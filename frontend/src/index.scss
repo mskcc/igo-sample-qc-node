@@ -1,0 +1,133 @@
+$mskcc-blue: #007cba;
+$mskcc-orange: #df4602;
+$mskcc-dark-blue: #006098;
+$mskcc-medium-blue: #40b4e5;
+$mskcc-light-blue: #8fc7e8;
+$mskcc-dark-orange: #c24d00;
+$mskcc-medium-orange: #f29934;
+$mskcc-light-orange: #f6c65b;
+$mskcc-dark-violet: #83276b;
+$mskcc-light-violet: #b687b8;
+$mskcc-dark-magenta: #e92076;
+$mskcc-light-magenta: #efb3cb;
+$mskcc-red: #b1132d;
+$mskcc-dark-green: #4c8b2b;
+$mskcc-light-green: #a6ce39;
+$mskcc-dark-turquoise: #006c68;
+$mskcc-light-turquoise: #009490;
+$mskcc-dark-yellow: #ffc20e;
+$mskcc-light-yellow: #ffe100;
+$mskcc-dark-gray: #9e9e98;
+$mskcc-light-gray: #d5d4c7;
+$material-gray: #eceff1;
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+        "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    width: 100vw;
+    overflow: auto;
+}
+.content {
+    display: grid;
+    grid-template-areas: "sidebar comments" "sidebar comments" "sidebar table ";
+    // grid-template-rows: 30vh 65vh;
+    grid-template-columns: 15% 85%;
+    // grid-row-gap: 1em;
+    // grid-column-gap: 1em;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+        monospace;
+}
+
+._loading_overlay_overlay {
+    background: rgba(0, 48, 77, 0.5) !important;
+}
+
+.passed {
+    color: black;
+    text-align: center;
+    background-color: $mskcc-light-green;
+}
+.try {
+    color: black;
+    text-align: center;
+    background-color: $mskcc-dark-yellow;
+}
+
+.failed,
+.pathology-status {
+    color: white;
+    text-align: center;
+    background-color: $mskcc-red;
+}
+
+.download-icon {
+    cursor: pointer;
+    color: #006098;
+    text-align: center;
+}
+.show-icon {
+    cursor: pointer;
+    color: #006098;
+}
+
+.swal2-content {
+    .swal-comment-review {
+        text-align: left;
+    }
+}
+
+.htDimmed {
+    color: black !important;
+
+    background-color: $material-gray !important;
+}
+.recipients-col {
+    text-align: right !important;
+}
+
+.handsontable th {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.handsontable td {
+    text-align: right !important;
+    vertical-align: middle !important;
+}
+
+.pending .htDimmed {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.handsontable th {
+    background-color: rgba(143, 199, 232, 0.4) !important;
+    font-weight: bold !important;
+    // background-color: $mskcc-light-blue !important;
+}
+
+.handsontable .htCheckboxRendererInput {
+    height: 2em !important;
+}
+
+.listbox .htDimmed {
+    background-color: white !important;
+    font-size: 1em !important;
+    padding-bottom: 5px !important;
+    border-bottom: 1px solid lightgray !important;
+    border-left: 1px solid lightgray !important;
+    border-right: 1px solid lightgray !important;
+}
+
+.handsontable.listbox tr td.current,
+.handsontable.listbox tr:hover td {
+    background: rgba(143, 199, 232, 0.4) !important;
+}
