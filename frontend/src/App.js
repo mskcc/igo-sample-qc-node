@@ -11,7 +11,7 @@ import Root from './containers/Root';
 
 import * as serviceWorker from './serviceWorker';
 
-import './App.scss';
+import './App.css';
 
 function App() {
   return (
