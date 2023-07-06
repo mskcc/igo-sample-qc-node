@@ -7,7 +7,6 @@ export const fillReportTables = (reportList) => {
   let libraryReport = reportList.libraryReportSamples;
   let poolReport = reportList.poolReportSamples;
   let pathologyReport = reportList.pathologyReportSamples;
-  let covidReport = reportList.covidReportSamples;
   let attachments = reportList.attachments;
 
   if (dnaReport && dnaReport.data) {
@@ -30,11 +29,6 @@ export const fillReportTables = (reportList) => {
   if (pathologyReport && pathologyReport.data) {
     pathologyReport.data = sortBySampleId(pathologyReport.data);
     tables['Pathology Report'] = pathologyReport;
-  }
-
-  if (covidReport && covidReport.data) {
-    covidReport.data = covidReport.data;
-    tables['COVID19 Report'] = covidReport;
   }
 
   if (attachments && attachments.data) {

@@ -1,5 +1,4 @@
 // Non-disruptive message at the bottom of any page. Used for messaged like
-// - successful login
 // - single validation error
 // - expired token error
 

@@ -38,6 +38,13 @@ const useStyles = makeStyles((theme) => ({
 export default function InfoPanel(props) {
   const classes = useStyles();
 
+  // showInfoPanel={
+  //   this.props.report.tables &&
+  //   Object.keys(this.props.report.tables).length > 0 &&
+  //   (this.props.user.role === 'lab_member' ||
+  //     Object.keys(this.props.comments).length > 0)
+  // }
+
   return (
     <Paper className={classes.container}>
       <Typography component="div">
@@ -71,14 +78,19 @@ export default function InfoPanel(props) {
               )}
             </div>
           ))}
-        <br />
-        <br />
-        <div className={classes.link}>
-          <a target="_blank" href="https://genomics.mskcc.org/criteria/dna">
-            Click here for details of IGO's pass/fail criteria.{' '}
-          </a>
-        </div>
       </Typography>
     </Paper>
   );
 }
+
+// const mapStateToProps = (state) => ({
+//   report: state.report,
+//   user: state.user,
+//   comments: state.communication.comments,
+// });
+
+// export default withLocalize(
+//   connect(mapStateToProps, {
+//     ...reportActions,
+//   })(SidebarContainer)
+// );

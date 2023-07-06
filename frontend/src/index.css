@@ -2,7 +2,7 @@
     --mskcc-blue: #007cba;
     --mskcc-orange: #df4602;
     --mskcc-dark-blue: #006098;
-    --mskcc-medium-blue: #40b4e5;
+    --mskcc-medium-blue: #319ae8;
     --mskcc-light-blue: #8fc7e8;
     --mskcc-dark-orange: #c24d00;
     --mskcc-medium-orange: #f29934;
@@ -34,6 +34,50 @@ body {
     width: 100vw;
     overflow: auto;
 }
+.app {
+    background-image: url('./igo.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+.header {
+    background-color: var(--mskcc-medium-blue) !important;
+    color: white;
+    grid-area: 'header';
+}
+.header .avatar {
+    width: 26px;
+    height: 30px;
+    padding: 10px;
+}
+.header .title {
+    margin-right: 2em;
+}
+.header .navlink {
+    color: white;
+    text-decoration: none;
+    margin-right: 1em;
+    padding-left: 1em;
+}
+.header .navlink:hover {
+    cursor: pointer;
+}
+.header .search {
+    padding: 2px 4px;
+    grid-area: 'search';
+    display: flex;
+    height: min-content;
+    align-items: center;
+    max-width: 80%;
+    margin-left: auto;
+}
+.header .textField {
+    padding-left: 8px;
+}
+.header .iconButton {
+    padding: 10px
+}
+
 .content {
     display: grid;
     grid-template-areas: "sidebar comments" "sidebar comments" "sidebar table ";

@@ -3,7 +3,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import CommentEditor from './CommentEditor';
-import CovidEditor from './CovidEditor';
 import RecipientList from './RecipientList';
 
 const useStyles = makeStyles((theme) => ({
@@ -53,17 +52,6 @@ export default function CommentEditorArea(props) {
           recipients={props.recipients}
         />
       </div>
-      {props.currentReportShown.includes('COVID') ? (
-        <CovidEditor
-          recipe={props.recipe}
-          currentReportShown={props.currentReportShown}
-          request={props.request}
-          tables={props.tables}
-          comments={props.comments}
-          recipientsBeingEdited={values.recipientsBeingEdited}
-          handleInitialComment={handleInitialComment}
-        />
-      ) : (
         <CommentEditor
           recipe={props.recipe}
           currentReportShown={props.currentReportShown}
@@ -74,7 +62,6 @@ export default function CommentEditorArea(props) {
           recipientsBeingEdited={values.recipientsBeingEdited}
           handleInitialComment={handleInitialComment}
         />
-      )}
     </div>
   );
 }

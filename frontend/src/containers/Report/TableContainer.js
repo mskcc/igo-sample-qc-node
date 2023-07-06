@@ -98,13 +98,10 @@ export class TableContainer extends Component {
     const isReport = report.reportShown
       ? report.reportShown.includes('Report')
       : false;
-    const isCovidReport = report.reportShown
-      ? report.reportShown.includes('COVID')
-      : false;
       const isPathologyReport = report.reportShown
       ? report.reportShown.includes('Pathology')
       : false;
-    const isNormalReport = isReport && !isCovidReport && !isPathologyReport;
+    const isNormalReport = isReport && !isPathologyReport;
 
     return (
       <React.Fragment>
@@ -113,7 +110,6 @@ export class TableContainer extends Component {
             report={report}
             isReport={isReport}
             isNormalReport={isNormalReport}
-            isCovidReport={isCovidReport}
             role={this.props.user.role}
             username={this.props.user.username}
             updateReportShown={this.updateReportShown}

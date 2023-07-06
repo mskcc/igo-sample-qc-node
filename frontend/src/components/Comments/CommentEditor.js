@@ -304,8 +304,7 @@ export default function CommentEditor(props) {
                 {Object.keys(props.tables).map((report, index) => {
                   if (
                     report.includes('Report') &&
-                    !props.comments[report] &&
-                    !report.includes('Covid')
+                    !props.comments[report]
                   ) {
                     return (
                       <span key={report}>

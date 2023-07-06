@@ -1,0 +1,8 @@
+# Dependency directories
+node_modules/
+node_modules/*
+./node_modules/
+**/node_modules/**
+src/secret_config.js
+src/resources/constants.js
+constants.js
