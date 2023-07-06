@@ -6,7 +6,6 @@ import { reportActions } from '../../actions';
 
 import CommentContainer from './CommentContainer';
 import TableContainer from './TableContainer';
-import SidebarContainer from './SidebarContainer';
 
 export class ReportContainer extends Component {
   componentDidMount() {
@@ -18,15 +17,10 @@ export class ReportContainer extends Component {
       this.props.clearRequest();
     }
   }
-  handleSearch = (requestId) => {
-    this.props.history.push('/request/' + requestId);
-    this.props.getRequest(requestId);
-  };
   render() {
     return (
       <React.Fragment>
         <div className="content">
-          <SidebarContainer handleSearch={this.handleSearch} />
           {this.props.report.loaded && (
             <React.Fragment>
               <CommentContainer />

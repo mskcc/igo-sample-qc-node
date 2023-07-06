@@ -3,9 +3,8 @@ import 'react-app-polyfill/ie9';
 import 'react-app-polyfill/ie11';
 
 import { LocalizeProvider } from 'react-localize-redux';
-import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
-import { store, persistor } from './store/configureStore';
+import store from './store/configureStore';
 
 import Root from './containers/Root';
 
@@ -17,9 +16,8 @@ function App() {
   return (
     <Provider store={store}>
       <LocalizeProvider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
           <Root />
-        </PersistGate>
+          <img src='./igo.png' alt='IGO' />
       </LocalizeProvider>
     </Provider>
   );

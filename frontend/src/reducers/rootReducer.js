@@ -29,16 +29,6 @@ const appReducer = combineReducers({
 });
 
 const rootReducer = (state, action) => {
-  if (action.type === 'LOGOUT_SUCCESS') {
-    console.log('goodbye');
-    state = {
-      user: undefined,
-      communication: undefined,
-      common: undefined,
-      localize: state.localize,
-    };
-  }
-
   return appReducer(state, action);
 };
 

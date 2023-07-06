@@ -30,14 +30,11 @@ export class CommentContainer extends Component {
         return values[key] && key.includes('Report');
       });
       reportString = Object.values(filteredReports).join(', ');
-    } else {
-      reportString = 'COVID19 Report';
-      filteredReports = ['COVID19 Report'];
     }
     let recipients = cleanAndFilterRecipients(this.props.recipients);
     if ('QcAccessEmails' in this.props.recipients) {
       if (
-        this.props.recipients.QcAccessEmails.toLowerCase() ==
+        this.props.recipients.QcAccessEmails.toLowerCase() ===
         Config.CMO_PM_EMAIL
       ) {
         console.log('cmo pm only project!');

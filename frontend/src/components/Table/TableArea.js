@@ -143,7 +143,7 @@ export default function TableArea(props) {
                 </CardContent>
               </Card>
             ) : props.report.tables[props.report.reportShown].isCmoPmProject &&
-              props.role != 'cmo_pm' ? (
+              props.role !== 'cmo_pm' ? (
               <Card>
                 {' '}
                 <CardContent className={classes.decisions}>
@@ -216,17 +216,6 @@ export default function TableArea(props) {
             </Button>
           </React.Fragment>
         )}{' '}
-        {props.isCovidReport && (
-          <Button
-            onClick={handleReportDownload}
-            variant="contained"
-            color="secondary"
-            className={classes.downloadtBtn}
-            startIcon={<CloudDownloadIcon />}
-          >
-            {Object.keys(props.report.tables)[index]}
-          </Button>
-        )}
       </div>
       <div className={classes.report}>
         <Tabs

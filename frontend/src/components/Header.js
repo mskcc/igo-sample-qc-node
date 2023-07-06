@@ -1,53 +1,45 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import Paper from '@material-ui/core/Paper';
+import InputBase from '@material-ui/core/InputBase';
+import IconButton from '@material-ui/core/IconButton';
+import SearchIcon from '@material-ui/icons/Search';
 import {
   Avatar,
   AppBar,
   Toolbar,
   Button,
   Typography,
-  withStyles,
 } from '@material-ui/core';
-import Feedback from './Feedback/Feedback';
-import image from './igo.png';
+import image from '../igo.png';
 
-const Header = ({ classes, loggedIn, role, submitFeedback }) => {
-  const [values, setValues] = React.useState({
-    show: false,
-  });
+const Header = (props) => {
+  const [values, setValues] = React.useState({ requestId: '' });
 
-  const handleShow = () => {
-    setValues({
-      show: !values.show,
-    });
+  const handleChange = (requestId) => (event) => {
+    setValues({ ...values, [requestId]: event.target.value });
   };
-  // <div className={classes.mskccHeader}>
-  return (
-    <AppBar position="static" title={image} className={classes.header}>
-      <Toolbar>
-        <Avatar alt="mskcc logo" src={image} className={classes.avatar} />
 
-        <Typography color="inherit" variant="h6" className={classes.title}>
+  const handleSearch = () => {
+    const request = values.requestId.toUpperCase().trim();
+    props.history.push('/request/' + request);
+    props.getRequest(request);
+  };
+
+  return (
+    <AppBar position="static" title={image} className={'header'}>
+      <Toolbar>
+        <Avatar alt="mskcc logo" src={image} className={'avatar'} />
+
+        <Typography color="inherit" variant="h6" className={'title'}>
           Sample QC
         </Typography>
-        {loggedIn ? (
           <React.Fragment>
             <Button>
               <NavLink
-                to="/"
-                activeClassName={classes.active}
-                className={classes.navlink}
-              >
-                <Typography color="inherit" variant="h6">
-                  Home
-                </Typography>
-              </NavLink>
-            </Button>
-            <Button>
-              <NavLink
                 to="/pending"
-                activeClassName={classes.active}
-                className={classes.navlink}
+                activeClassName={'active'}
+                className={'navlink'}
               >
                 <Typography color="inherit" variant="h6">
                   Pending
@@ -58,90 +50,56 @@ const Header = ({ classes, loggedIn, role, submitFeedback }) => {
             <Button>
               <NavLink
                 to="/instructions"
-                activeClassName={classes.active}
-                className={classes.navlink}
+                activeClassName={'active'}
+                className={'navlink'}
               >
                 <Typography color="inherit" variant="h6">
                   Instructions
                 </Typography>
               </NavLink>
             </Button>
+
             <Button>
               <NavLink
-                to="/logout"
-                activeClassName={classes.active}
-                className={classes.navlink}
+                to="https://genomics.mskcc.org/criteria/dna"
+                activeClassName={'active'}
+                className={'navlink'}
+                target="_blank"
               >
                 <Typography color="inherit" variant="h6">
-                  Logout
+                  Pass/Fail Criteria
                 </Typography>
               </NavLink>
             </Button>
 
-            <Typography
-              color="inherit"
-              variant="h6"
-              className={classes.feedback}
-            >
-              <Button onClick={handleShow}>Feedback</Button>
-            </Typography>
-            {values.show && (
-              <Feedback
-                handleShow={handleShow}
-                submitFeedback={submitFeedback}
+            <Paper className={'search'}>
+              <InputBase
+                className={'textField'}
+                id="outlined-requestId"
+                value={values.requestId}
+                placeholder="Request ID"
+                onChange={handleChange('requestId')}
+                onKeyPress={(event) => {
+                  if (event.key === 'Enter') {
+                    handleSearch();
+                  }
+                }}
               />
-            )}
+              <IconButton
+                className={'iconButton'}
+                onClick={handleSearch}
+                aria-label="search"
+                disabled={!values.requestId.length > 0}
+              >
+                <SearchIcon />
+              </IconButton>
+            </Paper>
           </React.Fragment>
-        ) : (
-          <Button>
-            <NavLink
-              to="/login"
-              activeClassName={classes.active}
-              className={classes.navlink}
-            >
-              <Typography color="inherit" variant="h6">
-                Login
-              </Typography>
-            </NavLink>
-          </Button>
-        )}
       </Toolbar>
     </AppBar>
   );
   // </div>
 };
 
-const styles = (theme) => ({
-  header: {
-    backgroundColor: theme.palette.primary.logo,
-    color: 'white',
-    textAlign: 'center',
-    gridArea: 'header',
-  },
-  avatar: {
-    width: '26px',
-    height: '30px',
-    padding: '10px',
-  },
-  title: {
-    marginRight: theme.spacing(3),
-  },
 
-  navlink: {
-    color: theme.palette.textSecondary,
-    textDecoration: 'none',
-    marginRight: theme.spacing(1),
-  },
-  active: {
-    color: 'white',
-    fontSize: '1em',
-  },
-  feedback: {
-    flex: 1,
-    color: 'white',
-    textAlign: 'right',
-    justifyContent: 'flex-end',
-  },
-});
-
-export default withStyles(styles)(Header);
+export default Header;
