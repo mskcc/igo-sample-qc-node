@@ -1,17 +1,18 @@
 require('dotenv').config();
 const http = require('http');
 const path = require('path');
-const express = require("express");
+const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const apiRouter = require('./routes/api');
 
-
 const port = process.env.PORT || 3001;
 const hostname = '127.0.0.1';
 
 var publicDir = path.join(__dirname, 'public');
+
+const mysqllib = require('./services/mySqlConnect');
 
 const app = express();
 
@@ -43,6 +44,18 @@ app.use('*', (req, res) => {
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'));
+});
+
+mysqllib.connect().then(() => {
+    console.log('Connected to mysql...');
+    // var routes = require('./api/routes/routes'); //importing route
+    // routes(app);
+    // console.log('todo list RESTful API server started on: ' + port);
+    // app.listen(port);
+  
+}).catch(e => {
+    console.error('Error connecting mysql...', e);
+    process.exit();
 });
 
 const server = http.createServer(app);

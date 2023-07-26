@@ -34,11 +34,11 @@ body {
     width: 100vw;
     overflow: auto;
 }
-.app {
-    background-image: url('./igo.png');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
+.flex-container {
+    display: flex;
+}
+.background-image-homepage {
+    margin: 100px auto;
 }
 .header {
     background-color: var(--mskcc-medium-blue) !important;
