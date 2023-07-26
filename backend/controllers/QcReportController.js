@@ -32,6 +32,9 @@ exports.getRequestSamples = [
                 responseData['recipients']['LabHeadEmail'] = requestSamples['labHeadEmail'];
                 responseData['recipients']['InvestigatorEmail'] = requestSamples['investigatorEmail'];
             }
+
+            return apiResponse.successResponse(res, responseData);
+
         });
     }
 ];
