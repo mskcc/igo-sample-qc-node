@@ -4,11 +4,9 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 import { connect } from 'react-redux';
-import { commonActions, userActions } from '../actions';
+import { userActions } from '../actions';
 
-// import { LocalizeProvider, withLocalize } from "react-localize-redux";
 import { withLocalize } from 'react-localize-redux';
-import enTranslations from '../translations/en.json';
 
 import LoadingOverlay from 'react-loading-overlay';
 
@@ -39,7 +37,6 @@ class Root extends Component {
     // basic init of localization component
     this.props.initialize({
       languages: [{ name: 'English', code: 'en' }],
-      translation: enTranslations,
       options: {
         renderToStaticMarkup,
         renderInnerHtml: false,
@@ -82,7 +79,6 @@ class Root extends Component {
                 <Header
                   className="header"
                   role={this.props.user.role}
-                  submitFeedback={this.props.submitFeedback}
                 />
                 {this.props.common.serverError ? (
                   <ErrorPage />
@@ -137,7 +133,6 @@ const mapStateToProps = (state) => ({
   report: state.report,
 });
 const mapDispatchToProps = {
-  ...commonActions,
   ...userActions,
 };
 
