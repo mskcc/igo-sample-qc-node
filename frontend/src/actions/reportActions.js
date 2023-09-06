@@ -163,7 +163,7 @@ export function getPending() {
     if (getState().user.role === 'lab_member') {
       endpoint = '/pending/getPendingRequests';
     } else {
-      endpoint = '/getUserPending';
+      endpoint = '/pending/getPendingRequests';
     }
     return axios
       .get(Config.API_ROOT + endpoint, {})

@@ -12,8 +12,6 @@ const hostname = '127.0.0.1';
 
 var publicDir = path.join(__dirname, 'public');
 
-const mysqllib = require('./services/mySqlConnect');
-
 const app = express();
 
 app.use(cookieParser());
@@ -46,17 +44,13 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'));
 });
 
-mysqllib.connect().then(() => {
-    console.log('Connected to mysql...');
-    // var routes = require('./api/routes/routes'); //importing route
-    // routes(app);
-    // console.log('todo list RESTful API server started on: ' + port);
-    // app.listen(port);
-  
-}).catch(e => {
-    console.error('Error connecting mysql...', e);
-    process.exit();
-});
+const db = require('./models');
+// db.sequelize.authenicate().then(() => {
+//     console.log('Connection has been established successfully.');
+// }).catch((error) => {
+//     console.error('Unable to connect to the database: ', error);
+// });
+db.sequelize.sync();
 
 const server = http.createServer(app);
 server.listen(port, hostname, () => {

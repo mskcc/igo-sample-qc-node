@@ -1,7 +1,6 @@
 const services = require('../services/services');
 const apiResponse = require('../util/apiResponse');
 const { param } = require('express-validator');
-// const mysqlLib = require('../services/mySqlConnect');
 
 exports.getRequestSamples = [
     param('request').exists().withMessage('request ID must be specified.'),
@@ -31,11 +30,40 @@ exports.getRequestSamples = [
                 responseData['recipients']['IGOEmail'] = 'zzPDL_IGO_Staff@mskcc.org';
                 responseData['recipients']['LabHeadEmail'] = requestSamples['labHeadEmail'];
                 responseData['recipients']['InvestigatorEmail'] = requestSamples['investigatorEmail'];
+
+                if ('qcAccessEmails' in requestSamples && requestSamples['qcAccessEmails'] !== '') {
+                    responseData['recipients']['QcAccessEmails'] = requestSamples['qcAccessEmails'];
+                } else {
+                    responseData['recipients']['OtherContactEmails'] = requestSamples['otherContactEmails'];
+                }
+                    
+                // we only need Investigator Sample Ids
+                for(let sample in requestSamples) {
+                    responseData['request']['samples'].push(sample['investigatorSampleId']);
+                }
+
+                return apiResponse.successResponse(res, responseData);
+
+            } else {
+                return apiResponse.errorResponse(res, 'Associated request not found.');
             }
-
-            return apiResponse.successResponse(res, responseData);
-
         });
+    }
+];
+
+exports.getQcReportSamples = [
+    function(req, res) {
+        const requestId = req.body.request;
+        const samples = req.body.samples;
+
+        const qcReportPromise = services.getQcReportSamples({
+            request: requestId,
+            samples: samples
+        });
+
+        Promise.all([qcReportPromise]).then(results => {
+
+        })
     }
 ];
 
