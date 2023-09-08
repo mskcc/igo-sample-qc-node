@@ -18,5 +18,6 @@ db.sequelize = sequelize;
 db.commentRelations = require('./CommentRelationModel')(sequelize, Sequelize);
 db.decisions = require('./DecisionsModel')(sequelize, Sequelize);
 db.comments = require('./CommentsModel')(sequelize, Sequelize);
+db.users = require('./SqlUserModel')(sequelize, Sequelize);
 
 module.exports = db;

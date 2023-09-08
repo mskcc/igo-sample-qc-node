@@ -1,4 +1,5 @@
 const services = require('../services/services');
+const constants = require('../constants');
 
 //TODO set up user authorization logic
 
@@ -8,7 +9,7 @@ const services = require('../services/services');
 //     } else if ()
 // };
 
-export const buildTableHTML = (tableType, samples, constantColumnFeatures, order, decisions) => {
+exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, decisions) => {
     const responseColumnFeatures = [];
     const responseHeaders = [];
     const responseSamples = [];
@@ -180,5 +181,73 @@ export const buildTableHTML = (tableType, samples, constantColumnFeatures, order
         };
     } else {
         return {};
+    }
+};
+
+exports.buildPendingList = (pendings, isUser) => {
+    const responsePendings = [];
+
+    for (let pending in pendings) {
+        const responsePending = {};
+        responsePending['request_id'] = pending.request_id;
+        responsePending['date'] = pending.date_created.toLocaleString();
+
+        if (pending.children && pending.children.length > 0) {
+            responsePending['most_recent_date'] = pending.children[-1].date_created.toLocaleString();
+        } else {
+            responsePending['most_recent_date'] = pending.date_created.toLocaleString();
+        }
+
+        responsePending['report'] = pending.report;
+        responsePending['show'] = `<span pending-id='${pending.request_id}' class ='show-icon'><i class='material-icons'>'forward'</i></span>`;
+
+        // show additional fields for lab_member and project_manager roles
+        if (!isUser) {
+            responsePending['author'] = pending.author;
+            responsePending['recipients'] = `<div class='recipients-col'>${pending.recipients.replaceAll(',', '\n')}</div>`;
+            responsePending['lab_notifications'] = 0;
+            responsePending['pm_notifications'] = 0;
+            responsePending['user_replies'] = 0;
+    
+            const comments = pending.children;
+            for (let comment in comments) {
+                if (comment.author.role === 'lab_member') {
+                    responsePending['lab_notifications'] += 1;
+                }
+                if (comment.author.role === 'project_manager') {
+                    responsePending['pm_notifications'] += 1;
+                }
+                if (comment.author.role === 'user') {
+                    responsePending['user_replies'] += 1;
+                }
+            }
+        }
+
+        responsePendings.push(responsePending);
+
+        const columnFeatures = isUser ? [
+            {data: 'request_id', readOnly: true},
+            {data: 'date', readOnly: true},
+            {data: 'most_recent_date', readOnly: true},
+            {data: 'report', readOnly: true},
+            {data: 'show', readOnly: true, renderer: 'html'},
+        ] : [
+            {data: 'request_id', readOnly: true},
+            {data: 'date', readOnly: true},
+            {data: 'most_recent_date', readOnly: true},
+            {data: 'report', readOnly: true},
+            {data: 'author', readOnly: true},
+            {data: 'lab_notifications', readOnly: true},
+            {data: 'pm_notifications', readOnly: true},
+            {data: 'user_replies', readOnly: true},
+            {data: 'recipients', readOnly: true, renderer: 'html'},
+            {data: 'show', readOnly: true, renderer: 'html'},
+        ];
+
+        return {
+            data: responsePendings,
+            columnFeatures: columnFeatures,
+            columnHeaders: isUser ? constants.user_pending_order : constants.pending_order
+        };
     }
 };
