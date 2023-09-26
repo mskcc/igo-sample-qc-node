@@ -1,4 +1,4 @@
-export const sharedColumns = {
+exports.sharedColumns = {
     'SampleId': {
         'limsField': 'SampleId',
         'data': 'sampleId',
@@ -82,7 +82,7 @@ export const sharedColumns = {
     },
 };
 
-export const dnaColumns = {
+exports.dnaColumns = {
     'Din': {
         'limsField': 'Din',
         'data': 'din',
@@ -138,7 +138,7 @@ export const dnaColumns = {
     }
 };
 
-export const rnaColumns = {
+exports.rnaColumns = {
     'Rin': {
         'limsField': 'Rin',
         'data': 'rin',
@@ -188,7 +188,7 @@ export const rnaColumns = {
     }
 };
 
-export const libraryColumns = {
+exports.libraryColumns = {
     'AvgSize': {
         'limsField': 'AvgSize',
         'data': 'avgSize',
@@ -226,7 +226,7 @@ export const libraryColumns = {
     }
 };
 
-export const poolColumns = {
+exports.poolColumns = {
     'AvgSize': {
         'limsField': 'AvgSize',
         'data': 'avgSize',
@@ -258,7 +258,7 @@ export const poolColumns = {
     }
 };
 
-export const pathologyColumns = {
+exports.pathologyColumns = {
     'SampleId': {
         'limsField': 'SampleId',
         'data': 'sampleId',
@@ -287,7 +287,7 @@ export const pathologyColumns = {
     },
 };
 
-export const attachmentColumns = {
+exports.attachmentColumns = {
     'FileName': {
         'limsField': 'FilePath',
         'data': 'fileName',
@@ -309,7 +309,7 @@ export const attachmentColumns = {
 };
 
 // last column is always RecordId. Needed to set investigator decision efficiently
-export const dnaOrder = [
+exports.dnaOrder = [
     'OtherSampleId',
     'Recipe',
     'IgoQcRecommendation',
@@ -330,7 +330,7 @@ export const dnaOrder = [
     'RecordId',
 ];
 
-export const rnaOrder = [
+exports.rnaOrder = [
     'OtherSampleId',
     'Recipe',
     'IgoQcRecommendation',
@@ -350,7 +350,7 @@ export const rnaOrder = [
     'RecordId',
 ];
 
-export const libraryOrder = [
+exports.libraryOrder = [
     'OtherSampleId',
     'Recipe',
     'IgoQcRecommendation',
@@ -367,7 +367,7 @@ export const libraryOrder = [
     'RecordId',
 ];
 
-export const poolOrder = [
+exports.poolOrder = [
     'OtherSampleId',
     'Recipe',
     'IgoQcRecommendation',
@@ -383,12 +383,12 @@ export const poolOrder = [
     'RecordId',
 ];
 
-export const pathologyOrder = ['OtherSampleId', 'SampleStatus', 'SampleId', 'RecordId'];
+exports.pathologyOrder = ['OtherSampleId', 'SampleStatus', 'SampleId', 'RecordId'];
 
-export const attachmentOrder = ['FileName', 'Action', 'RecordId'];
+exports.attachmentOrder = ['FileName', 'Action', 'RecordId'];
 
 
-export const pending_order = [
+exports.pending_order = [
     'Request',
     'First notification',
     'Most recent notification',
@@ -401,7 +401,7 @@ export const pending_order = [
     'Show',
 ];
 
-export const user_pending_order = [
+exports.user_pending_order = [
     'Request',
     'First notification',
     'Most recent notification',
@@ -409,7 +409,7 @@ export const user_pending_order = [
     'Show',
 ];
 
-export const initial_email_template_html = {
+exports.initial_email_template_html = {
     'from': 'igoski@mskcc.org',
     'dev_subject': '[SampleQC Beta-Test] %s %s QC results available%s',
     'subject': '[IGO SampleQC] %s %s QC results available%s',
@@ -418,7 +418,7 @@ export const initial_email_template_html = {
     'footer': '<br><br><span style="color:#f29934; font-weight:bold;">%s</span><br>%s<br><a href="https://genomics.mskcc.org">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br>',
 };
 
-export const notification_email_template_html = {
+exports.notification_email_template_html = {
     'from': 'igoski@mskcc.org',
     'dev_subject': '[SampleQC Beta-Test] %s New Comment',
     'subject': '[IGO SampleQC] %s New Comment',
@@ -426,7 +426,7 @@ export const notification_email_template_html = {
     'footer': '<br><a href="https://genomics.mskcc.org">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br>',
 };
 
-export const decision_notification_email_template_html = {
+exports.decision_notification_email_template_html = {
     'from': 'igoski@mskcc.org',
     'dev_subject': '[SampleQC Beta-Test] %s Decisions Submitted for %s',
     'subject': '[IGO SampleQC] %s Decisions Submitted for %s',
@@ -434,7 +434,7 @@ export const decision_notification_email_template_html = {
     'footer': '<br><a style="color:#f29934; font-weight:bold;" href="https://genomics.mskcc.org">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br>',
 };
 
-export const stop_processing_notification_email_template_html = {
+exports.stop_processing_notification_email_template_html = {
     'from': 'igoski@mskcc.org',
     'dev_subject': '[SampleQC Beta-Test] %s Stop Processing Decision(s) Submitted for %s',
     'subject': '[IGO SampleQC] %s Stop Processing Decision(s) Submitted for %s',
@@ -442,4 +442,4 @@ export const stop_processing_notification_email_template_html = {
     'footer': '<br><a style="color:#f29934; font-weight:bold;" href="https://genomics.mskcc.org">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br>',
 };
 
-export const user_training_string = 'Unfamiliar with this new process for sharing QC results? Watch our 5 minute <a href="https://igo.mskcc.org/sample-qc/instructions">how-to video</a>.';
+exports.user_training_string = 'Unfamiliar with this new process for sharing QC results? Watch our 5 minute <a href="https://igo.mskcc.org/sample-qc/instructions">how-to video</a>.';
