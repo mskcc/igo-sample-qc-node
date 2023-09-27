@@ -190,12 +190,12 @@ exports.buildPendingList = (pendings, isUser) => {
     for (let pending in pendings) {
         const responsePending = {};
         responsePending['request_id'] = pending.request_id;
-        responsePending['date'] = pending.date_created.toLocaleString();
+        responsePending['date'] = pending.createdAt.toLocaleString();
 
         if (pending.children && pending.children.length > 0) {
-            responsePending['most_recent_date'] = pending.children[-1].date_created.toLocaleString();
+            responsePending['most_recent_date'] = pending.children[-1].createdAt.toLocaleString();
         } else {
-            responsePending['most_recent_date'] = pending.date_created.toLocaleString();
+            responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
         }
 
         responsePending['report'] = pending.report;
