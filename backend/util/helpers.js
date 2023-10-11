@@ -209,7 +209,7 @@ exports.buildPendingList = (pendings, isUser) => {
             responsePending['pm_notifications'] = 0;
             responsePending['user_replies'] = 0;
     
-            const comments = pending.children;
+            const comments = pending.children();
             for (let comment in comments) {
                 if (comment.author.role === 'lab_member') {
                     responsePending['lab_notifications'] += 1;
