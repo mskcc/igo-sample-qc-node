@@ -10,6 +10,7 @@ export class PendingContainer extends Component {
   componentDidMount() {
     if (!this.props.report.pending) {
       this.props.getPending();
+      console.log(this.props.report);
     }
   }
   showPending = (request) => {
