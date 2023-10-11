@@ -29,7 +29,7 @@ exports.getPendingRequests = [
                 pendingTable = buildPendingList(responseData, true);
             }
 
-            return apiResponse.successResponse(res, pendingTable);
+            return apiResponse.successResponseWithData(res, 'success', pendingTable);
         }).catch(e => {
             console.log(e);
             res.status(500).send(`ERROR querying MySQL database: ${e}`);

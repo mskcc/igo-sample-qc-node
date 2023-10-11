@@ -187,13 +187,15 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
 exports.buildPendingList = (pendings, isUser) => {
     const responsePendings = [];
     for (let pending of pendings) {
-        console.log(pending.dataValues.request_id);
+        // console.log(pending.dataValues.request_id);
         const responsePending = {};
         responsePending['request_id'] = pending.request_id;
         responsePending['date'] = pending.createdAt.toLocaleString();
 
-        if (pending.children && pending.children.length > 0) {
-            responsePending['most_recent_date'] = pending.children[-1].createdAt.toLocaleString();
+        if (pending.children() && pending.children().length > 0) {
+            // TODO FIX LAST CHILD DATE BEFORE DEPLOY
+            responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
+            // responsePending['most_recent_date'] = pending.children[-1].createdAt.toLocaleString();
         } else {
             responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
         }
@@ -244,7 +246,7 @@ exports.buildPendingList = (pendings, isUser) => {
         {data: 'recipients', readOnly: true, renderer: 'html'},
         {data: 'show', readOnly: true, renderer: 'html'},
     ];
-    
+
     return {
         data: responsePendings,
         columnFeatures: columnFeatures,

@@ -8,7 +8,7 @@ import { PendingTable } from '../../components';
 
 export class PendingContainer extends Component {
   componentDidMount() {
-    if (!this.props.pending) {
+    if (!this.props.report.pending) {
       this.props.getPending();
     }
   }
@@ -22,7 +22,7 @@ export class PendingContainer extends Component {
       <React.Fragment>
         {this.props.pending && (
           <PendingTable
-            data={this.props.pending}
+            data={this.props.report.pending}
             showPending={this.showPending}
           />
         )}
