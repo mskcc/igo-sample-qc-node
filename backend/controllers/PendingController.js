@@ -26,7 +26,7 @@ exports.getPendingRequests = [
                 pendingTable = buildPendingList(responseData, false);
             } else {
                 // TODO UPDATE TO 'true' BEFORE DEPLOYMENT!!!!!
-                pendingTable = buildPendingList(responseData, true);
+                pendingTable = buildPendingList(responseData, false);
             }
 
             return apiResponse.successResponseWithData(res, 'success', pendingTable);

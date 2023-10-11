@@ -14,7 +14,7 @@ export class PendingContainer extends Component {
     }
   }
   showPending = (request) => {
-    window.open(`/sample-qc/request/${request}`, '_blank');
+    window.open(`/sampleQC/request/${request}`, '_blank');
     // this.props.history.push('/request/' + request);
     // this.props.getRequest(request);
   };

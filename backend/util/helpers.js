@@ -202,7 +202,7 @@ exports.buildPendingList = (pendings, isUser) => {
         // }
 
         responsePending['report'] = pending.report;
-        responsePending['show'] = `<span pending-id='${pending.request_id}' class ='show-icon'><i class='material-icons'>'forward'</i></span>`;
+        responsePending['show'] = `<span pending-id='${pending.request_id}' class ='show-icon'><i class='material-icons'>forward</i></span>`;
 
         // show additional fields for lab_member and project_manager roles
         if (!isUser) {
