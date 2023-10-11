@@ -212,18 +212,19 @@ exports.buildPendingList = (pendings, isUser) => {
             responsePending['pm_notifications'] = 0;
             responsePending['user_replies'] = 0;
     
-            const comments = pending.children();
-            for (let comment in comments) {
-                if (comment.author.role === 'lab_member') {
-                    responsePending['lab_notifications'] += 1;
-                }
-                if (comment.author.role === 'project_manager') {
-                    responsePending['pm_notifications'] += 1;
-                }
-                if (comment.author.role === 'user') {
-                    responsePending['user_replies'] += 1;
-                }
-            }
+            // TODO - PROPERLY QUERY FOR COMMENT COUNT BEFORE DEPLOYMENT
+            // const comments = pending.children();
+            // for (let comment in comments) {
+            //     if (comment.author.role === 'lab_member') {
+            //         responsePending['lab_notifications'] += 1;
+            //     }
+            //     if (comment.author.role === 'project_manager') {
+            //         responsePending['pm_notifications'] += 1;
+            //     }
+            //     if (comment.author.role === 'user') {
+            //         responsePending['user_replies'] += 1;
+            //     }
+            // }
         }
 
         responsePendings.push(responsePending);
