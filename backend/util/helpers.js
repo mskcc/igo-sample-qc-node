@@ -192,13 +192,14 @@ exports.buildPendingList = (pendings, isUser) => {
         responsePending['request_id'] = pending.request_id;
         responsePending['date'] = pending.createdAt.toLocaleString();
 
-        if (pending.children() && pending.children().length > 0) {
-            // TODO FIX LAST CHILD DATE BEFORE DEPLOY
-            responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
-            // responsePending['most_recent_date'] = pending.children[-1].createdAt.toLocaleString();
-        } else {
-            responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
-        }
+        responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
+
+        // TODO FIX LAST CHILD DATE BEFORE DEPLOY
+        // if (pending.children() && pending.children().length > 0) {
+        //     responsePending['most_recent_date'] = pending.children[-1].createdAt.toLocaleString();
+        // } else {
+        //     responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
+        // }
 
         responsePending['report'] = pending.report;
         responsePending['show'] = `<span pending-id='${pending.request_id}' class ='show-icon'><i class='material-icons'>'forward'</i></span>`;
