@@ -20,9 +20,9 @@ export class PendingContainer extends Component {
   render() {
     return (
       <React.Fragment>
-        {this.props.report.pending && (
+        {this.props.pending && (
           <PendingTable
-            data={this.props.report.pending}
+            data={this.props.pending}
             showPending={this.showPending}
           />
         )}
