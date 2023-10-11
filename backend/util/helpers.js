@@ -186,9 +186,9 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
 
 exports.buildPendingList = (pendings, isUser) => {
     const responsePendings = [];
-    console.log(`PENDINGS: ${pendings}`);
+    console.log('PENDINGS: ', pendings);
     for (let pending in pendings) {
-        console.log(`child: ${pendings}`);
+        console.log('child: ', pending);
         const responsePending = {};
         responsePending['request_id'] = pending.request_id;
         responsePending['date'] = pending.createdAt.toLocaleString();
