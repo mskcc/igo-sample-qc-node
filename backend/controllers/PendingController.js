@@ -21,15 +21,15 @@ exports.getPendingRequests = [
                 ],
             },
         }).then((responseData) => {
-            console.log(responseData);
-
+            let pendingTable = {};
             if (userType === 'lab_member' || userType === 'project_manager') {
-                buildPendingList(responseData, false);
+                pendingTable = buildPendingList(responseData, false);
             } else {
-                buildPendingList(responseData, true);
+                // TODO UPDATE TO 'true' BEFORE DEPLOYMENT!!!!!
+                pendingTable = buildPendingList(responseData, true);
             }
 
-            return apiResponse.successResponse(res, responseData);
+            return apiResponse.successResponse(res, pendingTable);
         }).catch(e => {
             console.log(e);
             res.status(500).send(`ERROR querying MySQL database: ${e}`);
