@@ -6,6 +6,7 @@ import { reportActions } from '../../actions';
 
 import CommentContainer from './CommentContainer';
 import TableContainer from './TableContainer';
+import image from '../../igo.png';
 
 export class ReportContainer extends Component {
   componentDidMount() {
@@ -26,6 +27,11 @@ export class ReportContainer extends Component {
               <CommentContainer />
               <TableContainer />
             </React.Fragment>
+          )}
+          {!this.props.report.loaded && (
+            <div className='flex-container'>
+              <img src={image} alt='IGO' className='background-image-homepage'/>
+            </div>
           )}
         </div>
       </React.Fragment>
