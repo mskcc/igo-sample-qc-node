@@ -32,7 +32,7 @@ exports.getPendingRequests = [
             return apiResponse.successResponseWithData(res, 'success', pendingTable);
         }).catch(e => {
             console.log(e);
-            res.status(500).send(`ERROR querying MySQL database: ${e}`);
+            return apiResponse.errorResponse(res, `ERROR querying MySQL database: ${e}`);
         });
     }
 ];

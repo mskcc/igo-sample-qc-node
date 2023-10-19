@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { reportActions } from '../../actions';
 
 import { PendingTable } from '../../components';
+import { Config } from '../../secret_config';
 
 export class PendingContainer extends Component {
   componentDidMount() {
@@ -14,7 +15,7 @@ export class PendingContainer extends Component {
     }
   }
   showPending = (request) => {
-    window.open(`/sampleQC/request/${request}`, '_blank');
+    window.open(`/${Config.BASENAME}/request/${request}`, '_blank');
     // this.props.history.push('/request/' + request);
     // this.props.getRequest(request);
   };

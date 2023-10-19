@@ -1,5 +1,7 @@
 const services = require('../services/services');
 const constants = require('../constants');
+const db = require('../models');
+const Decisions = db.decisions;
 
 //TODO set up user authorization logic
 
@@ -254,4 +256,31 @@ exports.buildPendingList = (pendings, isUser) => {
         columnFeatures: columnFeatures,
         columnHeaders: isUser ? constants.user_pending_order : constants.pending_order
     };
+};
+
+// exports.isUserAuthorizedForRequest = (requestId, user) => {
+
+// };
+
+exports.getDecisionsForRequest = (requestId) => {
+    return Decisions.findAll({
+        where: {
+            request_id: requestId,
+            is_submitted: false
+        }
+    });
+};
+
+exports.isDecisionMade = (reportData) => {
+    for (let field of reportData) {
+        if (!field.investigatorDecision && field.hideFromSampleQC !== true) {
+            return false;
+        }
+        return true;
+    }
+};
+
+exports.mergeColumns = (columnObject1, columnObject2) => {
+    var res = Object.assign({}, columnObject1, columnObject2);
+    return res;
 };
