@@ -21,9 +21,9 @@ const { getDecisionsForRequest, isDecisionMade, mergeColumns, buildTableHTML } =
 const CommentRelation = db.commentRelations;
 
 exports.getRequestSamples = [
-    param('request').exists().withMessage('request ID must be specified.'),
+    param('request_id').exists().withMessage('request ID must be specified.'),
     function (req, res) {
-        const requestId = req.param.request;
+        const requestId = req.param.request_id;
         // TODO check user accessability for request
         // const user = req.param.user;
         const requestSamplesPromise = services.getRequestSamples(requestId);
