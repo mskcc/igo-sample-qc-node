@@ -49,14 +49,14 @@ export function getRequest(requestId) {
       loading: true,
       loadingMessage: 'Searching for Request ' + requestId,
     });
-    let username = getState().user.username;
-    let userRole = getState().user.role;
+    // let username = getState().user.username;
+    // let userRole = getState().user.role;
     return axios
       .get(Config.API_ROOT + '/getRequestSamples', {
         params: {
           request_id: requestId,
-          username: username,
-          role: userRole,
+          // username: username,
+          // role: userRole,
         },
       })
       .then((response) => {
