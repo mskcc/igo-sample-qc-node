@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 
 import { withLocalize } from 'react-localize-redux';
+import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { reportActions } from '../../actions';
 
 import CommentContainer from './CommentContainer';
 import TableContainer from './TableContainer';
 import image from '../../igo.png';
-import { useParams } from 'react-router-dom';
 
 export class ReportContainer extends Component {
   componentDidMount() {
-    const { requestId } = useParams();
+    const { requestId } = this.props.match.params;
     if (requestId) {
       this.props.getRequest(requestId.toUpperCase());
     } else {
@@ -47,8 +47,8 @@ const mapStateToProps = (state) => ({
   report: state.report,
 });
 
-export default withLocalize(
+export default withRouter(withLocalize(
   connect(mapStateToProps, {
     ...reportActions,
   })(ReportContainer)
-);
+));
