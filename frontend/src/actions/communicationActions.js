@@ -42,10 +42,8 @@ export function addInitialComment(
   return (dispatch, getState) => {
     let decisionsMade = {};
     for (let report in reports) {
-      // determines wether creating an initial comment also triggers an entry to the decisions table
-      if (
-        reports[report] === 'COVID19 Report' ||
-        allDecisionsMadeInBackend(
+      // determines whether creating an initial comment also triggers an entry to the decisions table
+      if (allDecisionsMadeInBackend(
           getState().report.tables[reports[report]].columnFeatures,
           reports[report]
         )

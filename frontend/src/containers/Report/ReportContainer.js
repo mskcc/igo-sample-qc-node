@@ -12,6 +12,7 @@ import image from '../../igo.png';
 export class ReportContainer extends Component {
   componentDidMount() {
     const { requestId } = this.props.match.params;
+    console.log(requestId);
     if (requestId) {
       this.props.getRequest(requestId.toUpperCase());
     } else {
@@ -25,7 +26,7 @@ export class ReportContainer extends Component {
           {this.props.report.loaded && (
             <React.Fragment>
               {/* <CommentContainer /> */}
-              <TableContainer />
+              {/* <TableContainer /> */}
             </React.Fragment>
           )}
           {!this.props.report.loaded && (
