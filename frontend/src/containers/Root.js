@@ -91,7 +91,7 @@ class Root extends Component {
 
                     <PrivateRoute
                       // exact
-                      path="/request/:requestId?"
+                      path="/request/:requestId"
                       component={ReportContainer}
                     />
                     <PrivateRoute

@@ -7,11 +7,11 @@ import { reportActions } from '../../actions';
 import CommentContainer from './CommentContainer';
 import TableContainer from './TableContainer';
 import image from '../../igo.png';
+import { useParams } from 'react-router-dom';
 
 export class ReportContainer extends Component {
   componentDidMount() {
-    const { requestId } = this.props.match.params;
-    // let requestIdParam = requestId
+    const { requestId } = useParams();
     if (requestId) {
       this.props.getRequest(requestId.toUpperCase());
     } else {
@@ -24,7 +24,7 @@ export class ReportContainer extends Component {
         <div className="content">
           {this.props.report.loaded && (
             <React.Fragment>
-              <CommentContainer />
+              {/* <CommentContainer /> */}
               <TableContainer />
             </React.Fragment>
           )}
