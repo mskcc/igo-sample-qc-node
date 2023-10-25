@@ -12,7 +12,6 @@ import image from '../../igo.png';
 export class ReportContainer extends Component {
   componentDidMount() {
     const { requestId } = this.props.match.params;
-    console.log(requestId);
     if (requestId) {
       this.props.getRequest(requestId.toUpperCase());
     } else {

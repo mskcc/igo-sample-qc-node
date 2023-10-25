@@ -20,13 +20,13 @@ const {
 const { getDecisionsForRequest, isDecisionMade, mergeColumns, buildTableHTML } = require('../util/helpers');
 const CommentRelation = db.commentRelations;
 
-const { loggers } = require('winston');
-const logger = loggers.get('logger');
+// const { loggers } = require('winston');
+// const logger = loggers.get('logger');
 
 exports.getRequestSamples = [
     param('request_id').exists().withMessage('request ID must be specified.'),
     function (req, res) {
-        const requestId = req.params.request_id;
+        const requestId = req.query.request_id;
         // TODO check user accessability for request
         // const user = req.param.user;
         const requestSamplesPromise = services.getRequestSamples(requestId);
@@ -37,7 +37,6 @@ exports.getRequestSamples = [
             }
 
             let [requestSamples] = results;
-            logger.log('REQUESTSAMPLES', requestSamples);
             let responseData = {};
 
             if ('samples' in requestSamples) {
