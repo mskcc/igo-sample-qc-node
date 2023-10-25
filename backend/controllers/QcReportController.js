@@ -20,6 +20,9 @@ const {
 const { getDecisionsForRequest, isDecisionMade, mergeColumns, buildTableHTML } = require('../util/helpers');
 const CommentRelation = db.commentRelations;
 
+const { loggers } = require('winston');
+const logger = loggers.get('logger');
+
 exports.getRequestSamples = [
     param('request_id').exists().withMessage('request ID must be specified.'),
     function (req, res) {
@@ -34,7 +37,7 @@ exports.getRequestSamples = [
             }
 
             let [requestSamples] = results;
-            console.log(requestSamples);
+            logger.log('REQUESTSAMPLES', requestSamples);
             let responseData = {};
 
             if ('samples' in requestSamples) {
