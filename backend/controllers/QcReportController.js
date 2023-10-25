@@ -24,7 +24,6 @@ exports.getRequestSamples = [
     param('request_id').exists().withMessage('request ID must be specified.'),
     function (req, res) {
         const requestId = req.params.request_id;
-        console.log(requestId);
         // TODO check user accessability for request
         // const user = req.param.user;
         const requestSamplesPromise = services.getRequestSamples(requestId);
@@ -35,6 +34,7 @@ exports.getRequestSamples = [
             }
 
             let [requestSamples] = results;
+            console.log(requestSamples);
             let responseData = {};
 
             if ('samples' in requestSamples) {
