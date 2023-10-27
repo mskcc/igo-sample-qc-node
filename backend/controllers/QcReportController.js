@@ -27,8 +27,9 @@ exports.getRequestSamples = [
     param('request_id').exists().withMessage('request ID must be specified.'),
     function (req, res) {
         const requestId = req.query.request_id;
+        console.log(requestId);
         // TODO check user accessability for request
-        // const user = req.param.user;
+        // const user = req.query.user;
         const requestSamplesPromise = services.getRequestSamples(requestId);
 
         Promise.all([requestSamplesPromise]).then(results => {

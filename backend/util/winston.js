@@ -36,6 +36,14 @@ if (process.env.NODE_ENV === 'production') {
             format: consoleConfig,
         })
     );
+} else {
+    // Log to the console
+    const tsFormat = () => (new Date()).toLocaleTimeString();
+    container.add(new (winston.transports.Console)({
+        timestamp: tsFormat,
+        colorize: true,
+        handleExceptions: true
+    }));
 }
 
 exports.logger = container.get(logLabel);
