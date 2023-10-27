@@ -69,6 +69,9 @@ exports.getRequestSamples = [
             } else {
                 return apiResponse.errorResponse(res, 'Associated request not found.');
             }
+        }).catch(e => {
+            console.log(e);
+            return apiResponse.errorResponse(res, `ERROR getting request samples: ${e}`);
         });
     }
 ];
