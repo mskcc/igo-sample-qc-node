@@ -64,7 +64,7 @@ exports.getRequestSamples = [
                     responseData['request']['samples'].push(sample['investigatorSampleId']);
                 }
 
-                return apiResponse.successResponse(res, responseData);
+                return apiResponse.successResponseWithData(res, 'success', responseData);
 
             } else {
                 return apiResponse.errorResponse(res, 'Associated request not found.');
