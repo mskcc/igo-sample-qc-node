@@ -1,6 +1,7 @@
 const https = require('https');
 const axios = require('axios');
-const { logger } = require('../util/winston');
+const { loggers } = require('winston');
+const logger = loggers.get('logger');
 
 const LIMS_AUTH = {
     username: process.env.LIMS_USER,
@@ -21,7 +22,7 @@ const formatData = function (resp) {
     return data;
 };
 const info = (url) => logger.info(`Successfully retrieved response from ${url}`);
-const errorlog = (url) => logger.error(url);
+const errorlog = (url, error) => logger.error(`${url} : ${error}`);
 
 exports.getRequestSamples = (requestId) => {
     const url = `${LIMS_URL}/api/getRequestSamples?request=${requestId}`;
@@ -30,14 +31,14 @@ exports.getRequestSamples = (requestId) => {
         .get(url, {auth: {...LIMS_AUTH}, ...axiosConfig})
         .then((resp) => {
             if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
-                errorlog(url);
+                errorlog(url, resp.data[0]);
                 return [];
             }
             info(url);
             return resp;
         })
         .catch((error) => {
-            errorlog(url);
+            errorlog(url, error);
             throw error;
         })
         .then((resp) => {
@@ -63,7 +64,7 @@ exports.getQcReportSamples = (requestData) => {
             return resp;
         })
         .catch((error) => {
-            errorlog(url);
+            errorlog(url, error);
             if (error.response) {
                 throw error.response.data;
             } else {
@@ -85,14 +86,14 @@ exports.getPicklist = (listName) => {
         })
         .then((resp) => {
             if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
-                errorlog(url);
+                errorlog(url, resp.data[0]);
                 return [];
             }
             info(url);
             return resp;
         })
         .catch((error) => {
-            errorlog(url);
+            errorlog(url, error);
             throw error;
         })
         .then((resp) => {
@@ -118,7 +119,7 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
             return resp;
         })
         .catch((error) => {
-            errorlog(url);
+            errorlog(url, error);
             if (error.response) {
                 throw error.response.data;
             } else {
