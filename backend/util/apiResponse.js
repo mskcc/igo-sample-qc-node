@@ -1,11 +1,14 @@
-const winston = require('winston');
-const myWinstonOptions = {
-    transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: 'SampleQC_logs.log' })
-    ]
-};
-const logger = new winston.createLogger(myWinstonOptions);
+// const winston = require('winston');
+const { loggers } = require('winston');
+const logger = loggers.get('logger');
+// const myWinstonOptions = {
+//     format: winston.format.simple(),
+//     transports: [
+//         new winston.transports.Console(),
+//         new winston.transports.File({ filename: 'SampleQC_logs.log' })
+//     ]
+// };
+// const logger = new winston.createLogger(myWinstonOptions);
 
 //
 // If we're not in production then log to the `console` with the format:
