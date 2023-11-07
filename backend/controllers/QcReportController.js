@@ -1,6 +1,6 @@
 const services = require('../services/services');
 const apiResponse = require('../util/apiResponse');
-const { param } = require('express-validator');
+const { query } = require('express-validator');
 const db = require('../models');
 const {
     sharedColumns,
@@ -24,10 +24,9 @@ const CommentRelation = db.commentRelations;
 // const logger = loggers.get('logger');
 
 exports.getRequestSamples = [
-    param('request_id').exists().withMessage('request ID must be specified.'),
+    query('request_id').exists().withMessage('request ID must be specified.'),
     function (req, res) {
         const requestId = req.query.request_id;
-        console.log(requestId);
         // TODO check user accessability for request
         // const user = req.query.user;
         const requestSamplesPromise = services.getRequestSamples(requestId);

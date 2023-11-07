@@ -52,12 +52,12 @@ export function getRequest(requestId) {
     // let username = getState().user.username;
     // let userRole = getState().user.role;
     return axios
-      .get(Config.API_ROOT + '/getRequestSamples', {
-        params: {
-          request_id: requestId,
-          // username: username,
-          // role: userRole,
-        },
+      .get(Config.API_ROOT + `/getRequestSamples?request_id=${requestId}`, {
+        // params: {
+        //   request_id: requestId,
+        //   // username: username,
+        //   // role: userRole,
+        // },
       })
       .then((response) => {
         return dispatch({
