@@ -52,7 +52,7 @@ export function getRequest(requestId) {
     // let username = getState().user.username;
     // let userRole = getState().user.role;
     return axios
-      .get(Config.API_ROOT + `/getRequestSamples?request_id=${requestId}`, {
+      .get(Config.API_ROOT + `/qcReport/getRequestSamples?request_id=${requestId}`, {
         // params: {
         //   request_id: requestId,
         //   // username: username,
