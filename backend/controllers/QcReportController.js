@@ -20,14 +20,11 @@ const {
 const { getDecisionsForRequest, isDecisionMade, mergeColumns, buildTableHTML } = require('../util/helpers');
 const CommentRelation = db.commentRelations;
 
-const { loggers } = require('winston');
-const logger = loggers.get('logger');
 
 exports.getRequestSamples = [
     query('request_id').exists().withMessage('request ID must be specified.'),
     function (req, res) {
         const requestId = req.query.request_id;
-        logger.info('requestid', requestId);
         // TODO check user accessibility for request
         // const user = req.query.user;
         const requestSamplesPromise = services.getRequestSamples(requestId);
@@ -61,9 +58,9 @@ exports.getRequestSamples = [
                 }
                     
                 // we only need Investigator Sample Ids
-                for(let sample in requestSamples) {
+                requestSamples.samples.forEach(sample => {
                     responseData['request']['samples'].push(sample['investigatorSampleId']);
-                }
+                });
 
                 return apiResponse.successResponseWithData(res, 'success', responseData);
 
