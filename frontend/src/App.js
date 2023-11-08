@@ -9,7 +9,6 @@ import store from './store/configureStore';
 import Root from './containers/Root';
 
 import * as serviceWorker from './serviceWorker';
-import image from './igo.png';
 
 import './App.css';
 
@@ -18,9 +17,6 @@ function App() {
     <Provider store={store}>
       <LocalizeProvider store={store}>
           <Root />
-          <div className='flex-container'>
-            <img src={image} alt='IGO' className='background-image-homepage'/>
-          </div>
       </LocalizeProvider>
     </Provider>
   );

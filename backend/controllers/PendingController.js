@@ -21,18 +21,18 @@ exports.getPendingRequests = [
                 ],
             },
         }).then((responseData) => {
-            console.log(responseData);
-
+            let pendingTable = {};
             if (userType === 'lab_member' || userType === 'project_manager') {
-                buildPendingList(responseData, false);
+                pendingTable = buildPendingList(responseData, false);
             } else {
-                buildPendingList(responseData, true);
+                // TODO UPDATE TO 'true' BEFORE DEPLOYMENT!!!!!
+                pendingTable = buildPendingList(responseData, false);
             }
 
-            return apiResponse.successResponse(res, responseData);
+            return apiResponse.successResponseWithData(res, 'success', pendingTable);
         }).catch(e => {
             console.log(e);
-            res.status(500).send(`ERROR querying MySQL database: ${e}`);
+            return apiResponse.errorResponse(res, `ERROR querying MySQL database: ${e}`);
         });
     }
 ];

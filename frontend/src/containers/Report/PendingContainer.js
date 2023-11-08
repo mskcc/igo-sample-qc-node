@@ -5,15 +5,17 @@ import { connect } from 'react-redux';
 import { reportActions } from '../../actions';
 
 import { PendingTable } from '../../components';
+import { Config } from '../../secret_config';
 
 export class PendingContainer extends Component {
   componentDidMount() {
-    if (!this.props.pending) {
+    if (!this.props.report.pending) {
       this.props.getPending();
+      console.log(this.props.report);
     }
   }
   showPending = (request) => {
-    window.open(`/sample-qc/request/${request}`, '_blank');
+    window.open(`/${Config.BASENAME}/request/${request}`, '_blank');
     // this.props.history.push('/request/' + request);
     // this.props.getRequest(request);
   };
@@ -22,7 +24,7 @@ export class PendingContainer extends Component {
       <React.Fragment>
         {this.props.report.pending && (
           <PendingTable
-            data={this.props.report.pending}
+            data={this.props.report.pending.data}
             showPending={this.showPending}
           />
         )}

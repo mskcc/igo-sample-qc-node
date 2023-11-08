@@ -1,5 +1,6 @@
 const mysql = require('mysql');
-const { logger } = require('../util/winston');
+const { loggers } = require('winston');
+const logger = loggers.get('logger');
 
 const mysqlConfig = {
     host: 'localhost',

@@ -79,9 +79,7 @@ body {
 }
 
 .content {
-    display: grid;
-    grid-template-areas: "sidebar comments" "sidebar comments" "sidebar table ";
-    grid-template-columns: 15% 85%;
+    width: 100%;
 }
 
 code {
@@ -91,6 +89,7 @@ code {
 
 ._loading_overlay_overlay {
     background: rgba(0, 48, 77, 0.5) !important;
+    height: 100vh !important;
 }
 
 .passed {

@@ -1,11 +1,6 @@
-const winston = require('winston');
-const myWinstonOptions = {
-    transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: 'RunQc_combined.log' })
-    ]
-};
-const logger = new winston.createLogger(myWinstonOptions);
+const { loggers } = require('winston');
+const logger = loggers.get('logger');
+
 
 exports.successResponse = function (res, msg) {
     var data = {
@@ -26,6 +21,10 @@ exports.successResponseWithData = function (res, msg, data) {
             user: user,
         },
     };
+    logger.log({
+        level: 'info',
+        message: msg
+    });
     res.status(200).json(resData);
 };
 

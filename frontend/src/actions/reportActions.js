@@ -49,20 +49,20 @@ export function getRequest(requestId) {
       loading: true,
       loadingMessage: 'Searching for Request ' + requestId,
     });
-    let username = getState().user.username;
-    let userRole = getState().user.role;
+    // let username = getState().user.username;
+    // let userRole = getState().user.role;
     return axios
-      .get(Config.API_ROOT + '/getRequestSamples', {
-        params: {
-          request_id: requestId,
-          username: username,
-          role: userRole,
-        },
+      .get(Config.API_ROOT + `/qcReport/getRequestSamples?request_id=${requestId}`, {
+        // params: {
+        //   request_id: requestId,
+        //   // username: username,
+        //   // role: userRole,
+        // },
       })
       .then((response) => {
         return dispatch({
           type: GET_REQUEST_SUCCESS,
-          payload: response.data,
+          payload: response.data.data,
         });
       })
       .catch((error) => {
@@ -74,7 +74,6 @@ export function getRequest(requestId) {
         } else {
           return dispatch({
             type: GET_REQUEST_FAIL,
-
             message: 'reset',
           });
         }
@@ -112,7 +111,7 @@ export function getQcReports(requestId, otherSampleIds) {
       loadingMessage: 'Request found. Checking QC Tables...',
     });
     return axios
-      .post(Config.API_ROOT + '/getQcReportSamples', {
+      .post(Config.API_ROOT + '/qcReport/getQcReportSamples', {
         data: {
           request: requestId,
           samples: getState().report.request.samples,
@@ -142,7 +141,6 @@ export function getQcReports(requestId, otherSampleIds) {
         return dispatch({
           type: GET_REPORT_FAIL,
           error: error,
-
           loading: false,
         });
       });

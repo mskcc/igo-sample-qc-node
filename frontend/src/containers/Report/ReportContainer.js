@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 
 import { withLocalize } from 'react-localize-redux';
+import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { reportActions } from '../../actions';
 
 import CommentContainer from './CommentContainer';
 import TableContainer from './TableContainer';
+import image from '../../igo.png';
 
 export class ReportContainer extends Component {
   componentDidMount() {
     const { requestId } = this.props.match.params;
-    // let requestIdParam = requestId
     if (requestId) {
       this.props.getRequest(requestId.toUpperCase());
     } else {
@@ -23,9 +24,14 @@ export class ReportContainer extends Component {
         <div className="content">
           {this.props.report.loaded && (
             <React.Fragment>
-              <CommentContainer />
-              <TableContainer />
+              {/* <CommentContainer /> */}
+              {/* <TableContainer /> */}
             </React.Fragment>
+          )}
+          {!this.props.report.loaded && (
+            <div className='flex-container'>
+              <img src={image} alt='IGO' className='background-image-homepage'/>
+            </div>
           )}
         </div>
       </React.Fragment>
@@ -41,8 +47,8 @@ const mapStateToProps = (state) => ({
   report: state.report,
 });
 
-export default withLocalize(
+export default withRouter(withLocalize(
   connect(mapStateToProps, {
     ...reportActions,
   })(ReportContainer)
-);
+));

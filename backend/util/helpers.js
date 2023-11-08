@@ -1,5 +1,7 @@
 const services = require('../services/services');
 const constants = require('../constants');
+const db = require('../models');
+const Decisions = db.decisions;
 
 //TODO set up user authorization logic
 
@@ -186,20 +188,23 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
 
 exports.buildPendingList = (pendings, isUser) => {
     const responsePendings = [];
-
-    for (let pending in pendings) {
+    for (let pending of pendings) {
+        // console.log(pending.dataValues.request_id);
         const responsePending = {};
         responsePending['request_id'] = pending.request_id;
-        responsePending['date'] = pending.date_created.toLocaleString();
+        responsePending['date'] = pending.createdAt.toLocaleString();
 
-        if (pending.children && pending.children.length > 0) {
-            responsePending['most_recent_date'] = pending.children[-1].date_created.toLocaleString();
-        } else {
-            responsePending['most_recent_date'] = pending.date_created.toLocaleString();
-        }
+        responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
+
+        // TODO FIX LAST CHILD DATE BEFORE DEPLOY
+        // if (pending.children() && pending.children().length > 0) {
+        //     responsePending['most_recent_date'] = pending.children[-1].createdAt.toLocaleString();
+        // } else {
+        //     responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
+        // }
 
         responsePending['report'] = pending.report;
-        responsePending['show'] = `<span pending-id='${pending.request_id}' class ='show-icon'><i class='material-icons'>'forward'</i></span>`;
+        responsePending['show'] = `<span pending-id='${pending.request_id}' class ='show-icon'><i class='material-icons'>forward</i></span>`;
 
         // show additional fields for lab_member and project_manager roles
         if (!isUser) {
@@ -209,45 +214,73 @@ exports.buildPendingList = (pendings, isUser) => {
             responsePending['pm_notifications'] = 0;
             responsePending['user_replies'] = 0;
     
-            const comments = pending.children;
-            for (let comment in comments) {
-                if (comment.author.role === 'lab_member') {
-                    responsePending['lab_notifications'] += 1;
-                }
-                if (comment.author.role === 'project_manager') {
-                    responsePending['pm_notifications'] += 1;
-                }
-                if (comment.author.role === 'user') {
-                    responsePending['user_replies'] += 1;
-                }
-            }
+            // TODO - PROPERLY QUERY FOR COMMENT COUNT BEFORE DEPLOYMENT
+            // const comments = pending.children();
+            // for (let comment in comments) {
+            //     if (comment.author.role === 'lab_member') {
+            //         responsePending['lab_notifications'] += 1;
+            //     }
+            //     if (comment.author.role === 'project_manager') {
+            //         responsePending['pm_notifications'] += 1;
+            //     }
+            //     if (comment.author.role === 'user') {
+            //         responsePending['user_replies'] += 1;
+            //     }
+            // }
         }
 
         responsePendings.push(responsePending);
-
-        const columnFeatures = isUser ? [
-            {data: 'request_id', readOnly: true},
-            {data: 'date', readOnly: true},
-            {data: 'most_recent_date', readOnly: true},
-            {data: 'report', readOnly: true},
-            {data: 'show', readOnly: true, renderer: 'html'},
-        ] : [
-            {data: 'request_id', readOnly: true},
-            {data: 'date', readOnly: true},
-            {data: 'most_recent_date', readOnly: true},
-            {data: 'report', readOnly: true},
-            {data: 'author', readOnly: true},
-            {data: 'lab_notifications', readOnly: true},
-            {data: 'pm_notifications', readOnly: true},
-            {data: 'user_replies', readOnly: true},
-            {data: 'recipients', readOnly: true, renderer: 'html'},
-            {data: 'show', readOnly: true, renderer: 'html'},
-        ];
-
-        return {
-            data: responsePendings,
-            columnFeatures: columnFeatures,
-            columnHeaders: isUser ? constants.user_pending_order : constants.pending_order
-        };
     }
+
+    const columnFeatures = isUser ? [
+        {data: 'request_id', readOnly: true},
+        {data: 'date', readOnly: true},
+        {data: 'most_recent_date', readOnly: true},
+        {data: 'report', readOnly: true},
+        {data: 'show', readOnly: true, renderer: 'html'},
+    ] : [
+        {data: 'request_id', readOnly: true},
+        {data: 'date', readOnly: true},
+        {data: 'most_recent_date', readOnly: true},
+        {data: 'report', readOnly: true},
+        {data: 'author', readOnly: true},
+        {data: 'lab_notifications', readOnly: true},
+        {data: 'pm_notifications', readOnly: true},
+        {data: 'user_replies', readOnly: true},
+        {data: 'recipients', readOnly: true, renderer: 'html'},
+        {data: 'show', readOnly: true, renderer: 'html'},
+    ];
+
+    return {
+        data: responsePendings,
+        columnFeatures: columnFeatures,
+        columnHeaders: isUser ? constants.user_pending_order : constants.pending_order
+    };
+};
+
+// exports.isUserAuthorizedForRequest = (requestId, user) => {
+
+// };
+
+exports.getDecisionsForRequest = (requestId) => {
+    return Decisions.findAll({
+        where: {
+            request_id: requestId,
+            is_submitted: false
+        }
+    });
+};
+
+exports.isDecisionMade = (reportData) => {
+    for (let field of reportData) {
+        if (!field.investigatorDecision && field.hideFromSampleQC !== true) {
+            return false;
+        }
+        return true;
+    }
+};
+
+exports.mergeColumns = (columnObject1, columnObject2) => {
+    var res = Object.assign({}, columnObject1, columnObject2);
+    return res;
 };
