@@ -15,7 +15,7 @@ const agent = new https.Agent({
     rejectUnauthorized: false,
 });
 const axiosConfig = {
-    httpsAgent: agent,
+    httpsAgent: agent
 };
 
 const formatData = function (resp) {
@@ -48,6 +48,10 @@ exports.getRequestSamples = (requestId) => {
 };
 
 exports.getQcReportSamples = (requestData) => {
+    const headers = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+    };
     const url = `${LIMS_URL}/getQcReportSamples`;
     logger.info(`Sending request to ${url}`);
     return axios
@@ -58,6 +62,7 @@ exports.getQcReportSamples = (requestData) => {
                 auth: { ...LIMS_AUTH },
                 params: { requestData },
                 ...axiosConfig,
+                ...headers
             }
         )
         .then((resp) => {
