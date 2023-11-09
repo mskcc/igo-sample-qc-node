@@ -242,7 +242,7 @@ exports.getQcReportSamples = [
             });
         }).catch(error => {
             console.log(error);
-            return apiResponse.errorResponse(res, `ERROR retrieving QC reports: ${error}`);
+            return apiResponse.errorResponse(res, 'ERROR retrieving QC reports: ', error);
         });
     }
 ];

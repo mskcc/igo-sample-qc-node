@@ -50,23 +50,22 @@ exports.getRequestSamples = (requestId) => {
 exports.getQcReportSamples = (requestData) => {
     const url = `${LIMS_URL}/getQcReportSamples`;
     logger.info(`Sending request to ${url}`);
-    return axios({
-        url: url,
-        method: 'post',
-        data: requestData,
-        httpsAgent: agent,
-        auth: { ...LIMS_AUTH },
-    })
-        // .post(
-        //     url,
-        //     {},
-        //     {
-        //         auth: { ...LIMS_AUTH },
-        //         params: { requestData },
-        //         ...axiosConfig,
-        //         ...headers
-        //     }
-        // )
+    return axios
+    //     url: url,
+    //     method: 'post',
+    //     data: requestData,
+    //     httpsAgent: agent,
+    //     auth: { ...LIMS_AUTH },
+    // })
+        .get(
+            url,
+            {},
+            {
+                auth: { ...LIMS_AUTH },
+                params: { requestData },
+                ...axiosConfig,
+            }
+        )
         .then((resp) => {
             info(url);
             return resp;
