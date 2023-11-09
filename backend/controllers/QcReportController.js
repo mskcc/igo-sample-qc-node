@@ -17,7 +17,14 @@ const {
     pathologyOrder,
     attachmentOrder
 } = require('../constants');
-const { getDecisionsForRequest, isDecisionMade, mergeColumns, buildTableHTML, isUserAuthorizedForRequest } = require('../util/helpers');
+const {
+    getDecisionsForRequest,
+    getCommentRelationsForRequest,
+    isDecisionMade,
+    mergeColumns,
+    buildTableHTML,
+    isUserAuthorizedForRequest
+} = require('../util/helpers');
 const CommentRelation = db.commentRelations;
 
 
@@ -96,16 +103,16 @@ exports.getQcReportSamples = [
             samples: samples
         });
         const decisions = getDecisionsForRequest(requestId);
-        const isAuthorizedForRequest = isUserAuthorizedForRequest(requestId, user);
+        const commentRelations = getCommentRelationsForRequest(requestId);
 
-        Promise.all([qcReportPromise, decisions, isAuthorizedForRequest]).then(results => {
+        Promise.all([qcReportPromise, decisions, commentRelations]).then(results => {
             if(!results) {
                 return apiResponse.errorResponse(res, 'Cannot find report data');
             }
-            let [qcReportResults, decisionsResults, isAuthorizedResults] = results;
+            let [qcReportResults, decisionsResults, commentRelationsResults] = results;
 
-            console.log(`ISAUTH? ${isAuthorizedResults}`);
-            const isAuthed = isLabMember || isAuthorizedForRequest;
+            console.log(`commentRelations? ${commentRelationsResults}`);
+            const isAuthed = isLabMember || isUserAuthorizedForRequest(commentRelationsResults, user);
             if (!isAuthed) {
                 return apiResponse.notFoundResponse(res, 'Request not found or associated with your username.');
             }
