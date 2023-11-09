@@ -59,10 +59,11 @@ exports.getQcReportSamples = (requestData) => {
     // })
         .get(
             url,
-            {},
             {
                 auth: { ...LIMS_AUTH },
                 params: { requestData },
+            },
+            {
                 ...axiosConfig,
             }
         )
