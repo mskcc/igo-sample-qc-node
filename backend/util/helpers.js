@@ -308,15 +308,21 @@ exports.isUserAuthorizedForRequest = (requestId, user) => {
             }
             return isAuthorized;
         }
+    }).catch(error => {
+        console.log(`Could not authorize user ${error}`);
     });
 };
 
 exports.getDecisionsForRequest = (requestId) => {
-    return Decisions.findAll({
+    Decisions.findAll({
         where: {
             request_id: requestId,
             is_submitted: false
         }
+    }).then(responseData => {
+        return responseData;
+    }).catch(error => {
+        console.log(`error getting decisions ${error}`);
     });
 };
 
