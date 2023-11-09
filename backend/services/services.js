@@ -54,7 +54,8 @@ exports.getQcReportSamples = (requestData) => {
         url: url,
         method: 'post',
         data: requestData,
-        httpsAgent: agent
+        httpsAgent: agent,
+        auth: { ...LIMS_AUTH },
     })
         // .post(
         //     url,
