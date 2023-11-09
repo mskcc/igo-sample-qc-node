@@ -14,6 +14,12 @@ var publicDir = path.join(__dirname, 'public');
 
 const app = express();
 
+// For parsing application/json
+app.use(express.json());
+ 
+// For parsing application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
 app.use(cookieParser());
 const jwtInCookie = require('jwt-in-cookie');
 jwtInCookie.configure({ secret: process.env.JWT_SECRET_KEY });

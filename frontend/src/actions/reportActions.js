@@ -115,7 +115,7 @@ export function getQcReports(requestId, otherSampleIds) {
         data: {
           request: requestId,
           samples: getState().report.request.samples,
-          username: getState().user.username,
+          user: getState().user,
         },
       })
       .then((response) => {

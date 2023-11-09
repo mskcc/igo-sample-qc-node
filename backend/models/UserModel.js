@@ -7,15 +7,9 @@ var UserSchema = new mongoose.Schema(
         username: { type: String, required: true, index: true, unique: true },
         role: { type: String, required: true },
         title: { type: String, required: true },
+        groups: { type: Array, required: true },
     },
     { timestamps: true }
 );
-
-// // Virtual for user's full name
-// UserSchema
-//     .virtual("fullName")
-//     .get(function () {
-//         return this.firstName + " " + this.lastName;
-//     });
 
 module.exports = mongoose.model('User', UserSchema);

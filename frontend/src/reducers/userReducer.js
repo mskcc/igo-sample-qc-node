@@ -1,4 +1,11 @@
 import { reportActions as ReportActionTypes } from '../actions';
+const mockUser = {
+  loggedIn: true,
+  username: 'lawala',
+  fullName: 'Fname Lname',
+  role: 'lab_member'
+};
+
 const initialState = {
   loggedIn: false,
 };
@@ -11,7 +18,10 @@ function userReducer(state = initialState, action) {
       };
 
     default:
-      return state;
+      // return state;
+      return {
+        ...mockUser
+      }
   }
 }
 export default userReducer;

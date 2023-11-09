@@ -17,7 +17,7 @@ const {
     pathologyOrder,
     attachmentOrder
 } = require('../constants');
-const { getDecisionsForRequest, isDecisionMade, mergeColumns, buildTableHTML } = require('../util/helpers');
+const { getDecisionsForRequest, isDecisionMade, mergeColumns, buildTableHTML, isUserAuthorizedForRequest } = require('../util/helpers');
 const CommentRelation = db.commentRelations;
 
 
@@ -76,25 +76,42 @@ exports.getRequestSamples = [
 
 exports.getQcReportSamples = [
     function(req, res) {
-        const requestId = req.body.request;
-        const samples = req.body.samples;
+        const reqData = req.body.data;
+        const requestId = reqData.request;
+        const samples = reqData.samples;
+        const user = reqData.user;
 
-        // TODO set up user authorization/permission to access request
+        const isLabMember = user.role === 'lab_member';
+        const isCmoPm = user.role === 'cmo_pm';
+
+        // let isAuthorizedForRequest = false;
+        // isUserAuthorizedForRequest(requestId, user).then(isAuth => isAuthorizedForRequest = isLabMember || isAuth)
+        //     .catch(e => {
+        //         console.log(`error authorizing: ${e}`);
+        //     });
+
         const reports = [];
         const qcReportPromise = services.getQcReportSamples({
             request: requestId,
             samples: samples
         });
         const decisions = getDecisionsForRequest(requestId);
+        const isAuthorizedForRequest = isUserAuthorizedForRequest(requestId, user);
 
-        Promise.all([qcReportPromise, decisions]).then(results => {
+        Promise.all([qcReportPromise, decisions, isAuthorizedForRequest]).then(results => {
             if(!results) {
                 return apiResponse.errorResponse(res, 'Cannot find report data');
             }
-            let [qcReportResults, decisionsResults] = results;
+            let [qcReportResults, decisionsResults, isAuthorizedResults] = results;
+
+            console.log(`ISAUTH? ${isAuthorizedResults}`);
+            const isAuthed = isLabMember || isAuthorizedForRequest;
+            if (!isAuthed) {
+                return apiResponse.notFoundResponse(res, 'Request not found or associated with your username.');
+            }
 
             let isCmoPmOnly = false;
-            // let isCmoPmOnlyAndNotPmUser = false;
+            let isCmoPmOnlyAndNotPmUser = false;
 
             CommentRelation.findAll({
                 where: {
@@ -104,8 +121,9 @@ exports.getQcReportSamples = [
                 console.log(commentRelationsResponse);
                 for (let commentRelation of commentRelationsResponse) {
                     reports.push(commentRelation.report);
+                    isCmoPmOnly = commentRelation.is_cmo_pm_project;
                 }
-                // TODO isCmoPmOnly = commentRelation.is_cmo_pm_project;
+                isCmoPmOnlyAndNotPmUser = isCmoPmOnly && !isCmoPm;
 
                 let constantColumnFeatures = {};
                 const tables = {};
@@ -113,9 +131,8 @@ exports.getQcReportSamples = [
 
                 for (let field of qcReportResults) {
                     if (field === 'dnaReportSamples') {
-                        // TODO add if isLabMember or isUserAuthorizedForRequest :
                         if (reports.includes('DNA Report')) {
-                            readOnly = isDecisionMade(qcReportResults[field]); // OR isCmoPmOnlyAndNotPmUser
+                            readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                             constantColumnFeatures = mergeColumns(sharedColumns, dnaColumns);
                             constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
 
@@ -131,9 +148,8 @@ exports.getQcReportSamples = [
                         }
                     }
                     if (field === 'rnaReportSamples') {
-                        // TODO add if isLabMember or isUserAuthorizedForRequest :
                         if (reports.includes('RNA Report')) {
-                            readOnly = isDecisionMade(qcReportResults[field]); // OR isCmoPmOnlyAndNotPmUser
+                            readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                             constantColumnFeatures = mergeColumns(sharedColumns, rnaColumns);
                             constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
 
@@ -149,9 +165,8 @@ exports.getQcReportSamples = [
                         }
                     }
                     if (field === 'libraryReportSamples') {
-                        // TODO add if isLabMember or isUserAuthorizedForRequest :
                         if (reports.includes('Library Report')) {
-                            readOnly = isDecisionMade(qcReportResults[field]); // OR isCmoPmOnlyAndNotPmUser
+                            readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                             constantColumnFeatures = mergeColumns(sharedColumns, libraryColumns);
                             constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
 
@@ -167,9 +182,8 @@ exports.getQcReportSamples = [
                         }
                     }
                     if (field === 'poolReportSamples') {
-                        // TODO add if isLabMember or isUserAuthorizedForRequest :
                         if (reports.includes('Pool Report')) {
-                            readOnly = isDecisionMade(qcReportResults[field]); // OR isCmoPmOnlyAndNotPmUser
+                            readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                             constantColumnFeatures = mergeColumns(sharedColumns, poolColumns);
                             constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
 
@@ -185,7 +199,6 @@ exports.getQcReportSamples = [
                         }
                     }
                     if (field === 'pathologyReportSamples') {
-                        // TODO add if isLabMember or isUserAuthorizedForRequest :
                         if (reports.includes('Pathology Report')) {
 
                             tables[field] = buildTableHTML(

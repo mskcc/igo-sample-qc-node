@@ -443,3 +443,5 @@ exports.stop_processing_notification_email_template_html = {
 };
 
 exports.user_training_string = 'Unfamiliar with this new process for sharing QC results? Watch our 5 minute <a href="https://igo.mskcc.org/sample-qc/instructions">how-to video</a>.';
+
+exports.PM_EMAIL_LIST = 'skicmopm';
