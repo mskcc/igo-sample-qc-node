@@ -98,9 +98,10 @@ exports.getQcReportSamples = [
         //     });
 
         const reports = [];
+        const samplesAsString = samples.toString();
         const qcReportPromise = services.getQcReportSamples({
             request: requestId,
-            samples: samples
+            samples: samplesAsString
         });
         const decisions = getDecisionsForRequest(requestId);
         const commentRelations = getCommentRelationsForRequest(requestId);
