@@ -240,6 +240,9 @@ exports.getQcReportSamples = [
                 console.log(e);
                 return apiResponse.errorResponse(res, `ERROR querying MySQL database: ${e}`);
             });
+        }).catch(error => {
+            console.log(error);
+            return apiResponse.errorResponse(res, `ERROR retrieving QC reports: ${error}`);
         });
     }
 ];
