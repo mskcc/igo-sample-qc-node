@@ -5,6 +5,8 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+
 const apiRouter = require('./routes/api');
 
 const port = process.env.PORT || 3001;

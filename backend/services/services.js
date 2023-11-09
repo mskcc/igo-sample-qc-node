@@ -53,7 +53,8 @@ exports.getQcReportSamples = (requestData) => {
     return axios({
         url: url,
         method: 'post',
-        data: requestData
+        data: requestData,
+        httpsAgent: agent
     })
         // .post(
         //     url,
