@@ -47,15 +47,14 @@ exports.getRequestSamples = (requestId) => {
         });
 };
 
-exports.getQcReportSamples = (requestData) => {
-    const url = `${LIMS_URL}/getQcReportSamples`;
+exports.getQcReportSamples = (requestId, samples) => {
+    const url = `${LIMS_URL}/getQcReportSamples?request=${requestId}&samples=${samples}`;
     logger.info(`Sending request to ${url}`);
     return axios
         .get(
             url,
             {
                 auth: { ...LIMS_AUTH },
-                params: { requestData },
                 ...axiosConfig,
             }
         )
