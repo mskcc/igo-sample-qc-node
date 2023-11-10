@@ -112,7 +112,7 @@ exports.getQcReportSamples = [
             }
             let [qcReportResults, decisionsResults, commentRelationsResults] = results;
 
-            console.log(`commentRelations? ${commentRelationsResults}`);
+            console.log(qcReportResults);
             const isAuthed = isLabMember || isUserAuthorizedForRequest(commentRelationsResults, user);
             if (!isAuthed) {
                 return apiResponse.notFoundResponse(res, 'Request not found or associated with your username.');
