@@ -60,6 +60,7 @@ export function getRequest(requestId) {
         // },
       })
       .then((response) => {
+        console.log(response);
         return dispatch({
           type: GET_REQUEST_SUCCESS,
           payload: response.data.data,

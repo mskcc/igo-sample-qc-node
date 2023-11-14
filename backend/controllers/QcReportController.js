@@ -90,12 +90,6 @@ exports.getQcReportSamples = [
         const isLabMember = user.role === 'lab_member';
         const isCmoPm = user.role === 'cmo_pm';
 
-        // let isAuthorizedForRequest = false;
-        // isUserAuthorizedForRequest(requestId, user).then(isAuth => isAuthorizedForRequest = isLabMember || isAuth)
-        //     .catch(e => {
-        //         console.log(`error authorizing: ${e}`);
-        //     });
-
         const reports = [];
         const samplesAsString = samples.toString();
 
@@ -115,8 +109,6 @@ exports.getQcReportSamples = [
                     request_id: requestId
                 }
             }).then((commentRelationsResponse) => {
-                console.log(commentRelationsResponse);
-                 
                 const isAuthed = isLabMember || isUserAuthorizedForRequest(commentRelationsResponse, user);
                 if (!isAuthed) {
                     return apiResponse.notFoundResponse(res, 'Request not found or associated with your username.');
