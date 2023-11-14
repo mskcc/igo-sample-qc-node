@@ -66,7 +66,6 @@ export function getRequest(requestId) {
         });
       })
       .catch((error) => {
-        console.log(error);
         if (error.response && error.response.status === 401) {
           return dispatch({
             type: EXPIRED,
@@ -120,6 +119,7 @@ export function getQcReports(requestId, otherSampleIds) {
         },
       })
       .then((response) => {
+        console.log(response);
         let tables = fillReportTables(response.data.tables);
         if (isEmpty(tables)) {
           return dispatch({

@@ -1,6 +1,7 @@
 // import { Config } from "../secret_config.js";
 
 export const fillReportTables = (reportList) => {
+  console.log('filling report tables');
   let tables = {};
   let dnaReport = reportList.dnaReportSamples;
   let rnaReport = reportList.rnaReportSamples;
@@ -263,8 +264,5 @@ const sortBySampleId = (data) => {
 };
 
 export const isEmpty = (obj) => {
-  for (var key in obj) {
-    if (obj.hasOwnProperty(key)) return false;
-  }
-  return true;
+  return Object.keys(obj).length === 0;
 };
