@@ -1,7 +1,6 @@
 // import { Config } from "../secret_config.js";
 
 export const fillReportTables = (reportList) => {
-  console.log('filling report tables');
   let tables = {};
   let dnaReport = reportList.dnaReportSamples;
   let rnaReport = reportList.rnaReportSamples;
