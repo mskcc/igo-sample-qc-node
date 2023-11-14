@@ -268,22 +268,24 @@ exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
     if (commentRelationsForRequest.length > 0) {
         const username = user.username.toLowerCase();
         for (let relation of commentRelationsForRequest) {
+            const relationData = relation.dataValues;
+            console.log(relationData);
             //username listed specifically
-            if (relation.recipients.toLowerCase().includes(username) ||
-                    relation.author.toLowerCase() === username) {
+            if (relationData.recipients.toLowerCase().includes(username) ||
+                relationData.author.toLowerCase() === username) {
 
                 isAuthorized = true;
                 break;
             }
 
             // user is PM and skicmopm recipient (PMs do not use zzPDLs for this to be able to communicate with outside investigators)
-            if (relation.recipients.toLowerCase().includes(constants.PM_EMAIL_LIST) && user.role === 'cmo_pm') {
+            if (relationData.recipients.toLowerCase().includes(constants.PM_EMAIL_LIST) && user.role === 'cmo_pm') {
                 isAuthorized = true;
                 break;
             }
 
             // one of user's groups listed
-            const recipientArray = relation.recipients.split(',');
+            const recipientArray = relationData.recipients.split(',');
             for (let recip of recipientArray) {
                 const recipName = recip.replace('@mskcc.org', '').toLowerCase();
                 if (user.groups.toLowerCase().includes(recipName)) {
@@ -293,10 +295,10 @@ exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
             }
 
             // SKI email and username - do we need this anymore?
-            if (relation.recipients.includes('ski.mskcc.org')) {
+            if (relationData.recipients.includes('ski.mskcc.org')) {
                 const skiName = username.charAt(-1) + '-' + username.substring(0, username.length - 1);
-                if (relation.recipients.toLowerCase().includes(skiName) ||
-                        relation.author.toLowerCase().includes(skiName)) {
+                if (relationData.recipients.toLowerCase().includes(skiName) ||
+                    relationData.author.toLowerCase().includes(skiName)) {
 
                     isAuthorized = true;
                     break;

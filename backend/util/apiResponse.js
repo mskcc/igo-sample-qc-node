@@ -1,6 +1,4 @@
-const { loggers } = require('winston');
-const logger = loggers.get('logger');
-
+const { logger } = require('../util/winston');
 
 exports.successResponse = function (res, msg) {
     var data = {

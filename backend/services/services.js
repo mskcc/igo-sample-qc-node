@@ -1,7 +1,5 @@
 const https = require('https');
 const axios = require('axios');
-// const { loggers } = require('winston');
-// const logger = loggers.get('logger');
 const { logger } = require('../util/winston');
 
 const LIMS_AUTH = {
