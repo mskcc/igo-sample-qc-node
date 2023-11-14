@@ -119,7 +119,6 @@ export function getQcReports(requestId, otherSampleIds) {
         },
       })
       .then((response) => {
-        console.log(response);
         let tables = fillReportTables(response.data.data.tables);
         if (isEmpty(tables)) {
           return dispatch({

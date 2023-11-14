@@ -3,7 +3,7 @@ const mockUser = {
   loggedIn: true,
   username: 'lawala',
   fullName: 'Fname Lname',
-  role: 'lab_member'
+  role: 'user'
 };
 
 const initialState = {
