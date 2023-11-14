@@ -19,7 +19,6 @@ const {
 } = require('../constants');
 const {
     getDecisionsForRequest,
-    getCommentRelationsForRequest,
     isDecisionMade,
     mergeColumns,
     buildTableHTML,
@@ -102,137 +101,144 @@ exports.getQcReportSamples = [
 
         const qcReportPromise = services.getQcReportSamples(requestId, samplesAsString);
         const decisions = getDecisionsForRequest(requestId);
-        const commentRelations = getCommentRelationsForRequest(requestId);
 
-        Promise.all([qcReportPromise, decisions, commentRelations]).then(results => {
+        Promise.all([qcReportPromise, decisions]).then(results => {
             if(!results) {
                 return apiResponse.errorResponse(res, 'Cannot find report data');
             }
-            let [qcReportResults, decisionsResults, commentRelationsResults] = results;
-
-            console.log(commentRelationsResults);
-            // isLabMember || 
-            const isAuthed = isUserAuthorizedForRequest(commentRelationsResults, user);
-            if (!isAuthed) {
-                return apiResponse.notFoundResponse(res, 'NOT AUTHED Request not found or associated with your username.');
-            }
-
+            let [qcReportResults, decisionsResults] = results;
             let isCmoPmOnly = false;
             let isCmoPmOnlyAndNotPmUser = false;
-                
-            for (let commentRelation of commentRelationsResults) {
-                reports.push(commentRelation.report);
-                isCmoPmOnly = commentRelation.is_cmo_pm_project;
-            }
-            isCmoPmOnlyAndNotPmUser = isCmoPmOnly && !isCmoPm;
 
-            let constantColumnFeatures = {};
-            const tables = {};
-            let readOnly = true;
+            CommentRelation.findAll({
+                where: {
+                    request_id: requestId
+                }
+            }).then((commentRelationsResponse) => {
+                console.log(commentRelationsResponse);
+                // isLabMember || 
+                const isAuthed = isUserAuthorizedForRequest(commentRelationsResponse, user);
+                if (!isAuthed) {
+                    return apiResponse.notFoundResponse(res, 'Request not found or associated with your username.');
+                }
 
-            for (let field of Object.keys(qcReportResults)) {
-                if (field === 'dnaReportSamples') {
-                    if (reports.includes('DNA Report')) {
-                        readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
-                        constantColumnFeatures = mergeColumns(sharedColumns, dnaColumns);
-                        constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+                for (let commentRelation of commentRelationsResponse) {
+                    reports.push(commentRelation.report);
+                    isCmoPmOnly = commentRelation.is_cmo_pm_project;
+                }
+                isCmoPmOnlyAndNotPmUser = isCmoPmOnly && !isCmoPm;
 
+                let constantColumnFeatures = {};
+                const tables = {};
+                let readOnly = true;
+
+                for (let field of Object.keys(qcReportResults)) {
+                    if (field === 'dnaReportSamples') {
+                        if (reports.includes('DNA Report')) {
+                            readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
+                            constantColumnFeatures = mergeColumns(sharedColumns, dnaColumns);
+                            constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+
+                            tables[field] = buildTableHTML(
+                                field,
+                                qcReportResults[field],
+                                constantColumnFeatures,
+                                dnaOrder,
+                                decisionsResults
+                            );
+                            tables[field]['readOnly'] = readOnly;
+                            tables[field]['isCmoPmProject'] = isCmoPmOnly;
+                        }
+                    }
+                    if (field === 'rnaReportSamples') {
+                        if (reports.includes('RNA Report')) {
+                            readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
+                            constantColumnFeatures = mergeColumns(sharedColumns, rnaColumns);
+                            constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+
+                            tables[field] = buildTableHTML(
+                                field,
+                                qcReportResults[field],
+                                constantColumnFeatures,
+                                rnaOrder,
+                                decisionsResults
+                            );
+                            tables[field]['readOnly'] = readOnly;
+                            tables[field]['isCmoPmProject'] = isCmoPmOnly;
+                        }
+                    }
+                    if (field === 'libraryReportSamples') {
+                        if (reports.includes('Library Report')) {
+                            readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
+                            constantColumnFeatures = mergeColumns(sharedColumns, libraryColumns);
+                            constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+
+                            tables[field] = buildTableHTML(
+                                field,
+                                qcReportResults[field],
+                                constantColumnFeatures,
+                                libraryOrder,
+                                decisionsResults
+                            );
+                            tables[field]['readOnly'] = readOnly;
+                            tables[field]['isCmoPmProject'] = isCmoPmOnly;
+                        }
+                    }
+                    if (field === 'poolReportSamples') {
+                        if (reports.includes('Pool Report')) {
+                            readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
+                            constantColumnFeatures = mergeColumns(sharedColumns, poolColumns);
+                            constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+
+                            tables[field] = buildTableHTML(
+                                field,
+                                qcReportResults[field],
+                                constantColumnFeatures,
+                                poolOrder,
+                                decisionsResults
+                            );
+                            tables[field]['readOnly'] = readOnly;
+                            tables[field]['isCmoPmProject'] = isCmoPmOnly;
+                        }
+                    }
+                    if (field === 'pathologyReportSamples') {
+                        if (reports.includes('Pathology Report')) {
+
+                            tables[field] = buildTableHTML(
+                                field,
+                                qcReportResults[field],
+                                pathologyColumns,
+                                pathologyOrder
+                            );
+                            tables[field]['readOnly'] = true;
+                            readOnly = true;
+                        }
+                    }
+                    if (field === 'attachments') {
                         tables[field] = buildTableHTML(
                             field,
                             qcReportResults[field],
-                            constantColumnFeatures,
-                            dnaOrder,
-                            decisionsResults
+                            attachmentColumns,
+                            attachmentOrder
                         );
-                        tables[field]['readOnly'] = readOnly;
-                        tables[field]['isCmoPmProject'] = isCmoPmOnly;
                     }
-                }
-                if (field === 'rnaReportSamples') {
-                    if (reports.includes('RNA Report')) {
-                        readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
-                        constantColumnFeatures = mergeColumns(sharedColumns, rnaColumns);
-                        constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
-
-                        tables[field] = buildTableHTML(
-                            field,
-                            qcReportResults[field],
-                            constantColumnFeatures,
-                            rnaOrder,
-                            decisionsResults
-                        );
-                        tables[field]['readOnly'] = readOnly;
-                        tables[field]['isCmoPmProject'] = isCmoPmOnly;
-                    }
-                }
-                if (field === 'libraryReportSamples') {
-                    if (reports.includes('Library Report')) {
-                        readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
-                        constantColumnFeatures = mergeColumns(sharedColumns, libraryColumns);
-                        constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
-
-                        tables[field] = buildTableHTML(
-                            field,
-                            qcReportResults[field],
-                            constantColumnFeatures,
-                            libraryOrder,
-                            decisionsResults
-                        );
-                        tables[field]['readOnly'] = readOnly;
-                        tables[field]['isCmoPmProject'] = isCmoPmOnly;
-                    }
-                }
-                if (field === 'poolReportSamples') {
-                    if (reports.includes('Pool Report')) {
-                        readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
-                        constantColumnFeatures = mergeColumns(sharedColumns, poolColumns);
-                        constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
-
-                        tables[field] = buildTableHTML(
-                            field,
-                            qcReportResults[field],
-                            constantColumnFeatures,
-                            poolOrder,
-                            decisionsResults
-                        );
-                        tables[field]['readOnly'] = readOnly;
-                        tables[field]['isCmoPmProject'] = isCmoPmOnly;
-                    }
-                }
-                if (field === 'pathologyReportSamples') {
-                    if (reports.includes('Pathology Report')) {
-
-                        tables[field] = buildTableHTML(
-                            field,
-                            qcReportResults[field],
-                            pathologyColumns,
-                            pathologyOrder
-                        );
-                        tables[field]['readOnly'] = true;
-                        readOnly = true;
-                    }
-                }
-                if (field === 'attachments') {
-                    tables[field] = buildTableHTML(
-                        field,
-                        qcReportResults[field],
-                        attachmentColumns,
-                        attachmentOrder
-                    );
-                }
                     
-            }
+                }
 
-            const responseObject = {
-                tables,
-                read_only: readOnly
-            };
+                const responseObject = {
+                    tables,
+                    read_only: readOnly
+                };
 
-            return apiResponse.successResponseWithData(res, 'successfully retrieved table data', responseObject);
+                return apiResponse.successResponseWithData(res, 'successfully retrieved table data', responseObject);
 
+            }).catch(e => {
+                console.log(e);
+                return apiResponse.errorResponse(res, `ERROR querying MySQL database: ${e}`);
+            });
         }).catch(error => {
             console.log(error);
-            return apiResponse.errorResponse(res, 'ERROR retrieving QC reports: ', error);
+            return apiResponse.errorResponse(res, `ERROR retrieving QC reports: ${error}`, error);
         });
     }
 ];
