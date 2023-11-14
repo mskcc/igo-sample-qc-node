@@ -286,12 +286,17 @@ exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
 
             // one of user's groups listed
             const recipientArray = relationData.recipients.split(',');
-            for (let recip of recipientArray) {
-                const recipName = recip.replace('@mskcc.org', '').toLowerCase();
+            let isInUserGroup = false;
+            for (let j = 0; j < recipientArray.length; j++) {
+                const recipName = recipientArray[i].replace('@mskcc.org', '').toLowerCase();
                 if (user.groups.toLowerCase().includes(recipName)) {
-                    isAuthorized = true;
+                    isInUserGroup = true;
                     break;
                 }
+            }
+            if (isInUserGroup) {
+                isAuthorized = true;
+                break;
             }
 
             // SKI email and username - do we need this anymore?
@@ -337,12 +342,14 @@ exports.getDecisionsForRequest = (requestId) => {
 };
 
 exports.isDecisionMade = (reportData) => {
-    for (let field of reportData) {
-        if (!field.investigatorDecision && field.hideFromSampleQC !== true) {
+    for (let i = 0; i < reportData.length; i++) {
+        const reportObj = reportData[i];
+        const hasDecision = reportObj.investigatorDecision && reportObj.investigatorDecision !== '';
+        if (!hasDecision && reportObj.hideFromSampleQC !== true) {
             return false;
         }
-        return true;
     }
+    return true;
 };
 
 exports.mergeColumns = (columnObject1, columnObject2) => {

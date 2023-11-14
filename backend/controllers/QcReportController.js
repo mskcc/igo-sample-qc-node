@@ -116,16 +116,16 @@ exports.getQcReportSamples = [
                 }
             }).then((commentRelationsResponse) => {
                 console.log(commentRelationsResponse);
-                // isLabMember || 
-                const isAuthed = isUserAuthorizedForRequest(commentRelationsResponse, user);
+                 
+                const isAuthed = isLabMember || isUserAuthorizedForRequest(commentRelationsResponse, user);
                 if (!isAuthed) {
                     return apiResponse.notFoundResponse(res, 'Request not found or associated with your username.');
                 }
 
-                for (let commentRelation of commentRelationsResponse) {
-                    reports.push(commentRelation.report);
-                    isCmoPmOnly = commentRelation.is_cmo_pm_project;
-                }
+                commentRelationsResponse.forEach(commentRelation => {
+                    reports.push(commentRelation.dataValues.report);
+                    isCmoPmOnly = commentRelation.dataValues.is_cmo_pm_project;
+                });
                 isCmoPmOnlyAndNotPmUser = isCmoPmOnly && !isCmoPm;
 
                 let constantColumnFeatures = {};
@@ -135,7 +135,7 @@ exports.getQcReportSamples = [
                 for (let field of Object.keys(qcReportResults)) {
                     if (field === 'dnaReportSamples') {
                         if (reports.includes('DNA Report')) {
-                            readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
+                            readOnly = isCmoPmOnlyAndNotPmUser || isDecisionMade(qcReportResults[field]);
                             constantColumnFeatures = mergeColumns(sharedColumns, dnaColumns);
                             constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
 
