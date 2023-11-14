@@ -99,11 +99,8 @@ exports.getQcReportSamples = [
 
         const reports = [];
         const samplesAsString = samples.toString();
+
         const qcReportPromise = services.getQcReportSamples(requestId, samplesAsString);
-        //     {
-        //     request: requestId,
-        //     samples: samplesAsString
-        // });
         const decisions = getDecisionsForRequest(requestId);
         const commentRelations = getCommentRelationsForRequest(requestId);
 
@@ -138,7 +135,7 @@ exports.getQcReportSamples = [
                 const tables = {};
                 let readOnly = true;
 
-                for (let field of qcReportResults) {
+                for (let field of Object.keys(qcReportResults)) {
                     if (field === 'dnaReportSamples') {
                         if (reports.includes('DNA Report')) {
                             readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
