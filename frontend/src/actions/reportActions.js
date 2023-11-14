@@ -60,13 +60,13 @@ export function getRequest(requestId) {
         // },
       })
       .then((response) => {
-        console.log(response);
         return dispatch({
           type: GET_REQUEST_SUCCESS,
           payload: response.data.data,
         });
       })
       .catch((error) => {
+        console.log(error);
         if (error.response && error.response.status === 401) {
           return dispatch({
             type: EXPIRED,
