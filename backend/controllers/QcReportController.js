@@ -259,6 +259,8 @@ exports.savePartialSubmission = [
         const decisions = reqData.decisions;
         const requestId = reqData.request_id;
         const report = reqData.report;
+        const username = reqData.username;
+
         if(!decisions || decisions.length === 0) {
             return apiResponse.errorResponse(res, 'No decisions to save.');
         }
@@ -276,6 +278,7 @@ exports.savePartialSubmission = [
                     report: report,
                     request_id: requestId,
                     is_submitted: false,
+                    decision_maker: username,
                 });
             }
         }).catch(error => {
