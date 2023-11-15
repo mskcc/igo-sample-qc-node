@@ -129,8 +129,7 @@ exports.getQcReportSamples = [
                     where: {
                         request_id: requestId,
                         is_submitted: false
-                    },
-                    raw: true
+                    }
                 }).then((decisionsResults) => {
                     let decisionsSamplesByReport = {
                         'DNA Report': [],
@@ -141,10 +140,14 @@ exports.getQcReportSamples = [
                     if (decisionsResults && decisionsResults.length > 0) {
                         decisionsResults.forEach(result => {
                             const resultReport = result.report;
-                            const decisionSamples = result.decisions[0].samples;
+                            const decisionsArr = eval(result.decisions);
+                            const decisionSamples = decisionsArr[0].samples;
+                            console.log(decisionSamples);
                             decisionsSamplesByReport[resultReport] = decisionSamples;
                         });
+                        
                     }
+                    console.log(decisionsSamplesByReport);
                     for (let field of Object.keys(qcReportResults)) {
                         if (field === 'dnaReportSamples') {
                             if (reports.includes('DNA Report')) {
