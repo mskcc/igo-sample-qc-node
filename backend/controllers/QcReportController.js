@@ -131,7 +131,6 @@ exports.getQcReportSamples = [
                         is_submitted: false
                     }
                 }).then((decisionsResults) => {
-                    console.log(decisionsResults);
                     if (decisionsResults === undefined) {
                         decisionsResults = [];
                     }
@@ -231,18 +230,21 @@ exports.getQcReportSamples = [
                         }
                     
                     }
+
+                    const responseObject = {
+                        tables,
+                        read_only: readOnly
+                    };
+    
+                    return apiResponse.successResponseWithData(res, 'successfully retrieved table data', responseObject);
+                }).catch(e => {
+                    console.log(e);
+                    return apiResponse.errorResponse(res, `ERROR querying MySQL database for decisions: ${e}`);
                 });
-
-                const responseObject = {
-                    tables,
-                    read_only: readOnly
-                };
-
-                return apiResponse.successResponseWithData(res, 'successfully retrieved table data', responseObject);
 
             }).catch(e => {
                 console.log(e);
-                return apiResponse.errorResponse(res, `ERROR querying MySQL database: ${e}`);
+                return apiResponse.errorResponse(res, `ERROR querying MySQL database for comment relations: ${e}`);
             });
         }).catch(error => {
             console.log(error);
