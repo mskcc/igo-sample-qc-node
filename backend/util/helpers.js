@@ -129,14 +129,13 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
                             responseSample[dataField] = sampleFieldValue;
                         } else {
                             if (decisions && decisions.length > 0) {
-                                for (let decisionRecord in decisions) {
+                                for (let i = 0; i < decisions.length; i++) {
+                                    const decisionRecord = decisions[i];
                                     console.log(`decisionRecord: ${decisionRecord}`);
                                     for (let decision in decisionRecord.decisions) {
                                         for (let decidedSample in decision['samples']) {
                                             if ((sample['recordId'] === decidedSample['recordId']) && 'investigatorDecision' in decidedSample) {
                                                 decidedSample['investigatorDecision'] = sampleFieldValue;
-
-                                                //db.session.commit()
 
                                                 responseSample[dataField] = decidedSample['investigatorDecision'];
                                             }
