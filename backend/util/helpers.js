@@ -129,14 +129,10 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
                             responseSample[dataField] = sampleFieldValue;
                         } else {
                             if (decisionSamples && decisionSamples.length > 0) {
-                                console.log(decisionSamples);
                                 for (let i = 0; i < decisionSamples.length; i++) {
                                     const decidedSample = decisionSamples[i];
-                                    console.log(`decidedSample: ${JSON.stringify(decidedSample)}`);
                                     if ((sample['recordId'] === decidedSample['recordId']) && 'investigatorDecision' in decidedSample) {
-                                        console.log(sampleFieldValue);
-                                        decidedSample['investigatorDecision'] = sampleFieldValue;
-
+                                        // decidedSample['investigatorDecision'] = sampleFieldValue;
                                         responseSample[dataField] = decidedSample['investigatorDecision'];
                                     }
                                 }
