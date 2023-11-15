@@ -3,7 +3,7 @@ const mockUser = {
   loggedIn: true,
   username: 'lawala',
   fullName: 'Fname Lname',
-  role: 'user',
+  role: 'lab_member',
   groups: 'zzPDL_IGO_Staff'
 };
 
