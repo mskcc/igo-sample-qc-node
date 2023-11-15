@@ -259,7 +259,9 @@ exports.savePartialSubmission = [
         const decisions = reqData.decisions;
         const requestId = reqData.request_id;
         const report = reqData.report;
-        console.log(reqData);
+        if(!decisions || decisions.length === 0) {
+            return apiResponse.errorResponse(res, 'No decisions to save.');
+        }
         Decisions.findAll({
             where: {
                 request_id: requestId,
@@ -270,7 +272,7 @@ exports.savePartialSubmission = [
                 return apiResponse.errorResponse(res, 'This decision was already submitted to IGO and cannot be saved. Contact IGO if you need to make changes.');
             } else {
                 Decisions.create({
-                    decisions: decisions,
+                    decisions: JSON.stringify(decisions),
                     report: report,
                     request_id: requestId,
                     is_submitted: false,
