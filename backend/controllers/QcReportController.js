@@ -279,7 +279,7 @@ exports.savePartialSubmission = [
             }).then(decision => {
                 if (decision && decision.is_submitted) {
                     return apiResponse.errorResponse(res, 'This decision was already submitted to IGO and cannot be saved. Contact IGO if you need to make changes.');
-                } else if (decision) {
+                } else if (decision && decision.length > 0) {
                     Decisions.update({
                         decisions: JSON.stringify(decisions),
                         is_submitted: false,
