@@ -131,6 +131,7 @@ exports.getQcReportSamples = [
                         is_submitted: false
                     }
                 }).then((decisionsResults) => {
+                    console.log(decisionsResults);
                     if (decisionsResults === undefined) {
                         decisionsResults = [];
                     }
