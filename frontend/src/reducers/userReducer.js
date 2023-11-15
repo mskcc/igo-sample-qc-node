@@ -3,7 +3,8 @@ const mockUser = {
   loggedIn: true,
   username: 'lawala',
   fullName: 'Fname Lname',
-  role: 'user'
+  role: 'user',
+  groups: 'zzPDL_IGO_Staff'
 };
 
 const initialState = {

@@ -25,7 +25,7 @@ exports.getPendingRequests = [
             if (userType === 'lab_member' || userType === 'project_manager') {
                 pendingTable = buildPendingList(responseData, false);
             } else {
-                // TODO UPDATE TO 'true' BEFORE DEPLOYMENT!!!!! userType === 'user'
+                // userType === 'user'
                 pendingTable = buildPendingList(responseData, true);
             }
 
