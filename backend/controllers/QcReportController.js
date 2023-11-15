@@ -129,9 +129,10 @@ exports.getQcReportSamples = [
                     where: {
                         request_id: requestId,
                         is_submitted: false
-                    }
+                    },
+                    raw: true
                 }).then((decisionsResults) => {
-                    if (decisionsResults === undefined) {
+                    if (!decisionsResults || decisionsResults === '' || decisionsResults === undefined) {
                         decisionsResults = [];
                     }
                     for (let field of Object.keys(qcReportResults)) {
