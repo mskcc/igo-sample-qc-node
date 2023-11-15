@@ -131,7 +131,7 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
                             if (decisions && decisions.length > 0) {
                                 for (let i = 0; i < decisions.length; i++) {
                                     const decisionRecord = decisions[i];
-                                    console.log(`decisionRecord: ${decisionRecord}`);
+                                    console.log(`decisionRecord: ${JSON.stringify(decisionRecord)}`);
                                     for (let decision in decisionRecord.decisions) {
                                         for (let decidedSample in decision['samples']) {
                                             if ((sample['recordId'] === decidedSample['recordId']) && 'investigatorDecision' in decidedSample) {
