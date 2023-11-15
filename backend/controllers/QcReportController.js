@@ -132,8 +132,18 @@ exports.getQcReportSamples = [
                     },
                     raw: true
                 }).then((decisionsResults) => {
-                    if (!decisionsResults || decisionsResults === '' || decisionsResults === undefined) {
-                        decisionsResults = [];
+                    let decisionsSamplesByReport = {
+                        'DNA Report': [],
+                        'RNA Report': [],
+                        'Library Report': [],
+                        'Pool Report': []
+                    };
+                    if (decisionsResults && decisionsResults.length > 0) {
+                        decisionsResults.forEach(result => {
+                            const resultReport = result.report;
+                            const decisionSamples = result.decisions[0].samples;
+                            decisionsSamplesByReport[resultReport] = decisionSamples;
+                        });
                     }
                     for (let field of Object.keys(qcReportResults)) {
                         if (field === 'dnaReportSamples') {
@@ -148,7 +158,7 @@ exports.getQcReportSamples = [
                                     qcReportResults[field],
                                     constantColumnFeatures,
                                     dnaOrder,
-                                    decisionsResults
+                                    decisionsSamplesByReport['DNA Report']
                                 );
                                 tables[field]['readOnly'] = readOnly;
                                 tables[field]['isCmoPmProject'] = isCmoPmOnly;
@@ -166,7 +176,7 @@ exports.getQcReportSamples = [
                                     qcReportResults[field],
                                     constantColumnFeatures,
                                     rnaOrder,
-                                    decisionsResults
+                                    decisionsSamplesByReport['RNA Report']
                                 );
                                 tables[field]['readOnly'] = readOnly;
                                 tables[field]['isCmoPmProject'] = isCmoPmOnly;
@@ -184,7 +194,7 @@ exports.getQcReportSamples = [
                                     qcReportResults[field],
                                     constantColumnFeatures,
                                     libraryOrder,
-                                    decisionsResults
+                                    decisionsSamplesByReport['Library Report']
                                 );
                                 tables[field]['readOnly'] = readOnly;
                                 tables[field]['isCmoPmProject'] = isCmoPmOnly;
@@ -202,7 +212,7 @@ exports.getQcReportSamples = [
                                     qcReportResults[field],
                                     constantColumnFeatures,
                                     poolOrder,
-                                    decisionsResults
+                                    decisionsSamplesByReport['Pool Report']
                                 );
                                 tables[field]['readOnly'] = readOnly;
                                 tables[field]['isCmoPmProject'] = isCmoPmOnly;

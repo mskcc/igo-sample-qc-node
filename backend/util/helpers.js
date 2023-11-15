@@ -11,7 +11,7 @@ const CommentRelations = db.commentRelations;
 //     } else if ()
 // };
 
-exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, decisions) => {
+exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, decisionSamples) => {
     const responseColumnFeatures = [];
     const responseHeaders = [];
     const responseSamples = [];
@@ -128,18 +128,15 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
                         if (dataField in sample && sampleFieldValue) {
                             responseSample[dataField] = sampleFieldValue;
                         } else {
-                            if (decisions && decisions.length > 0) {
-                                for (let i = 0; i < decisions.length; i++) {
-                                    const decisionRecord = decisions[i];
-                                    console.log(`decisionRecord: ${JSON.stringify(decisionRecord)}`);
-                                    for (let decision in decisionRecord.decisions) {
-                                        for (let decidedSample in decision['samples']) {
-                                            if ((sample['recordId'] === decidedSample['recordId']) && 'investigatorDecision' in decidedSample) {
-                                                decidedSample['investigatorDecision'] = sampleFieldValue;
+                            if (decisionSamples && decisionSamples.length > 0) {
+                                for (let i = 0; i < decisionSamples.length; i++) {
+                                    const decidedSample = decisionSamples[i];
+                                    console.log(`decidedSample: ${decidedSample}`);
+                                    if ((sample['recordId'] === decidedSample['recordId']) && 'investigatorDecision' in decidedSample) {
+                                        console.log(sampleFieldValue);
+                                        decidedSample['investigatorDecision'] = sampleFieldValue;
 
-                                                responseSample[dataField] = decidedSample['investigatorDecision'];
-                                            }
-                                        }
+                                        responseSample[dataField] = decidedSample['investigatorDecision'];
                                     }
                                 }
                             } else {
