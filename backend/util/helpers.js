@@ -1,4 +1,3 @@
-const services = require('../services/services');
 const constants = require('../constants');
 const db = require('../models');
 const Decisions = db.decisions;
@@ -27,15 +26,7 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
     order.forEach(constantOrderedColumn => {
         if (constantOrderedColumn in constantColumnFeatures) {
 
-            // account for special columns like dropdowns or unitless measurments
-            // if ('picklistName' in constantColumnFeatures[constantOrderedColumn]) {
-            //     // old code -> todo do this async!!
-            //     constantColumnFeatures[constantOrderedColumn]['source'] = services.getPicklist(
-            //         constantColumnFeatures[constantOrderedColumn]['picklistName']
-            //     );
-            //     responseColumnFeatures.push(constantColumnFeatures[constantOrderedColumn]);
-
-            // } else 
+            // account for special columns like unitless measurments
             if (constantOrderedColumn === 'Concentration') {
                 const concentrationColumn = constantColumnFeatures[constantOrderedColumn];
                 concentrationColumn['columnHeader'] = (
@@ -260,7 +251,7 @@ exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
         const username = user.username.toLowerCase();
         for (let i = 0; i < commentRelationsForRequest.length; i++) {
             const relationData = commentRelationsForRequest[i].dataValues;
-            console.log(relationData);
+
             //username listed specifically
             if (relationData.recipients.toLowerCase().includes(username) ||
                 relationData.author.toLowerCase() === username) {

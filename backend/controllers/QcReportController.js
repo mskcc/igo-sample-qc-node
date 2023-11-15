@@ -18,12 +18,12 @@ const {
     attachmentOrder
 } = require('../constants');
 const {
-    getDecisionsForRequest,
     isDecisionMade,
     mergeColumns,
     buildTableHTML,
     isUserAuthorizedForRequest
 } = require('../util/helpers');
+const Decisions = db.decisions;
 const CommentRelation = db.commentRelations;
 
 
@@ -95,15 +95,13 @@ exports.getQcReportSamples = [
 
         const qcReportPromise = services.getQcReportSamples(requestId, samplesAsString);
         const picklistPromise = services.getPicklist();
-        const decisions = getDecisionsForRequest(requestId);
 
-        Promise.all([qcReportPromise, picklistPromise, decisions]).then(results => {
+        Promise.all([qcReportPromise, picklistPromise]).then(results => {
             if(!results) {
                 return apiResponse.errorResponse(res, 'Cannot find report data');
             }
-            let [qcReportResults, picklistResults, decisionsResults] = results;
-            console.log(picklistResults);
-            console.log(decisionsResults);
+            let [qcReportResults, picklistResults] = results;
+
             let isCmoPmOnly = false;
             let isCmoPmOnlyAndNotPmUser = false;
 
@@ -127,6 +125,15 @@ exports.getQcReportSamples = [
                 const tables = {};
                 let readOnly = true;
 
+                Decisions.findAll({
+                    where: {
+                        request_id: requestId,
+                        is_submitted: false
+                    }
+                }).then((decisionsResponse) => {
+                    console.log(decisionsResponse);
+                });
+
                 for (let field of Object.keys(qcReportResults)) {
                     if (field === 'dnaReportSamples') {
                         if (reports.includes('DNA Report')) {
@@ -140,7 +147,7 @@ exports.getQcReportSamples = [
                                 qcReportResults[field],
                                 constantColumnFeatures,
                                 dnaOrder,
-                                decisionsResults
+                                // decisionsResults
                             );
                             tables[field]['readOnly'] = readOnly;
                             tables[field]['isCmoPmProject'] = isCmoPmOnly;
@@ -158,7 +165,7 @@ exports.getQcReportSamples = [
                                 qcReportResults[field],
                                 constantColumnFeatures,
                                 rnaOrder,
-                                decisionsResults
+                                // decisionsResults
                             );
                             tables[field]['readOnly'] = readOnly;
                             tables[field]['isCmoPmProject'] = isCmoPmOnly;
@@ -176,7 +183,7 @@ exports.getQcReportSamples = [
                                 qcReportResults[field],
                                 constantColumnFeatures,
                                 libraryOrder,
-                                decisionsResults
+                                // decisionsResults
                             );
                             tables[field]['readOnly'] = readOnly;
                             tables[field]['isCmoPmProject'] = isCmoPmOnly;
@@ -194,7 +201,7 @@ exports.getQcReportSamples = [
                                 qcReportResults[field],
                                 constantColumnFeatures,
                                 poolOrder,
-                                decisionsResults
+                                // decisionsResults
                             );
                             tables[field]['readOnly'] = readOnly;
                             tables[field]['isCmoPmProject'] = isCmoPmOnly;
@@ -242,20 +249,3 @@ exports.getQcReportSamples = [
     }
 ];
 
-// exports.getPicklist = [
-//     query('picklistName').exists().withMessage('picklistName must be specified.'),
-//     function(req, res) {
-//         const picklistName = req.query.picklistName;
-//         const picklistPromise = services.getPicklist(picklistName);
-
-//         Promise.all([picklistPromise]).then(results => {
-//             if (!results || results.length === 0) {
-//                 return apiResponse.errorResponse(res, 'Could not find picklist data.');
-//             }
-
-//             let [picklistSource] = results;
-
-//             return apiResponse.successResponseWithData(res, 'successfully retrieved picklist data', picklistSource);
-//         });
-//     }
-// ];
