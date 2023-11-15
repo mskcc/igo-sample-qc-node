@@ -94,13 +94,16 @@ exports.getQcReportSamples = [
         const samplesAsString = samples.toString();
 
         const qcReportPromise = services.getQcReportSamples(requestId, samplesAsString);
+        const picklistPromise = services.getPicklist();
         const decisions = getDecisionsForRequest(requestId);
 
-        Promise.all([qcReportPromise, decisions]).then(results => {
+        Promise.all([qcReportPromise, picklistPromise, decisions]).then(results => {
             if(!results) {
                 return apiResponse.errorResponse(res, 'Cannot find report data');
             }
-            let [qcReportResults, decisionsResults] = results;
+            let [qcReportResults, picklistResults, decisionsResults] = results;
+            console.log(picklistResults);
+            console.log(decisionsResults);
             let isCmoPmOnly = false;
             let isCmoPmOnlyAndNotPmUser = false;
 
@@ -130,6 +133,7 @@ exports.getQcReportSamples = [
                             readOnly = isCmoPmOnlyAndNotPmUser || isDecisionMade(qcReportResults[field]);
                             constantColumnFeatures = mergeColumns(sharedColumns, dnaColumns);
                             constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+                            constantColumnFeatures.InvestigatorDecision.source = picklistResults;
 
                             tables[field] = buildTableHTML(
                                 field,
@@ -147,6 +151,7 @@ exports.getQcReportSamples = [
                             readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                             constantColumnFeatures = mergeColumns(sharedColumns, rnaColumns);
                             constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+                            constantColumnFeatures.InvestigatorDecision.source = picklistResults;
 
                             tables[field] = buildTableHTML(
                                 field,
@@ -164,6 +169,7 @@ exports.getQcReportSamples = [
                             readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                             constantColumnFeatures = mergeColumns(sharedColumns, libraryColumns);
                             constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+                            constantColumnFeatures.InvestigatorDecision.source = picklistResults;
 
                             tables[field] = buildTableHTML(
                                 field,
@@ -181,6 +187,7 @@ exports.getQcReportSamples = [
                             readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                             constantColumnFeatures = mergeColumns(sharedColumns, poolColumns);
                             constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+                            constantColumnFeatures.InvestigatorDecision.source = picklistResults;
 
                             tables[field] = buildTableHTML(
                                 field,
@@ -234,3 +241,21 @@ exports.getQcReportSamples = [
         });
     }
 ];
+
+// exports.getPicklist = [
+//     query('picklistName').exists().withMessage('picklistName must be specified.'),
+//     function(req, res) {
+//         const picklistName = req.query.picklistName;
+//         const picklistPromise = services.getPicklist(picklistName);
+
+//         Promise.all([picklistPromise]).then(results => {
+//             if (!results || results.length === 0) {
+//                 return apiResponse.errorResponse(res, 'Could not find picklist data.');
+//             }
+
+//             let [picklistSource] = results;
+
+//             return apiResponse.successResponseWithData(res, 'successfully retrieved picklist data', picklistSource);
+//         });
+//     }
+// ];

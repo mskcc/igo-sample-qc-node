@@ -23,29 +23,20 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
     }
 
     let exampleSample = samples[0];
-    
-    // code from old code base - I don't think this is needed bc what?
-    // for (let sample in samples) {
-    //     if ('hideFromSampleQC' in sample && sample['hideFromSampleQC'] === false) {
-    //         exampleSample = sample;
-    //         break;
-    //     } else {
-    //         exampleSample = samples[0];
-    //     }
-    // }
 
     order.forEach(constantOrderedColumn => {
         if (constantOrderedColumn in constantColumnFeatures) {
 
             // account for special columns like dropdowns or unitless measurments
-            if ('picklistName' in constantColumnFeatures[constantOrderedColumn]) {
-                // old code -> todo do this async!!
-                constantColumnFeatures[constantOrderedColumn]['source'] = services.getPicklist(
-                    constantColumnFeatures[constantOrderedColumn]['picklistName']
-                );
-                responseColumnFeatures.push(constantColumnFeatures[constantOrderedColumn]);
+            // if ('picklistName' in constantColumnFeatures[constantOrderedColumn]) {
+            //     // old code -> todo do this async!!
+            //     constantColumnFeatures[constantOrderedColumn]['source'] = services.getPicklist(
+            //         constantColumnFeatures[constantOrderedColumn]['picklistName']
+            //     );
+            //     responseColumnFeatures.push(constantColumnFeatures[constantOrderedColumn]);
 
-            } else if (constantOrderedColumn === 'Concentration') {
+            // } else 
+            if (constantOrderedColumn === 'Concentration') {
                 const concentrationColumn = constantColumnFeatures[constantOrderedColumn];
                 concentrationColumn['columnHeader'] = (
                     `${constantColumnFeatures[constantOrderedColumn]['columnHeader']} (${exampleSample['concentrationUnits']})`

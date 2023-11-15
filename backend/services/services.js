@@ -73,8 +73,8 @@ exports.getQcReportSamples = (requestId, samples) => {
         });
 };
 
-exports.getPicklist = (listName) => {
-    const url = `${LIMS_URL}/getPickListValues?list=${listName}`;
+exports.getPicklist = () => {
+    const url = `${LIMS_URL}/getPickListValues?list=InvestigatorDecisionCustomers`;
     logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {
