@@ -264,26 +264,51 @@ exports.savePartialSubmission = [
         if(!decisions || decisions.length === 0) {
             return apiResponse.errorResponse(res, 'No decisions to save.');
         }
-        Decisions.findAll({
+        CommentRelation.findOne({
             where: {
                 request_id: requestId,
                 report: report
             }
-        }).then(decision => {
-            if (decision && decision.is_submitted) {
-                return apiResponse.errorResponse(res, 'This decision was already submitted to IGO and cannot be saved. Contact IGO if you need to make changes.');
-            } else {
-                Decisions.create({
-                    decisions: JSON.stringify(decisions),
-                    report: report,
+        }).then(commentRelation => {
+            const commentRelationId = commentRelation.id;
+            Decisions.findAll({
+                where: {
                     request_id: requestId,
-                    is_submitted: false,
-                    decision_maker: username,
-                });
-            }
+                    report: report
+                }
+            }).then(decision => {
+                if (decision && decision.is_submitted) {
+                    return apiResponse.errorResponse(res, 'This decision was already submitted to IGO and cannot be saved. Contact IGO if you need to make changes.');
+                } else if (decision) {
+                    Decisions.update({
+                        decisions: JSON.stringify(decisions),
+                        is_submitted: false,
+                        decision_maker: username,
+                    }, {
+                        where: {
+                            request_id: requestId,
+                            report: report
+                        }
+                    });
+                    return apiResponse.successResponse(res, 'Decisions updated, not yet submitted to IGO.');
+                } else {
+                    Decisions.create({
+                        decisions: JSON.stringify(decisions),
+                        report: report,
+                        request_id: requestId,
+                        is_submitted: false,
+                        decision_maker: username,
+                        comment_relation_id: commentRelationId
+                    });
+                    return apiResponse.successResponse(res, 'Decisions saved, not yet submitted to IGO.');
+                }
+            }).catch(error => {
+                return apiResponse.errorResponse(res, `Failed to save. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+            });
         }).catch(error => {
             return apiResponse.errorResponse(res, `Failed to save. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
         });
+        
     }
 ];
 
