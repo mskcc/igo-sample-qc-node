@@ -142,12 +142,9 @@ exports.getQcReportSamples = [
                             const resultReport = result.report;
                             const decisionsArr = eval(result.decisions);
                             const decisionSamples = decisionsArr[0].samples;
-                            console.log(decisionSamples);
                             decisionsSamplesByReport[resultReport] = decisionSamples;
                         });
-                        
                     }
-                    console.log(decisionsSamplesByReport);
                     for (let field of Object.keys(qcReportResults)) {
                         if (field === 'dnaReportSamples') {
                             if (reports.includes('DNA Report')) {
