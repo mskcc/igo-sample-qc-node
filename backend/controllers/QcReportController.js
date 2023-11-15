@@ -248,35 +248,39 @@ exports.getQcReportSamples = [
             });
         }).catch(error => {
             console.log(error);
-            return apiResponse.errorResponse(res, `ERROR retrieving QC reports: ${error}`, error);
+            return apiResponse.errorResponse(res, `ERROR retrieving QC reports: ${error}`);
         });
     }
 ];
 
-// exports.savePartialSubmission = [
-//     function(req, res) {
-//         const reqData = req.body.data;
-//         const decisions = reqData.decisions;
-//         const username = reqData.username;
-//         const requestId = reqData.request_id;
-//         const report = reqData.report;
-
-//         Decisions.findAll({
-//             where: {
-//                 request_id: requestId,
-//                 report: report
-//             }
-//         }).then(decision => {
-//             if (decision && decision.is_submitted) {
-//                 return apiResponse.errorResponse(res, 'This decision was already submitted to IGO and cannot be saved. Contact IGO if you need to make changes.');
-//             } else {
-//                 Decisions.create({
-
-//                 })
-//             }
-//         })
-//     }
-// ]
+exports.savePartialSubmission = [
+    function(req, res) {
+        const reqData = req.body.data;
+        const decisions = reqData.decisions;
+        const requestId = reqData.request_id;
+        const report = reqData.report;
+        console.log(reqData);
+        Decisions.findAll({
+            where: {
+                request_id: requestId,
+                report: report
+            }
+        }).then(decision => {
+            if (decision && decision.is_submitted) {
+                return apiResponse.errorResponse(res, 'This decision was already submitted to IGO and cannot be saved. Contact IGO if you need to make changes.');
+            } else {
+                Decisions.create({
+                    decisions: decisions,
+                    report: report,
+                    request_id: requestId,
+                    is_submitted: false,
+                });
+            }
+        }).catch(error => {
+            return apiResponse.errorResponse(res, `Failed to save. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+        });
+    }
+];
 
 // exports.getComments = [
 //     param('request_id').exists().withMessage('request ID must be specified.'),

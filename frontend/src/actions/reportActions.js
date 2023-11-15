@@ -253,7 +253,6 @@ export function savePartialDecision() {
     });
     let decisions = generateDecisionSubmitData(
       getState().report.tables,
-
       getState().report.reportShown
     );
     let request_id = getState().report.request.requestId;
@@ -261,22 +260,19 @@ export function savePartialDecision() {
     let report = getState().report.reportShown;
 
     return axios
-      .post(Config.API_ROOT + '/savePartialSubmission', {
+      .post(Config.API_ROOT + '/qcReport/savePartialSubmission', {
         data: {
           decisions,
           username,
           request_id,
           report,
         },
-      })
-      .then((response) => {
+      }).then((response) => {
         dispatch({
           type: POST_PARTIAL_DECISION_SUCCESS,
-
           message: 'Saved!',
         });
-      })
-      .catch((error) => {
+      }).catch((error) => {
         return dispatch({
           type: POST_PARTIAL_DECISION_FAIL,
           message:
