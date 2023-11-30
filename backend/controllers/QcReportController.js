@@ -323,6 +323,69 @@ exports.savePartialSubmission = [
     }
 ];
 
+exports.setQCInvestigatorDecision = [
+    function(req, res) {
+        const reqData = req.body.data;
+        const decisions = reqData.decisions;
+        const username = reqData.username;
+        const requestId = reqData.request_id;
+        const report = reqData.report;
+
+        CommentRelation.findOne({
+            where: {
+                request_id: requestId,
+                report: report
+            }
+        }).then(commentRelationRecord => {
+            if (!commentRelationRecord || !commentRelationRecord.length) {
+                return apiResponse.errorResponse(res, 'Can only decide on reports with initial comment.');
+            }
+            Decisions.findOne({
+                where: {
+                    comment_relation_id: commentRelationRecord.id
+                }
+            }).then(decision => {
+                console.log(decision);
+                if (!decision || !decision.length) {
+                    Decisions.create({
+                        decisions: JSON.stringify(decisions),
+                        report: report,
+                        request_id: requestId,
+                        is_submitted: true,
+                        decision_maker: username,
+                        comment_relation_id: commentRelationRecord.id
+                    });
+                } else {
+                    Decisions.update({
+                        decisions: JSON.stringify(decisions),
+                        is_submitted: true,
+                        decision_maker: username,
+                    }, {
+                        where: {
+                            comment_relation_id: commentRelationRecord.id
+                        }
+                    });
+                }
+
+                // save to LIMS
+                const saveQcDecisionPromise = services.setQCInvestigatorDecision(decisions);
+                Promise.all([saveQcDecisionPromise]).then(results => {
+                    //figure out what we get back from POST??
+                    console.log(results);
+                    return apiResponse.successResponse(res, 'Decisions submitted to IGO.');
+                }).catch(error => {
+                    return apiResponse.errorResponse(res, `Failed to save decisions to LIMS. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+                });
+
+            }).catch(error => {
+                return apiResponse.errorResponse(res, `Failed to save submit. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+            });
+        }).catch(error => {
+            return apiResponse.errorResponse(res, `Failed to save submit. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+        });
+    }
+];
+
 // exports.getComments = [
 //     param('request_id').exists().withMessage('request ID must be specified.'),
 //     function(req, res) {

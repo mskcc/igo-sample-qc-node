@@ -119,7 +119,6 @@ export function getQcReports(requestId, otherSampleIds) {
         },
       })
       .then((response) => {
-        console.log(response);
         let tables = fillReportTables(response.data.data.tables);
         if (isEmpty(tables)) {
           return dispatch({
@@ -270,7 +269,7 @@ export function savePartialDecision() {
       }).then((response) => {
         dispatch({
           type: POST_PARTIAL_DECISION_SUCCESS,
-          message: 'Saved!',
+          message: 'Saved! To submit saved decisions, please click "Submit to IGO" button.',
         });
       }).catch((error) => {
         return dispatch({

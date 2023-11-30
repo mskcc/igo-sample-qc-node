@@ -22,27 +22,37 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
     }
 
     let exampleSample = samples[0];
+    const sampleUnits = exampleSample['concentrationUnits'].toLowerCase();
 
     order.forEach(constantOrderedColumn => {
         if (constantOrderedColumn in constantColumnFeatures) {
 
-            // account for special columns like unitless measurments
+            // account for special columns like unitless measurements
             if (constantOrderedColumn === 'Concentration') {
                 const concentrationColumn = constantColumnFeatures[constantOrderedColumn];
-                concentrationColumn['columnHeader'] = (
-                    `${constantColumnFeatures[constantOrderedColumn]['columnHeader']} (${exampleSample['concentrationUnits']})`
-                );
+                const columnName = constantColumnFeatures[constantOrderedColumn]['columnHeader'];
+
+                // if column name already includes units, don't add again
+                concentrationColumn['columnHeader'] = columnName.toLowerCase().includes(sampleUnits) ?
+                    columnName : (
+                        `${constantColumnFeatures[constantOrderedColumn]['columnHeader']} (${exampleSample['concentrationUnits']})`
+                    );
+
                 responseColumnFeatures.push(concentrationColumn);
 
             } else if (constantOrderedColumn === 'TotalMass') {
                 const massColumn = constantColumnFeatures[constantOrderedColumn];
-                if (exampleSample['concentrationUnits'].toLowerCase() === 'ng/ul') {
-                    massColumn['columnHeader'] = (
+                const columnName = constantColumnFeatures[constantOrderedColumn]['columnHeader'];
+                
+                if (sampleUnits === 'ng/ul') {
+                    // if column name already includes units, don't add again
+                    massColumn['columnHeader'] = columnName.toLowerCase().includes('(ng)') ? columnName : (
                         `${constantColumnFeatures[constantOrderedColumn]['columnHeader']} (ng)`
                     );
                 }
-                if (exampleSample['concentrationUnits'].toLowerCase() === 'nm') {
-                    massColumn['columnHeader'] = (
+                if (sampleUnits === 'nm') {
+                    // if column name already includes units, don't add again
+                    massColumn['columnHeader'] = columnName.toLowerCase().includes('(fmole)') ? columnName : (
                         `${constantColumnFeatures[constantOrderedColumn]['columnHeader']} (fmole)`
                     );
                 }
