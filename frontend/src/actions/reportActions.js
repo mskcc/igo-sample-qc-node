@@ -205,7 +205,7 @@ export function submitInvestigatorDecision() {
     let report = getState().report.reportShown;
 
     return axios
-      .post(Config.API_ROOT + '/setQCInvestigatorDecision', {
+      .post(Config.API_ROOT + '/qcReport/setQCInvestigatorDecision', {
         data: {
           decisions,
           username,
