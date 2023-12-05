@@ -233,7 +233,7 @@ export function submitInvestigatorDecision() {
             false
           ),
           message:
-            `Decisions could not be submitted due to an application error: ${error}.`,
+            'Decisions could not be submitted due to an application error. Please reach out to IGO.',
           error: error,
         });
       });

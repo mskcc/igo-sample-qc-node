@@ -337,17 +337,17 @@ exports.setQCInvestigatorDecision = [
                 report: report
             }
         }).then(commentRelationRecord => {
-            console.log(commentRelationRecord);
             if (!commentRelationRecord || commentRelationRecord.length === 0) {
                 return apiResponse.errorResponse(res, 'Can only decide on reports with initial comment.');
             }
+
+            // save/update Decisions table
             Decisions.findOne({
                 where: {
                     comment_relation_id: commentRelationRecord.id
                 }
             }).then(decision => {
-                console.log(decision);
-                if (!decision || !decision.length) {
+                if (!decision || decision.length === 0) {
                     Decisions.create({
                         decisions: JSON.stringify(decisions),
                         report: report,
@@ -371,7 +371,7 @@ exports.setQCInvestigatorDecision = [
                 // save to LIMS
                 const saveQcDecisionPromise = services.setQCInvestigatorDecision(decisions);
                 Promise.all([saveQcDecisionPromise]).then(results => {
-                    //figure out what we get back from POST??
+                //figure out what we get back from POST??
                     console.log(results);
                     return apiResponse.successResponse(res, 'Decisions submitted to IGO.');
                 }).catch(error => {
