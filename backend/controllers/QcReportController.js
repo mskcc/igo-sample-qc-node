@@ -341,46 +341,48 @@ exports.setQCInvestigatorDecision = [
                 return apiResponse.errorResponse(res, 'Can only decide on reports with initial comment.');
             }
 
-            // save/update Decisions table
-            Decisions.findOne({
-                where: {
-                    comment_relation_id: commentRelationRecord.id
-                }
-            }).then(decision => {
-                if (!decision || decision.length === 0) {
-                    Decisions.create({
-                        decisions: JSON.stringify(decisions),
-                        report: report,
-                        request_id: requestId,
-                        is_submitted: true,
-                        decision_maker: username,
-                        comment_relation_id: commentRelationRecord.id
-                    });
-                } else {
-                    Decisions.update({
-                        decisions: JSON.stringify(decisions),
-                        is_submitted: true,
-                        decision_maker: username,
-                    }, {
-                        where: {
-                            comment_relation_id: commentRelationRecord.id
-                        }
-                    });
-                }
-
-                // save to LIMS
-                const saveQcDecisionPromise = services.setQCInvestigatorDecision(decisions);
-                Promise.all([saveQcDecisionPromise]).then(results => {
+            // save to LIMS
+            const saveQcDecisionPromise = services.setQCInvestigatorDecision(decisions);
+            Promise.all([saveQcDecisionPromise]).then(results => {
                 //figure out what we get back from POST??
-                    console.log(results);
-                    return apiResponse.successResponse(res, 'Decisions submitted to IGO.');
+                console.log(results);
+
+                // save/update Decisions table
+                Decisions.findOne({
+                    where: {
+                        comment_relation_id: commentRelationRecord.id
+                    }
+                }).then(decision => {
+                    if (!decision || decision.length === 0) {
+                        Decisions.create({
+                            decisions: JSON.stringify(decisions),
+                            report: report,
+                            request_id: requestId,
+                            is_submitted: true,
+                            decision_maker: username,
+                            comment_relation_id: commentRelationRecord.id
+                        });
+                    } else {
+                        Decisions.update({
+                            decisions: JSON.stringify(decisions),
+                            is_submitted: true,
+                            decision_maker: username,
+                        }, {
+                            where: {
+                                comment_relation_id: commentRelationRecord.id
+                            }
+                        });
+                    }
                 }).catch(error => {
-                    return apiResponse.errorResponse(res, `Failed to save decisions to LIMS. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+                    return apiResponse.errorResponse(res, `Failed to save decision to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                 });
 
+                return apiResponse.successResponse(res, 'Decisions submitted to IGO.');
+
             }).catch(error => {
-                return apiResponse.errorResponse(res, `Failed to save submit. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+                return apiResponse.errorResponse(res, `Failed to save decisions to LIMS. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
             });
+
         }).catch(error => {
             return apiResponse.errorResponse(res, `Failed to save submit. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
         });
