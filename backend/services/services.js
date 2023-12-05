@@ -107,7 +107,8 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
             {},
             {
                 auth: { ...LIMS_AUTH },
-                params: { decisionsData },
+                httpsAgent: agent,
+                params: { ...decisionsData },
                 ...axiosConfig,
             }
         )

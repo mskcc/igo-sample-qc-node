@@ -52,6 +52,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'));
 });
 
+app.post('/', function (req, res) {
+    res.send(JSON.stringify(req.body));
+});
+
 const db = require('./models');
 // db.sequelize.authenicate().then(() => {
 //     console.log('Connection has been established successfully.');
