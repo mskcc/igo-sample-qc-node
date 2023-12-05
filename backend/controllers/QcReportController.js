@@ -337,7 +337,8 @@ exports.setQCInvestigatorDecision = [
                 report: report
             }
         }).then(commentRelationRecord => {
-            if (!commentRelationRecord || !commentRelationRecord.length) {
+            console.log(commentRelationRecord);
+            if (!commentRelationRecord || commentRelationRecord.length === 0) {
                 return apiResponse.errorResponse(res, 'Can only decide on reports with initial comment.');
             }
             Decisions.findOne({
