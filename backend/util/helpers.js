@@ -22,7 +22,7 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
     }
 
     let exampleSample = samples[0];
-    const sampleUnits = exampleSample['concentrationUnits'].toLowerCase();
+    const sampleUnits = exampleSample['concentrationUnits'] ? exampleSample['concentrationUnits'].toLowerCase() : '';
 
     order.forEach(constantOrderedColumn => {
         if (constantOrderedColumn in constantColumnFeatures) {
