@@ -211,10 +211,10 @@ export function getComments() {
 
     dispatch({ type: GET_COMMENTS });
     return axios
-      .get(Config.API_ROOT + '/qcReport/getComments', {
-        params: {
-          request_id: requestId,
-        },
+      .get(Config.API_ROOT + `/qcReport/getComments?request_id=${requestId}`, {
+        // params: {
+        //   request_id: requestId,
+        // },
       })
       .then((response) => {
         return dispatch({

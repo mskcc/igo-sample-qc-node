@@ -25,6 +25,7 @@ const {
 } = require('../util/helpers');
 const Decisions = db.decisions;
 const CommentRelation = db.commentRelations;
+const Comments = db.comments;
 
 
 exports.getRequestSamples = [
@@ -389,9 +390,60 @@ exports.setQCInvestigatorDecision = [
     }
 ];
 
-// exports.getComments = [
-//     param('request_id').exists().withMessage('request ID must be specified.'),
-//     function(req, res) {
-//         const requestId = req.param.request_id;
-//     }
-// ]
+exports.getComments = [
+    query('request_id').exists().withMessage('request ID must be specified.'),
+    function(req, res) {
+        const requestId = req.query.request_id;
+        const responseObj = {'comments': null};
+
+        CommentRelation.findAll({
+            where: {
+                request_id: requestId
+            }
+        }).then(commentRelationRecords => {
+            if (!commentRelationRecords || commentRelationRecords.length === 0) {
+                return apiResponse.successResponseWithData(res, 'No comments for request', responseObj);
+            }
+            // response should look like: 
+            // {
+            //     'DNA Report': {'comments': [], 'recipients': ''},
+            //     'RNA Report': {'comments': [], 'recipients': ''},
+            //     'Pool Report': {'comments': [], 'recipients': ''},
+            //     'Library Report': {'comments': [], 'recipients': ''},
+            //     'Pathology Report': {'comments': [], 'recipients': ''},
+            // }
+            const commentsResponse = {};
+
+            // TODO query comments table for each commentRelation id
+            commentRelationRecords.forEach(commentRelation => {
+                commentsResponse[commentRelation.report]['recipients'] = commentRelation.recipients;
+                commentsResponse[commentRelation.report]['comments'] = [];
+                Comments.findAll({
+                    where: {
+                        commentrelation_id: commentRelation.id
+                    }
+                }).then(commentsRecords => {
+                    commentsRecords.forEach(comment => {
+                        
+                        const commentData = {
+                            'comment': comment.comment,
+                            'date_created': comment.createdAt,
+                            'username': comment.username,
+                            'full_name': res.user.fullName,
+                            'title': res.user.title
+                        };
+                        commentsResponse[commentRelation.report]['comments'].push(commentData);
+                    });
+
+                }).catch(error => {
+                    return apiResponse.errorResponse(res, `Failed to retrieve comments from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+                });
+            });
+
+            return apiResponse.successResponseWithData(res, 'Successfully retrieved comments', commentsResponse);
+
+        }).catch(error => {
+            return apiResponse.errorResponse(res, `Failed to retrieve commentRelations from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+        });
+    }
+];
