@@ -405,19 +405,18 @@ exports.getComments = [
                 return apiResponse.successResponseWithData(res, 'No comments for request', responseObj);
             }
             // response should look like: 
-            // {
-            //     'DNA Report': {'comments': [], 'recipients': ''},
-            //     'RNA Report': {'comments': [], 'recipients': ''},
-            //     'Pool Report': {'comments': [], 'recipients': ''},
-            //     'Library Report': {'comments': [], 'recipients': ''},
-            //     'Pathology Report': {'comments': [], 'recipients': ''},
-            // }
-            const commentsResponse = {};
+            
+            const commentsResponse = {
+                'DNA Report': {'comments': [], 'recipients': ''},
+                'RNA Report': {'comments': [], 'recipients': ''},
+                'Pool Report': {'comments': [], 'recipients': ''},
+                'Library Report': {'comments': [], 'recipients': ''},
+                'Pathology Report': {'comments': [], 'recipients': ''}
+            };
 
             // TODO query comments table for each commentRelation id
             commentRelationRecords.forEach(commentRelation => {
                 commentsResponse[commentRelation.report]['recipients'] = commentRelation.recipients;
-                commentsResponse[commentRelation.report]['comments'] = [];
                 Comments.findAll({
                     where: {
                         commentrelation_id: commentRelation.id
