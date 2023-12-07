@@ -1,7 +1,7 @@
-const services = require('../services/services');
 const constants = require('../constants');
 const db = require('../models');
 const Decisions = db.decisions;
+const CommentRelations = db.commentRelations;
 
 //TODO set up user authorization logic
 
@@ -11,7 +11,7 @@ const Decisions = db.decisions;
 //     } else if ()
 // };
 
-exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, decisions) => {
+exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, decisionSamples) => {
     const responseColumnFeatures = [];
     const responseHeaders = [];
     const responseSamples = [];
@@ -21,42 +21,38 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
         return {};
     }
 
-    let exampleSample;
-    for (let sample in samples) {
-        if ('hideFromSampleQC' in sample && sample['hideFromSampleQC'] === false) {
-            exampleSample = sample;
-            break;
-        } else {
-            exampleSample = samples[0];
-        }
-    }
+    let exampleSample = samples[0];
+    const sampleUnits = exampleSample['concentrationUnits'] ? exampleSample['concentrationUnits'].toLowerCase() : '';
 
-    for (let constantOrderedColumn in order) {
+    order.forEach(constantOrderedColumn => {
         if (constantOrderedColumn in constantColumnFeatures) {
 
-            // account for special columns like dropdowns or unitless measurments
-            if ('picklistName' in constantColumnFeatures[constantOrderedColumn]) {
-                constantColumnFeatures[constantOrderedColumn]['source'] = services.getPicklist(
-                    constantColumnFeatures[constantOrderedColumn]['picklistName']
-                );
-                responseColumnFeatures.push(constantColumnFeatures[constantOrderedColumn]);
-
-            } else if (constantOrderedColumn === 'Concentration') {
+            // account for special columns like unitless measurements
+            if (constantOrderedColumn === 'Concentration') {
                 const concentrationColumn = constantColumnFeatures[constantOrderedColumn];
-                concentrationColumn['columnHeader'] = (
-                    `${constantColumnFeatures[constantOrderedColumn]['columnHeader']} (${exampleSample['concentrationUnits']})`
-                );
+                const columnName = constantColumnFeatures[constantOrderedColumn]['columnHeader'];
+
+                // if column name already includes units, don't add again
+                concentrationColumn['columnHeader'] = columnName.toLowerCase().includes(sampleUnits) ?
+                    columnName : (
+                        `${constantColumnFeatures[constantOrderedColumn]['columnHeader']} (${exampleSample['concentrationUnits']})`
+                    );
+
                 responseColumnFeatures.push(concentrationColumn);
 
             } else if (constantOrderedColumn === 'TotalMass') {
                 const massColumn = constantColumnFeatures[constantOrderedColumn];
-                if (exampleSample['concentrationUnits'].toLowerCase() === 'ng/ul') {
-                    massColumn['columnHeader'] = (
+                const columnName = constantColumnFeatures[constantOrderedColumn]['columnHeader'];
+                
+                if (sampleUnits === 'ng/ul') {
+                    // if column name already includes units, don't add again
+                    massColumn['columnHeader'] = columnName.toLowerCase().includes('(ng)') ? columnName : (
                         `${constantColumnFeatures[constantOrderedColumn]['columnHeader']} (ng)`
                     );
                 }
-                if (exampleSample['concentrationUnits'].toLowerCase() === 'nm') {
-                    massColumn['columnHeader'] = (
+                if (sampleUnits === 'nm') {
+                    // if column name already includes units, don't add again
+                    massColumn['columnHeader'] = columnName.toLowerCase().includes('(fmole)') ? columnName : (
                         `${constantColumnFeatures[constantOrderedColumn]['columnHeader']} (fmole)`
                     );
                 }
@@ -66,114 +62,106 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
                 responseColumnFeatures.push(constantColumnFeatures[constantOrderedColumn]);
             }
         }
-    }
+    });
 
     // go through samples to format for FE and handsontable
-    for (let sample in samples) {
+    samples.forEach(sample => {
         const responseSample = {};
 
         // samples can be selected to be hidden in LIMS
-        if ('hideFromSampleQC' in sample && sample['hideFromSampleQC'] === true) {
-            continue;
-        }
+        if (sample['hideFromSampleQC'] === false) {
 
-        if (tableType === 'attachments') {
-            responseSample['action'] = (
-                '<div record-id=\''
+            if (tableType === 'attachments') {
+                responseSample['action'] = (
+                    '<div record-id=\''
                 + sample['recordId'].toString()
                 + '\' file-name=\''
                 + sample['fileName'].toString()
                 + '\' class =\'download-icon\'><i class=%s>%s</i></div>'
                 % ('material-icons', 'cloud_download')
-            );
-        }
+                );
+            }
 
-        for (let dataField in sample) {
-            const formattedDataField = dataField.charAt(0).toUpperCase() + dataField.slice(1);
-            let sampleFieldValue = sample[dataField];
-            const measurements = [
-                'concentration',
-                'totalMass',
-                'rin',
-                'din',
-                'dV200',
-                'humanPercentage',
-                'cqN1',
-                'cqN2',
-                'cqRP'
-            ];
+            for (let dataField of Object.keys(sample)) {
+                const formattedDataField = dataField.charAt(0).toUpperCase() + dataField.slice(1);
+                let sampleFieldValue = sample[dataField];
+                const measurements = [
+                    'concentration',
+                    'totalMass',
+                    'rin',
+                    'din',
+                    'dV200',
+                    'humanPercentage',
+                    'cqN1',
+                    'cqN2',
+                    'cqRP'
+                ];
 
-            if (formattedDataField in order) {
-                if (dataField === 'otherSampleId' && sampleFieldValue.includes(',')) {
-                    sampleFieldValue = sampleFieldValue.replaceAll(',', ', ');
-                    responseSample[dataField] = sampleFieldValue.replaceAll('-', '&#8209;');
+                if (order.includes(formattedDataField)) {
+                    if (dataField === 'otherSampleId' && sampleFieldValue.includes(',')) {
+                        sampleFieldValue = sampleFieldValue.replaceAll(',', ', ');
+                        responseSample[dataField] = sampleFieldValue.replaceAll('-', '&#8209;');
 
-                } else if (dataField === 'igoQcRecommendation') {
-                    const recommendation = sampleFieldValue;
-                    responseSample[dataField] = (`<div class=${recommendation.toLowerCase()}>${recommendation}</div>`);
+                    } else if (dataField === 'igoQcRecommendation') {
+                        const recommendation = sampleFieldValue;
+                        responseSample[dataField] = (`<div class=${recommendation.toLowerCase()}>${recommendation}</div>`);
 
-                } else if (measurements.includes(dataField)) {
+                    } else if (measurements.includes(dataField)) {
                     // round measurements to 1 decimal
-                    if (sampleFieldValue || sampleFieldValue === 0.0) {
-                        const roundedNumString = Number(sampleFieldValue).toFixed(1);
-                        const roundedNum = parseFloat(roundedNumString);
-                        responseSample[dataField] = roundedNum;
-                    } else {
-                        responseSample[dataField] = sampleFieldValue;
-                    }
+                        if (sampleFieldValue || sampleFieldValue === 0.0) {
+                            const roundedNumString = Number(sampleFieldValue).toFixed(1);
+                            const roundedNum = parseFloat(roundedNumString);
+                            responseSample[dataField] = roundedNum;
+                        } else {
+                            responseSample[dataField] = sampleFieldValue;
+                        }
                     
-                } else if (dataField === 'volume' || dataField === 'avgSize') {
-                    if (sampleFieldValue) {
-                        const roundedNumString = Number(sampleFieldValue).toFixed(0);
-                        const roundedNum = parseFloat(roundedNumString);
-                        responseSample[dataField] = roundedNum;
-                    } else {
-                        responseSample[dataField] = sampleFieldValue;
+                    } else if (dataField === 'volume' || dataField === 'avgSize') {
+                        if (sampleFieldValue) {
+                            const roundedNumString = Number(sampleFieldValue).toFixed(0);
+                            const roundedNum = parseFloat(roundedNumString);
+                            responseSample[dataField] = roundedNum;
+                        } else {
+                            responseSample[dataField] = sampleFieldValue;
+                        }
+
+                    } else if (dataField === 'action') {
+                        responseSample[dataField] = (
+                            '<div class ="download-icon"><i class="material-icons">cloud_download</i></div>'
+                        );
+
+                    } else if (dataField === 'sampleStatus') {
+                        responseSample[dataField] = `<div class='pathology-status'>${sampleFieldValue}</div>`;
                     }
-
-                } else if (dataField === 'action') {
-                    responseSample[dataField] = (
-                        '<div class ="download-icon"><i class="material-icons">cloud_download</i></div>'
-                    );
-
-                } else if (dataField === 'sampleStatus') {
-                    responseSample[dataField] = `<div class='pathology-status'>${sampleFieldValue}</div>`;
-                }
-                // non-empty lims decisions overwrite investigator decisions for non-submitted decisions
-                else if (dataField === 'investigatorDecision') {
-                    if (dataField in sample && sampleFieldValue) {
-                        responseSample[dataField] = sampleFieldValue;
-                    } else {
-                        if (decisions && decisions.length > 0) {
-                            for (let decisionRecord in decisions) {
-                                console.log(`decisionRecord: ${decisionRecord}`);
-                                for (let decision in decisionRecord.decisions) {
-                                    for (let decidedSample in decision['samples']) {
-                                        if ((sample['recordId'] === decidedSample['recordId']) && 'investigatorDecision' in decidedSample) {
-                                            decidedSample['investigatorDecision'] = sampleFieldValue;
-
-                                            //db.session.commit()
-
-                                            responseSample[dataField] = decidedSample['investigatorDecision'];
-                                        }
+                    // non-empty lims decisions overwrite investigator decisions for non-submitted decisions
+                    else if (dataField === 'investigatorDecision') {
+                        if (dataField in sample && sampleFieldValue) {
+                            responseSample[dataField] = sampleFieldValue;
+                        } else {
+                            if (decisionSamples && decisionSamples.length > 0) {
+                                for (let i = 0; i < decisionSamples.length; i++) {
+                                    const decidedSample = decisionSamples[i];
+                                    if ((sample['recordId'] === decidedSample['recordId']) && 'investigatorDecision' in decidedSample) {
+                                        // decidedSample['investigatorDecision'] = sampleFieldValue;
+                                        responseSample[dataField] = decidedSample['investigatorDecision'];
                                     }
                                 }
+                            } else {
+                                responseSample[dataField] = null;
                             }
-                        } else {
-                            responseSample[dataField] = null;
                         }
+                    } else {
+                        responseSample[dataField] = sampleFieldValue;
                     }
-                } else {
-                    responseSample[dataField] = sampleFieldValue;
                 }
             }
+            responseSamples.push(responseSample);
         }
-        responseSamples.push(responseSample);
-    }
+    });
 
-    for (let column in responseColumnFeatures) {
+    responseColumnFeatures.forEach(column => {
         responseHeaders.push(column['columnHeader']);
-    }
+    });
 
     if (responseSamples.length > 0) {
         return {
@@ -258,26 +246,95 @@ exports.buildPendingList = (pendings, isUser) => {
     };
 };
 
-// exports.isUserAuthorizedForRequest = (requestId, user) => {
+// returns true if user is associated with request as recipient
+// returns false if request has no inital comment OR user is not associated
+exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
+    let isAuthorized = false;
+    if (commentRelationsForRequest && commentRelationsForRequest.length > 0) {
+        const username = user.username.toLowerCase();
+        for (let i = 0; i < commentRelationsForRequest.length; i++) {
+            const relationData = commentRelationsForRequest[i].dataValues;
 
-// };
+            //username listed specifically
+            if (relationData.recipients.toLowerCase().includes(username) ||
+                relationData.author.toLowerCase() === username) {
+
+                isAuthorized = true;
+                break;
+            }
+
+            // user is PM and skicmopm recipient (PMs do not use zzPDLs for this to be able to communicate with outside investigators)
+            if (relationData.recipients.toLowerCase().includes(constants.PM_EMAIL_LIST) && user.role === 'cmo_pm') {
+                isAuthorized = true;
+                break;
+            }
+
+            // one of user's groups listed
+            const recipientArray = relationData.recipients.split(',');
+            let isInUserGroup = false;
+            for (let j = 0; j < recipientArray.length; j++) {
+                const recipName = recipientArray[i].replace('@mskcc.org', '').toLowerCase();
+                if (user.groups.toLowerCase().includes(recipName)) {
+                    isInUserGroup = true;
+                    break;
+                }
+            }
+            if (isInUserGroup) {
+                isAuthorized = true;
+                break;
+            }
+
+            // SKI email and username - do we need this anymore?
+            if (relationData.recipients.includes('ski.mskcc.org')) {
+                const skiName = username.charAt(-1) + '-' + username.substring(0, username.length - 1);
+                if (relationData.recipients.toLowerCase().includes(skiName) ||
+                    relationData.author.toLowerCase().includes(skiName)) {
+
+                    isAuthorized = true;
+                    break;
+                }
+            }
+        }
+        return isAuthorized;
+    }
+};
+
+exports.getCommentRelationsForRequest = (requestId) => {
+    CommentRelations.findAll({
+        where: {
+            request_id: requestId
+        }
+    }).then(responseData => {
+        return responseData;
+    }).catch(error => {
+        console.log(`error getting comment relations ${error}`);
+        return;
+    });
+};
 
 exports.getDecisionsForRequest = (requestId) => {
-    return Decisions.findAll({
+    Decisions.findAll({
         where: {
             request_id: requestId,
             is_submitted: false
         }
+    }).then(responseData => {
+        return responseData;
+    }).catch(error => {
+        console.log(`error getting decisions ${error}`);
+        return;
     });
 };
 
 exports.isDecisionMade = (reportData) => {
-    for (let field of reportData) {
-        if (!field.investigatorDecision && field.hideFromSampleQC !== true) {
+    for (let i = 0; i < reportData.length; i++) {
+        const reportObj = reportData[i];
+        const hasDecision = reportObj.investigatorDecision && reportObj.investigatorDecision !== '';
+        if (!hasDecision && reportObj.hideFromSampleQC !== true) {
             return false;
         }
-        return true;
     }
+    return true;
 };
 
 exports.mergeColumns = (columnObject1, columnObject2) => {

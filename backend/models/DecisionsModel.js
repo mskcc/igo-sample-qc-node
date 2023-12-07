@@ -17,6 +17,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         is_igo_decision: {
             type: Sequelize.DataTypes.TINYINT,
+            defaultValue: 0
         },
         is_submitted: {
             type: Sequelize.DataTypes.TINYINT,
@@ -28,6 +29,7 @@ module.exports = (sequelize, Sequelize) => {
         updatedAt: {
             field: 'date_updated',
             type: Sequelize.DataTypes.DATE,
+            defaultValue: Sequelize.DataTypes.NOW
         }
     }, {
         tableName: 'decisions'

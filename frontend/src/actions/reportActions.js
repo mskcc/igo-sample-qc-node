@@ -115,11 +115,11 @@ export function getQcReports(requestId, otherSampleIds) {
         data: {
           request: requestId,
           samples: getState().report.request.samples,
-          username: getState().user.username,
+          user: getState().user,
         },
       })
       .then((response) => {
-        let tables = fillReportTables(response.data.tables);
+        let tables = fillReportTables(response.data.data.tables);
         if (isEmpty(tables)) {
           return dispatch({
             type: GET_REPORT_FAIL,
@@ -205,7 +205,7 @@ export function submitInvestigatorDecision() {
     let report = getState().report.reportShown;
 
     return axios
-      .post(Config.API_ROOT + '/setQCInvestigatorDecision', {
+      .post(Config.API_ROOT + '/qcReport/setQCInvestigatorDecision', {
         data: {
           decisions,
           username,
@@ -252,7 +252,6 @@ export function savePartialDecision() {
     });
     let decisions = generateDecisionSubmitData(
       getState().report.tables,
-
       getState().report.reportShown
     );
     let request_id = getState().report.request.requestId;
@@ -260,22 +259,19 @@ export function savePartialDecision() {
     let report = getState().report.reportShown;
 
     return axios
-      .post(Config.API_ROOT + '/savePartialSubmission', {
+      .post(Config.API_ROOT + '/qcReport/savePartialSubmission', {
         data: {
           decisions,
           username,
           request_id,
           report,
         },
-      })
-      .then((response) => {
+      }).then((response) => {
         dispatch({
           type: POST_PARTIAL_DECISION_SUCCESS,
-
-          message: 'Saved!',
+          message: 'Saved! To submit saved decisions, please click "Submit to IGO" button.',
         });
-      })
-      .catch((error) => {
+      }).catch((error) => {
         return dispatch({
           type: POST_PARTIAL_DECISION_FAIL,
           message:

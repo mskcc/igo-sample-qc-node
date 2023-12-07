@@ -1,7 +1,6 @@
 const https = require('https');
 const axios = require('axios');
-// const { loggers } = require('winston');
-// const logger = loggers.get('logger');
+const qs = require('qs');
 const { logger } = require('../util/winston');
 
 const LIMS_AUTH = {
@@ -15,7 +14,7 @@ const agent = new https.Agent({
     rejectUnauthorized: false,
 });
 const axiosConfig = {
-    httpsAgent: agent,
+    httpsAgent: agent
 };
 
 const formatData = function (resp) {
@@ -47,16 +46,14 @@ exports.getRequestSamples = (requestId) => {
         });
 };
 
-exports.getQcReportSamples = (requestData) => {
-    const url = `${LIMS_URL}/getQcReportSamples`;
+exports.getQcReportSamples = (requestId, samples) => {
+    const url = `${LIMS_URL}/getQcReportSamples?request=${requestId}&samples=${samples}`;
     logger.info(`Sending request to ${url}`);
     return axios
-        .post(
+        .get(
             url,
-            {},
             {
                 auth: { ...LIMS_AUTH },
-                params: { requestData },
                 ...axiosConfig,
             }
         )
@@ -77,8 +74,8 @@ exports.getQcReportSamples = (requestData) => {
         });
 };
 
-exports.getPicklist = (listName) => {
-    const url = `${LIMS_URL}/getPickListValues?list=${listName}`;
+exports.getPicklist = () => {
+    const url = `${LIMS_URL}/getPickListValues?list=InvestigatorDecisionCustomers`;
     logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {
@@ -104,6 +101,14 @@ exports.getPicklist = (listName) => {
 
 exports.setQCInvestigatorDecision = (decisionsData) => {
     const url = `${LIMS_URL}/setInvestigatorDecision`;
+    // const options = {
+    //     method: 'POST',
+    //     headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    //     auth: { ...LIMS_AUTH },
+    //     httpsAgent: agent,
+    //     data: qs.stringify(decisionsData),
+    //     url,
+    //   };
     logger.info(`Sending request to ${url}`);
     return axios
         .post(
@@ -111,7 +116,9 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
             {},
             {
                 auth: { ...LIMS_AUTH },
-                params: { decisionsData },
+                httpsAgent: agent,
+                params: qs.stringify(decisionsData),
+                headers: { 'content-type': 'application/x-www-form-urlencoded' },
                 ...axiosConfig,
             }
         )

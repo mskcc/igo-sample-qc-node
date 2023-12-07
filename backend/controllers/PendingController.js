@@ -25,8 +25,8 @@ exports.getPendingRequests = [
             if (userType === 'lab_member' || userType === 'project_manager') {
                 pendingTable = buildPendingList(responseData, false);
             } else {
-                // TODO UPDATE TO 'true' BEFORE DEPLOYMENT!!!!!
-                pendingTable = buildPendingList(responseData, false);
+                // userType === 'user'
+                pendingTable = buildPendingList(responseData, true);
             }
 
             return apiResponse.successResponseWithData(res, 'success', pendingTable);

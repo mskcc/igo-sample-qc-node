@@ -5,6 +5,8 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+
 const apiRouter = require('./routes/api');
 
 const port = process.env.PORT || 3001;
@@ -13,6 +15,12 @@ const hostname = '127.0.0.1';
 var publicDir = path.join(__dirname, 'public');
 
 const app = express();
+
+// For parsing application/json
+app.use(express.json());
+ 
+// For parsing application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 const jwtInCookie = require('jwt-in-cookie');

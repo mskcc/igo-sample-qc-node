@@ -409,37 +409,14 @@ exports.user_pending_order = [
     'Show',
 ];
 
-exports.initial_email_template_html = {
-    'from': 'igoski@mskcc.org',
-    'dev_subject': '[SampleQC Beta-Test] %s %s QC results available%s',
-    'subject': '[IGO SampleQC] %s %s QC results available%s',
-    'body': 'Hello,<br><br>IGO has completed %s QC on project %s. <br><br>Please proceed to <a href="https://igo.mskcc.org/sample-qc/request/%s">igo.mskcc.org/sample-qc/request/%s</a> to ask any questions, download related documents, and to indicate which sample(s) should continue with processing.<br><br>Thank you,',
-    'cmo_pm_body': 'Hello,<br><br>IGO has completed %s QC on project %s. <br><br>You can view the results at <a href="https://igo.mskcc.org/sample-qc/request/%s">igo.mskcc.org/sample-qc/request/%s</a>. Your Project Manager will be handling any QC related decisions and questions.<br><br>Thank you,',
-    'footer': '<br><br><span style="color:#f29934; font-weight:bold;">%s</span><br>%s<br><a href="https://genomics.mskcc.org">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br>',
-};
-
-exports.notification_email_template_html = {
-    'from': 'igoski@mskcc.org',
-    'dev_subject': '[SampleQC Beta-Test] %s New Comment',
-    'subject': '[IGO SampleQC] %s New Comment',
-    'body': 'Hello,<br><br>The following comment has been added to %s QC on project %s by %s.<br><br>\'%s\'<br><br>Please proceed to <a href="https://igo.mskcc.org/sample-qc/request/%s">igo.mskcc.org/sample-qc/request/%s</a> if you would like to reply.<br><br>Thank you,',
-    'footer': '<br><a href="https://genomics.mskcc.org">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br>',
-};
-
-exports.decision_notification_email_template_html = {
-    'from': 'igoski@mskcc.org',
-    'dev_subject': '[SampleQC Beta-Test] %s Decisions Submitted for %s',
-    'subject': '[IGO SampleQC] %s Decisions Submitted for %s',
-    'body': 'Hello,<br><br>Decisions have been submitted for project %s by %s.<br><br><span style="font-weight:bold;"> To make any changes to the decisions, please reach out to IGO at zzPDL_IGO_Staff@mskcc.org.</span><br>You can find the project at <a href="https://igo.mskcc.org/sample-qc/request/%s">igo.mskcc.org/sample-qc/request/%s</a>.<br><br>Thank you,',
-    'footer': '<br><a style="color:#f29934; font-weight:bold;" href="https://genomics.mskcc.org">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br>',
-};
-
-exports.stop_processing_notification_email_template_html = {
-    'from': 'igoski@mskcc.org',
-    'dev_subject': '[SampleQC Beta-Test] %s Stop Processing Decision(s) Submitted for %s',
-    'subject': '[IGO SampleQC] %s Stop Processing Decision(s) Submitted for %s',
-    'body': 'Hello,<br><br>For project %s Stop Processing decision(s) have been submitted by %s.<br><br><span style="font-weight:bold;"> This is to notify you to check if the iLab proper charges for these samples are present.</span><br>You can find the project at <a href="https://igo.mskcc.org/sample-qc/request/%s">igo.mskcc.org/sample-qc/request/%s</a>.<br><br>Thank you,',
-    'footer': '<br><a style="color:#f29934; font-weight:bold;" href="https://genomics.mskcc.org">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br>',
-};
-
 exports.user_training_string = 'Unfamiliar with this new process for sharing QC results? Watch our 5 minute <a href="https://igo.mskcc.org/sample-qc/instructions">how-to video</a>.';
+
+exports.PM_EMAIL_LIST = 'skicmopm';
+
+exports.emailConfig = {
+    notificationSender: 'igoski@mskcc.org',
+    cmoPmEmail: 'skicmopm@mskcc.org',
+    devSubject: '[SampleQC Beta-Test]',
+    subject: '[IGO SampleQC]',
+    footer: `<br><a style="color:#f29934; font-weight:bold;" href="https://genomics.mskcc.org">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br><br><br>${this.user_training_string}`,
+};
