@@ -415,8 +415,9 @@ exports.getComments = [
             };
 
             // TODO query comments table for each commentRelation id
-            commentRelationRecords.forEach(commentRelation => {
+            Promise.all(commentRelationRecords.map(commentRelation => {
                 commentsResponse[commentRelation.report]['recipients'] = commentRelation.recipients;
+
                 Comments.findAll({
                     where: {
                         commentrelation_id: commentRelation.id
@@ -437,9 +438,9 @@ exports.getComments = [
                 }).catch(error => {
                     return apiResponse.errorResponse(res, `Failed to retrieve comments from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                 });
+            })).then(() => {
+                return apiResponse.successResponseWithData(res, 'Successfully retrieved comments', commentsResponse);
             });
-
-            return apiResponse.successResponseWithData(res, 'Successfully retrieved comments', commentsResponse);
 
         }).catch(error => {
             return apiResponse.errorResponse(res, `Failed to retrieve commentRelations from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
