@@ -424,12 +424,14 @@ exports.getComments = [
                         commentrelation_id: commentRelation.id
                     }
                 }).then(commentsRecords => {
-                    commentsRecords.forEach(comment => {
+                    // commentsRecords.forEach(comment => {
+                    return Promise.all(commentsRecords.map(comment => {
                         return Users.findOne({
                             where: {
                                 username: comment.username
                             }
                         }).then(user => {
+
                             const commentData = {
                                 'comment': comment.comment,
                                 'date_created': comment.createdAt,
@@ -441,7 +443,7 @@ exports.getComments = [
                         });
                         
                         
-                    });
+                    }));
                      
                 }).catch(error => {
                     return apiResponse.errorResponse(res, `Failed to retrieve comments from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
