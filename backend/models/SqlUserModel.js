@@ -14,14 +14,6 @@ module.exports = (sequelize, Sequelize) => {
         },
         groups: {
             type: Sequelize.DataTypes.TEXT,
-        },
-        createdAt: {
-            field: 'date_created',
-            type: Sequelize.DataTypes.DATE,
-        },
-        updatedAt: {
-            field: 'date_updated',
-            type: Sequelize.DataTypes.DATE,
         }
     }, {
         tableName: 'users'
