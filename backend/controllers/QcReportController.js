@@ -418,7 +418,7 @@ exports.getComments = [
             return Promise.all(commentRelationRecords.map(commentRelation => {
                 commentsResponse[commentRelation.report]['recipients'] = commentRelation.recipients;
 
-                Comments.findAll({
+                return Comments.findAll({
                     where: {
                         commentrelation_id: commentRelation.id
                     }
@@ -435,10 +435,7 @@ exports.getComments = [
                         commentsResponse[commentRelation.report]['comments'].push(commentData);
                         
                     });
-                    console.log(commentsResponse);
-                    return apiResponse.successResponseWithData(res, 'Successfully retrieved comments', commentsResponse); 
-
-                    // return commentsResponse;
+                     
                 }).catch(error => {
                     return apiResponse.errorResponse(res, `Failed to retrieve comments from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                 });
