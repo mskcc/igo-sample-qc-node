@@ -424,13 +424,14 @@ exports.getComments = [
                     }
                 }).then(commentsRecords => {
                     commentsRecords.forEach(comment => {
-                        
+                        //res.user.fullName
+                        //res.user.title
                         const commentData = {
                             'comment': comment.comment,
                             'date_created': comment.createdAt,
                             'username': comment.username,
-                            'full_name': res.user.fullName,
-                            'title': res.user.title
+                            'full_name': 'test name',
+                            'title': 'project assistant'
                         };
                         commentsResponse[commentRelation.report]['comments'].push(commentData);
                         
