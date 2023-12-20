@@ -414,8 +414,8 @@ exports.getComments = [
                 'Pathology Report': {'comments': [], 'recipients': ''}
             };
 
-            // TODO query comments table for each commentRelation id
-            Promise.all(commentRelationRecords.map(commentRelation => {
+            
+            return Promise.all(commentRelationRecords.map(commentRelation => {
                 commentsResponse[commentRelation.report]['recipients'] = commentRelation.recipients;
 
                 Comments.findAll({
@@ -433,13 +433,17 @@ exports.getComments = [
                             'title': res.user.title
                         };
                         commentsResponse[commentRelation.report]['comments'].push(commentData);
+                        
                     });
+                    console.log(commentsResponse);
+                    return apiResponse.successResponseWithData(res, 'Successfully retrieved comments', commentsResponse); 
 
+                    // return commentsResponse;
                 }).catch(error => {
                     return apiResponse.errorResponse(res, `Failed to retrieve comments from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                 });
             })).then(() => {
-                return apiResponse.successResponseWithData(res, 'Successfully retrieved comments', commentsResponse);
+                return apiResponse.successResponseWithData(res, 'Successfully retrieved comments', commentsResponse); 
             });
 
         }).catch(error => {

@@ -24,7 +24,6 @@ exports.successResponseWithData = function (res, msg, data) {
         message: msg
     });
     res.status(200).json(resData);
-    res.end();
 };
 
 exports.errorResponse = function (res, msg) {
