@@ -425,7 +425,7 @@ exports.getComments = [
                     }
                 }).then(commentsRecords => {
                     commentsRecords.forEach(comment => {
-                        Users.findOne({
+                        return Users.findOne({
                             where: {
                                 username: comment.username
                             }
