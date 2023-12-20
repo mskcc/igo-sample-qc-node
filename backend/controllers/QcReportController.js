@@ -26,6 +26,7 @@ const {
 const Decisions = db.decisions;
 const CommentRelation = db.commentRelations;
 const Comments = db.comments;
+const Users = db.users;
 
 
 exports.getRequestSamples = [
@@ -424,16 +425,21 @@ exports.getComments = [
                     }
                 }).then(commentsRecords => {
                     commentsRecords.forEach(comment => {
-                        //TODO res.user.fullName
-                        //res.user.title
-                        const commentData = {
-                            'comment': comment.comment,
-                            'date_created': comment.createdAt,
-                            'username': comment.username,
-                            'full_name': 'test name',
-                            'title': 'project assistant'
-                        };
-                        commentsResponse[commentRelation.report]['comments'].push(commentData);
+                        Users.findOne({
+                            where: {
+                                username: comment.username
+                            }
+                        }).then(user => {
+                            const commentData = {
+                                'comment': comment.comment,
+                                'date_created': comment.createdAt,
+                                'username': comment.username,
+                                'full_name': user.full_name,
+                                'title': user.title
+                            };
+                            commentsResponse[commentRelation.report]['comments'].push(commentData);
+                        });
+                        
                         
                     });
                      

@@ -217,7 +217,6 @@ export function getComments() {
         // },
       })
       .then((response) => {
-        console.log(response);
         return dispatch({
           type: GET_COMMENTS_SUCCESS,
           payload: response.data.data.comments,
