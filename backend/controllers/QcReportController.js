@@ -451,7 +451,7 @@ exports.getComments = [
             })).then(() => {
                 // delete reports without comments
                 for (const report in commentsResponse) {
-                    if (report.comments.length === 0) {
+                    if (commentsResponse[report]['comments'].length === 0) {
                         delete commentsResponse[report];
                     }
                 }
