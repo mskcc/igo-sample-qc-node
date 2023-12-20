@@ -424,7 +424,7 @@ exports.getComments = [
                     }
                 }).then(commentsRecords => {
                     commentsRecords.forEach(comment => {
-                        //res.user.fullName
+                        //TODO res.user.fullName
                         //res.user.title
                         const commentData = {
                             'comment': comment.comment,
