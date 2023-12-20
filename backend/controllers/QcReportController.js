@@ -441,7 +441,8 @@ exports.getComments = [
                     return apiResponse.errorResponse(res, `Failed to retrieve comments from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                 });
             })).then(() => {
-                return apiResponse.successResponseWithData(res, 'Successfully retrieved comments', commentsResponse); 
+                const response = {'comments': commentsResponse};
+                return apiResponse.successResponseWithData(res, 'Successfully retrieved comments', response); 
             });
 
         }).catch(error => {

@@ -220,7 +220,7 @@ export function getComments() {
         console.log(response);
         return dispatch({
           type: GET_COMMENTS_SUCCESS,
-          payload: response.data.comments,
+          payload: response.data.data.comments,
         });
       })
       .catch((error) => {
