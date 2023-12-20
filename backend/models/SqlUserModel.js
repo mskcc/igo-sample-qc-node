@@ -14,7 +14,9 @@ module.exports = (sequelize, Sequelize) => {
         },
         groups: {
             type: Sequelize.DataTypes.TEXT,
-        }
+        },
+        createdAt: false,
+        updatedAt: false,
     }, {
         tableName: 'users'
     });
