@@ -133,7 +133,7 @@ export function addComment(comment, report) {
             const currentCommentsForReport = currentComments[report];
             
             currentCommentsForReport.comments.push(newCommentData);
-            }
+            
             const newCommentState = {
               ...getState().communication.comments,
               ...currentCommentsForReport
