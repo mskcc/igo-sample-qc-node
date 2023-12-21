@@ -477,6 +477,16 @@ exports.addAndNotifyInitial = [
         const isCmoProject = reqData.is_cmo_pm_project;
         const username = reqData.comment.username;
 
+        //return value for comment state
+        const commentsResponse = {};
+        // const commentsResponse = {
+        //     'DNA Report': {'comments': [], 'recipients': ''},
+        //     'RNA Report': {'comments': [], 'recipients': ''},
+        //     'Pool Report': {'comments': [], 'recipients': ''},
+        //     'Library Report': {'comments': [], 'recipients': ''},
+        //     'Pathology Report': {'comments': [], 'recipients': ''}
+        // };
+
         Users.findOne({
             where: {
                 username: username
@@ -492,6 +502,7 @@ exports.addAndNotifyInitial = [
                     }
                 }).then(commentRelationRecord => {
                     let relationId;
+                    let createdAtDate = Date.now().toLocaleString();
                     if (!commentRelationRecord || commentRelationRecord.length === 0) {
                         CommentRelation.create({
                             request_id: requestId,
@@ -501,12 +512,15 @@ exports.addAndNotifyInitial = [
                             author: username
                         }).then(relation => {
                             relationId = relation.id;
+                            createdAtDate = relation.createdAt;
                             Comments.create({
                                 comment: comment.content,
                                 commentrelation_id: relation.id,
                                 username: username
                             });
                         });
+
+                        
                         
                     } else {
                         relationId = commentRelationRecord.id;
@@ -514,8 +528,22 @@ exports.addAndNotifyInitial = [
                             comment: comment.content,
                             commentrelation_id: commentRelationRecord.id,
                             username: username
+                        }).then(comment => {
+                            createdAtDate = comment.createdAt;
                         });
                     }
+
+                    // create commentData for response
+                    commentsResponse[report] = {'comments': [], 'recipients': ''};
+                    const commentData = {
+                        'comment': comment.content,
+                        'date_created': createdAtDate,
+                        'username': username,
+                        'full_name': user.full_name,
+                        'title': user.title
+                    };
+                    commentsResponse[report]['recipients'] = recipients;
+                    commentsResponse[report]['comments'].push(commentData);
 
 
                     // an inital comment was submitted for a report where all decisions have been made in the LIMS already
@@ -539,69 +567,11 @@ exports.addAndNotifyInitial = [
                 });
             }
 
-            // reload all comments to state after creating new
-            CommentRelation.findAll({
-                where: {
-                    request_id: requestId
-                }
-            }).then(commentRelationRecords => {
-                // response should look like: 
-                
-                const commentsResponse = {
-                    'DNA Report': {'comments': [], 'recipients': ''},
-                    'RNA Report': {'comments': [], 'recipients': ''},
-                    'Pool Report': {'comments': [], 'recipients': ''},
-                    'Library Report': {'comments': [], 'recipients': ''},
-                    'Pathology Report': {'comments': [], 'recipients': ''}
-                };
-    
-                
-                return Promise.all(commentRelationRecords.map(commentRelation => {
-                    commentsResponse[commentRelation.report]['recipients'] = commentRelation.recipients;
-    
-                    return Comments.findAll({
-                        where: {
-                            commentrelation_id: commentRelation.id
-                        }
-                    }).then(commentsRecords => {
-                        // commentsRecords.forEach(comment => {
-                        return Promise.all(commentsRecords.map(comment => {
-                            return Users.findOne({
-                                where: {
-                                    username: comment.username
-                                }
-                            }).then(user => {
-    
-                                const commentData = {
-                                    'comment': comment.comment,
-                                    'date_created': comment.createdAt,
-                                    'username': comment.username,
-                                    'full_name': user.full_name,
-                                    'title': user.title
-                                };
-                                commentsResponse[commentRelation.report]['comments'].push(commentData);
-                            });
-                            
-                            
-                        }));
-                         
-                    }).catch(error => {
-                        return apiResponse.errorResponse(res, `Failed to retrieve comments from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
-                    });
-                })).then(() => {
-                    // delete reports without comments
-                    for (const report in commentsResponse) {
-                        if (commentsResponse[report]['comments'].length === 0) {
-                            delete commentsResponse[report];
-                        }
-                    }
-                    const response = {'comments': commentsResponse};
-                    return apiResponse.successResponseWithData(res, 'Successfully retrieved comments', response); 
-                });
-            });
+            return apiResponse.successResponseWithData(res, 'Successfully saved comments and notified recipients', commentsResponse);
         }).catch(error => {
             return apiResponse.errorResponse(res, `Failed to save user comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
         });
+        
         
     }
 ];
