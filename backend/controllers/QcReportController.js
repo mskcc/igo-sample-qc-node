@@ -482,7 +482,7 @@ exports.addAndNotifyInitial = [
                 username: username
             }
         }).then(user => {
-            for(let report in reports) {
+            for(let report of reports) {
                 console.log(report);
                 let isDecided = false;
                 let isPathologyReport = report === 'Pathology Report';
@@ -492,7 +492,6 @@ exports.addAndNotifyInitial = [
                         report: report
                     }
                 }).then(commentRelationRecord => {
-                    console.log(commentRelationRecord);
                     let relationId;
                     if (!commentRelationRecord || commentRelationRecord.length === 0) {
                         CommentRelation.create({
@@ -502,18 +501,24 @@ exports.addAndNotifyInitial = [
                             is_cmo_pm_project: isCmoProject,
                             author: username
                         }).then(relation => {
+                            console.log(relation.id);
                             relationId = relation.id;
+                            Comments.create({
+                                comment: comment.content,
+                                commentrelation_id: relation.id,
+                                username: username
+                            });
                         });
                         
                     } else {
                         relationId = commentRelationRecord.id;
+                        Comments.create({
+                            comment: comment.content,
+                            commentrelation_id: commentRelationRecord.id,
+                            username: username
+                        });
                     }
 
-                    Comments.create({
-                        comment: comment.content,
-                        commentrelation_id: relationId,
-                        username: username
-                    });
 
                     // an inital comment was submitted for a report where all decisions have been made in the LIMS already
                     if (report in decisionsMade) {
