@@ -66,11 +66,11 @@ exports.sendInitialNotification = function(recipients, requestId, report, author
 
 exports.sendNotification = function(recipients, comment, requestId, report, author) {
     const reportType = report.split(' ')[0];
-    let contentBody = `Hello,<br><br>The following comment has been added to ${reportType} QC on project ${requestId} by ${author.fullName}.<br><br>'${comment.content}'<br><br>Please proceed to <a href="https://igo.mskcc.org/sample-qc/request/${requestId}">igo.mskcc.org/sample-qc/request/${requestId}</a> if you would like to reply.<br><br>Thank you,`;
+    let contentBody = `Hello,<br><br>The following comment has been added to ${reportType} QC on project ${requestId} by ${author.full_name}.<br><br>'${comment}'<br><br>Please proceed to <a href="https://igo.mskcc.org/sample-qc/request/${requestId}">igo.mskcc.org/sample-qc/request/${requestId}</a> if you would like to reply.<br><br>Thank you,`;
     let email;
 
     if (ENVIRONMENT === 'development') {
-        contentBody = contentBody + `<br><br>In production, this email would have been sent to: ${recipients.join(', ')}<br><br>`;
+        contentBody = contentBody + `<br><br>In production, this email would have been sent to: ${recipients}<br><br>`;
         email = {
             subject: `${emailConfig.devSubject} ${requestId} New Comment`,
             content: contentBody,
@@ -82,7 +82,7 @@ exports.sendNotification = function(recipients, comment, requestId, report, auth
             subject: `${emailConfig.subject} ${requestId} New Comment`,
             content: contentBody,
             footer: emailConfig.footer,
-            mailTo: recipients.join(',')
+            mailTo: recipients
         };
     }
 

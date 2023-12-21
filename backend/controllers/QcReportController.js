@@ -576,3 +576,116 @@ exports.addAndNotifyInitial = [
         
     }
 ];
+
+exports.addAndNotify = [
+    function(req, res) {
+        const reqData = req.body.data;
+        const comment = reqData.comment.content;
+        const username = reqData.comment.username;
+        const report = reqData.report;
+        const requestId = reqData.request_id;
+
+        //return value for comment state
+        const commentsResponse = {};
+        commentsResponse[report] = {'comments': [], 'recipients': ''};
+
+        Users.findOne({
+            where: {
+                username: username
+            }
+        }).then(user => {
+            CommentRelation.findOne({
+                where: {
+                    request_id: requestId,
+                    report: report
+                }
+            }).then(commentRelationRecord => {
+                Comments.create({
+                    comment: comment,
+                    commentrelation_id: commentRelationRecord.id,
+                    username: username
+                });
+                const commentData = {
+                    'comment': comment,
+                    'date_created': new Date().toISOString(),
+                    'username': username,
+                    'full_name': user.full_name,
+                    'title': user.title
+                };
+                commentsResponse[report]['recipients'] = commentRelationRecord.recipients;
+                commentsResponse[report]['comments'].push(commentData);
+
+                mailer.sendNotification(commentRelationRecord.recipients, comment, requestId, report, user);
+
+                return apiResponse.successResponseWithData(res, 'Successfully saved comment and notified recipients', commentsResponse);
+
+            }).catch(error => {
+                return apiResponse.errorResponse(res, `Failed to save user comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+            });
+        }).catch(error => {
+            return apiResponse.errorResponse(res, `Failed to get user from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+        });
+    }
+];
+
+exports.addToAllAndNotify = [
+    function(req, res) {
+        const reqData = req.body.data;
+        const comment = reqData.comment.content;
+        const username = reqData.comment.username;
+        const reports = reqData.reports;
+        const requestId = reqData.request_id;
+
+        //return value for comment state
+        const commentsResponse = {};
+        // const commentsResponse = {
+        //     'DNA Report': {'comments': [], 'recipients': ''},
+        //     'RNA Report': {'comments': [], 'recipients': ''},
+        //     'Pool Report': {'comments': [], 'recipients': ''},
+        //     'Library Report': {'comments': [], 'recipients': ''},
+        //     'Pathology Report': {'comments': [], 'recipients': ''}
+        // };
+        Users.findOne({
+            where: {
+                username: username
+            }
+        }).then(user => {
+            Promise.all(reports.map(report => {
+                commentsResponse[report] = {'comments': [], 'recipients': ''};
+
+                return CommentRelation.findOne({
+                    where: {
+                        request_id: requestId,
+                        report: report
+                    }
+                }).then(commentRelationRecord => {
+                    Comments.create({
+                        comment: comment,
+                        commentrelation_id: commentRelationRecord.id,
+                        username: username
+                    });
+
+                    const commentData = {
+                        'comment': comment,
+                        'date_created': new Date().toISOString(),
+                        'username': username,
+                        'full_name': user.full_name,
+                        'title': user.title
+                    };
+                    commentsResponse[report]['recipients'] = commentRelationRecord.recipients;
+                    commentsResponse[report]['comments'].push(commentData);
+
+                    mailer.sendNotification(commentRelationRecord.recipients, comment, requestId, report, user);
+
+
+                }).catch(error => {
+                    return apiResponse.errorResponse(res, `Failed to save user comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+                });
+            })).then(() => {
+                return apiResponse.successResponseWithData(res, 'Successfully saved comments and notified recipients', commentsResponse);
+            });
+        }).catch(error => {
+            return apiResponse.errorResponse(res, `Failed to get user from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+        });
+    }
+];

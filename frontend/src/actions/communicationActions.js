@@ -73,8 +73,6 @@ export function addInitialComment(
           ...getState().communication.comments,
           ...response.data.data
         }
-
-        console.log(newCommentState);
         return dispatch({
           type: ADD_INITIAL_COMMENT_SUCCESS,
           payload: newCommentState,
@@ -97,7 +95,6 @@ export const ADD_COMMENT_FAIL = 'ADD_COMMENT_FAIL';
 
 export function addComment(comment, report) {
   return (dispatch, getState) => {
-    console.log(getState().communication.comments[report].recipients);
     Swal.fire({
       title: 'Are you sure?',
       html:
@@ -128,11 +125,15 @@ export function addComment(comment, report) {
 
         dispatch({ type: ADD_COMMENT });
         return axios
-          .post(Config.API_ROOT + '/addAndNotify', { data: commentToSave })
+          .post(Config.API_ROOT + '/qcReport/addAndNotify', { data: commentToSave })
           .then((response) => {
+            const newCommentState = {
+              ...getState().communication.comments,
+              ...response.data.data
+            }
             return dispatch({
               type: ADD_COMMENT_SUCCESS,
-              payload: response.data.comments,
+              payload: newCommentState,
               message: 'Saved and notified!',
             });
           })
@@ -186,11 +187,15 @@ export function addCommentToAllReports(comment, reports) {
 
         dispatch({ type: ADD_COMMENT_TO_ALL });
         return axios
-          .post(Config.API_ROOT + '/addToAllAndNotify', { data: commentToSave })
+          .post(Config.API_ROOT + '/qcReport/addToAllAndNotify', { data: commentToSave })
           .then((response) => {
+            const newCommentState = {
+              ...getState().communication.comments,
+              ...response.data.data
+            }
             return dispatch({
               type: ADD_COMMENT_TO_ALL_SUCCESS,
-              payload: response.data.comments,
+              payload: newCommentState,
               message: 'Saved and notified!',
             });
           })
