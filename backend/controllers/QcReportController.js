@@ -525,8 +525,10 @@ exports.addAndNotifyInitial = [
                     }
 
                     mailer.sendInitialNotification(recipients, requestId, report, user, isDecided, isPathologyReport, isCmoProject);
+
                 });
             }
+            return apiResponse.successResponse(res, 'Successfully notified recipients');
         }).catch(error => {
             return apiResponse.errorResponse(res, `Failed to save comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
         });
