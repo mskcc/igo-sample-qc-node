@@ -71,7 +71,7 @@ export function addInitialComment(
       .then((response) => {
         return dispatch({
           type: ADD_INITIAL_COMMENT_SUCCESS,
-          payload: response.data.comments,
+          payload: response.data.data.comments,
           message: 'Saved and notified!',
         });
       })
