@@ -72,14 +72,7 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
         if (sample['hideFromSampleQC'] === false) {
 
             if (tableType === 'attachments') {
-                responseSample['action'] = (
-                    '<div record-id=\''
-                + sample['recordId'].toString()
-                + '\' file-name=\''
-                + sample['fileName'].toString()
-                + '\' class =\'download-icon\'><i class=%s>%s</i></div>'
-                % ('material-icons', 'cloud_download')
-                );
+                responseSample['action'] = (`<div record-id=${sample['recordId'].toString()} file-name=${sample['fileName'].toString()} class="download-icon"><i class="material-icons">cloud_download</i></div>`);
             }
 
             for (let dataField of Object.keys(sample)) {

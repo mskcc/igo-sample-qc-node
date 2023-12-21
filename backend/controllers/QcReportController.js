@@ -150,7 +150,7 @@ exports.getQcReportSamples = [
                     }
                     for (let field of Object.keys(qcReportResults)) {
                         if (field === 'dnaReportSamples') {
-                            if (reports.includes('DNA Report')) {
+                            if ((reports.includes('DNA Report') && isAuthed) || isLabMember) {
                                 readOnly = isCmoPmOnlyAndNotPmUser || isDecisionMade(qcReportResults[field]);
                                 constantColumnFeatures = mergeColumns(sharedColumns, dnaColumns);
                                 constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
@@ -168,7 +168,7 @@ exports.getQcReportSamples = [
                             }
                         }
                         if (field === 'rnaReportSamples') {
-                            if (reports.includes('RNA Report')) {
+                            if ((reports.includes('RNA Report') && isAuthed) || isLabMember) {
                                 readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                                 constantColumnFeatures = mergeColumns(sharedColumns, rnaColumns);
                                 constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
@@ -186,7 +186,7 @@ exports.getQcReportSamples = [
                             }
                         }
                         if (field === 'libraryReportSamples') {
-                            if (reports.includes('Library Report')) {
+                            if ((reports.includes('Library Report') && isAuthed) || isLabMember) {
                                 readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                                 constantColumnFeatures = mergeColumns(sharedColumns, libraryColumns);
                                 constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
@@ -204,7 +204,7 @@ exports.getQcReportSamples = [
                             }
                         }
                         if (field === 'poolReportSamples') {
-                            if (reports.includes('Pool Report')) {
+                            if ((reports.includes('Pool Report') && isAuthed) || isLabMember) {
                                 readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                                 constantColumnFeatures = mergeColumns(sharedColumns, poolColumns);
                                 constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
@@ -222,7 +222,7 @@ exports.getQcReportSamples = [
                             }
                         }
                         if (field === 'pathologyReportSamples') {
-                            if (reports.includes('Pathology Report')) {
+                            if ((reports.includes('Pathology Report') && isAuthed) || isLabMember) {
 
                                 tables[field] = buildTableHTML(
                                     field,
