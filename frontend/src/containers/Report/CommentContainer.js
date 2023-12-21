@@ -14,19 +14,9 @@ import {
 import { CommentArea, CommentEditorArea } from '../../components/Comments';
 
 export class CommentContainer extends Component {
-  state = {
-    loadNewComments: false,
-  };
 
   componentDidMount() {
     this.props.getComments();
-  }
-
-  componentDidUpdate() {
-    if (this.state.loadNewComments) {
-      this.props.getComments();
-      this.setState({loadNewComments: false});
-    }
   }
 
   handleInitialComment = (comment, values) => {
@@ -114,14 +104,12 @@ export class CommentContainer extends Component {
             cancelButtonText: 'Back to Edit',
           }).then((result) => {
             if (result.value) {
-              this.props.addInitialComment(
+              return this.props.addInitialComment(
                 result.value.replace(/\n/gi, '<br>'),
                 filteredReports,
                 recipients,
                 isCmoPmProject
               );
-              this.setState({loadNewComments: true});
-              return;
             } else {
               return true;
             }
@@ -154,14 +142,12 @@ export class CommentContainer extends Component {
         cancelButtonText: 'Back to Edit',
       }).then((result) => {
         if (result.value) {
-          this.props.addInitialComment(
+          return this.props.addInitialComment(
             result.value.replace(/\n/gi, '<br>'),
             filteredReports,
             recipients,
             isCmoPmProject
           );
-          this.setState({loadNewComments: true});
-          return;
         } else {
           return true;
         }
