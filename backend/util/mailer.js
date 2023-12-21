@@ -23,6 +23,7 @@ let transporter = nodemailer.createTransport({
 });
 
 exports.sendInitialNotification = function(recipients, requestId, report, author, isDecided, isPathologyReport, isCmoPmProject) {
+    console.log(report);
     const reportType = report.split(' ')[0];
     const actionNotNeeded = isDecided || isPathologyReport || isCmoPmProject;
     const actionText = actionNotNeeded ? '' : ', Pending further action';

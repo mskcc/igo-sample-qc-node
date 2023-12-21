@@ -490,6 +490,7 @@ exports.addAndNotifyInitial = [
                         request_id: requestId
                     }
                 }).then(commentRelationRecord => {
+                    console.log(commentRelationRecord);
                     let relationId;
                     if (!commentRelationRecord || commentRelationRecord.length === 0) {
                         CommentRelation.create({
