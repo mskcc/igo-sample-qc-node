@@ -492,10 +492,10 @@ exports.addAndNotifyInitial = [
                 username: username
             }
         }).then(user => {
-            for(let report of reports) {
+            Promise.all(reports.map(report => {
                 let isDecided = false;
                 let isPathologyReport = report === 'Pathology Report';
-                CommentRelation.findOne({
+                return CommentRelation.findOne({
                     where: {
                         request_id: requestId,
                         report: report
@@ -565,9 +565,10 @@ exports.addAndNotifyInitial = [
                 }).catch(error => {
                     return apiResponse.errorResponse(res, `Failed to save comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                 });
-            }
+            })).then(() => {
+                return apiResponse.successResponseWithData(res, 'Successfully saved comments and notified recipients', commentsResponse);
+            });
 
-            return apiResponse.successResponseWithData(res, 'Successfully saved comments and notified recipients', commentsResponse);
         }).catch(error => {
             return apiResponse.errorResponse(res, `Failed to save user comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
         });
