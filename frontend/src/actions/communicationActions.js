@@ -41,6 +41,7 @@ export function addInitialComment(
 ) {
   return (dispatch, getState) => {
     let decisionsMade = {};
+    console.log(reports);
     for (let report in reports) {
       // determines whether creating an initial comment also triggers an entry to the decisions table
       if (allDecisionsMadeInBackend(
