@@ -492,14 +492,16 @@ exports.addAndNotifyInitial = [
                 }).then(commentRelationRecord => {
                     let relationId;
                     if (!commentRelationRecord || commentRelationRecord.length === 0) {
-                        const commentRelation = CommentRelation.create({
+                        CommentRelation.create({
                             request_id: requestId,
                             report: report,
                             recipients: recipients,
                             is_cmo_pm_project: isCmoProject,
                             author: username
+                        }).then(relation => {
+                            relationId = relation.id;
                         });
-                        relationId = commentRelation.id;
+                        
                     } else {
                         relationId = commentRelationRecord.id;
                     }
