@@ -24,7 +24,7 @@ export class CommentContainer extends Component {
 
   componentDidUpdate() {
     if (this.state.loadNewComments) {
-      this props.getComments();
+      this.props.getComments();
       this.setState({loadNewComments: false});
     }
   }
