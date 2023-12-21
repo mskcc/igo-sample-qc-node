@@ -69,11 +69,15 @@ export function addInitialComment(
     return axios
       .post(Config.API_ROOT + '/qcReport/addAndNotifyInitial', { data: commentToSave })
       .then((response) => {
-        console.log(getState().communication.comments);
-        console.log(response);
+        const newCommentState = {
+          ...getState().communication.comments,
+          ...response.data.data
+        }
+
+        console.log(newCommentState);
         return dispatch({
           type: ADD_INITIAL_COMMENT_SUCCESS,
-          payload: response.data.data.comments,
+          payload: newCommentState,
           message: 'Saved and notified!',
         });
       })
