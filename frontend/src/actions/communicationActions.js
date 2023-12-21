@@ -127,9 +127,16 @@ export function addComment(comment, report) {
         return axios
           .post(Config.API_ROOT + '/qcReport/addAndNotify', { data: commentToSave })
           .then((response) => {
+            // already comments for report; add onto state instead of overwriting
+            let newCommentData = response.data.data[report].comments[0];
+            const currentComments = getState().communication.comments;
+            const currentCommentsForReport = currentComments[report];
+            
+            currentCommentsForReport.comments.push(newCommentData);
+            }
             const newCommentState = {
               ...getState().communication.comments,
-              ...response.data.data
+              ...currentCommentsForReport
             }
             return dispatch({
               type: ADD_COMMENT_SUCCESS,
