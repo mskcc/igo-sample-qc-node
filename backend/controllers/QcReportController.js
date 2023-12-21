@@ -477,8 +477,6 @@ exports.addAndNotifyInitial = [
         const isCmoProject = reqData.is_cmo_pm_project;
         const username = reqData.comment.username;
 
-        console.log(decisionsMade);
-
         Users.findOne({
             where: {
                 username: username
