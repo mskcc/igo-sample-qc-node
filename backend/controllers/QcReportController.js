@@ -615,7 +615,14 @@ exports.addAndNotify = [
                 commentsResponse[report]['recipients'] = commentRelationRecord.recipients;
                 commentsResponse[report]['comments'].push(commentData);
 
-                mailer.sendNotification(commentRelationRecord.recipients, comment, requestId, report, user);
+                // if a non-lab member comments, notify intial comment's author
+                let emailRecipients = commentRelationRecord.recipients;
+                if (user.role !== 'lab_member') {
+                    const authorEmail = `${commentRelationRecord.author}@mskcc.org`;
+                    emailRecipients = emailRecipients.concat(',', authorEmail);
+                }
+
+                mailer.sendNotification(emailRecipients, comment, requestId, report, user);
 
                 return apiResponse.successResponseWithData(res, 'Successfully saved comment and notified recipients', commentsResponse);
 
@@ -672,10 +679,18 @@ exports.addToAllAndNotify = [
                         'full_name': user.full_name,
                         'title': user.title
                     };
+
                     commentsResponse[report]['recipients'] = commentRelationRecord.recipients;
                     commentsResponse[report]['comments'].push(commentData);
 
-                    mailer.sendNotification(commentRelationRecord.recipients, comment, requestId, report, user);
+                    // if a non-lab member comments, notify intial comment's author
+                    let emailRecipients = commentRelationRecord.recipients;
+                    if (user.role !== 'lab_member') {
+                        const authorEmail = `${commentRelationRecord.author}@mskcc.org`;
+                        emailRecipients = emailRecipients.concat(',', authorEmail);
+                    }
+
+                    mailer.sendNotification(emailRecipients, comment, requestId, report, user);
 
 
                 }).catch(error => {
