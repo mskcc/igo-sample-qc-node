@@ -70,6 +70,7 @@ export function addInitialComment(
       .post(Config.API_ROOT + '/qcReport/addAndNotifyInitial', { data: commentToSave })
       .then((response) => {
         console.log(getState().communication.comments);
+        console.log(response);
         return dispatch({
           type: ADD_INITIAL_COMMENT_SUCCESS,
           payload: response.data.data.comments,
