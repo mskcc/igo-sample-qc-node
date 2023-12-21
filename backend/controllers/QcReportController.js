@@ -483,11 +483,13 @@ exports.addAndNotifyInitial = [
             }
         }).then(user => {
             for(let report in reports) {
+                console.log(report);
                 let isDecided = false;
                 let isPathologyReport = report === 'Pathology Report';
                 CommentRelation.findOne({
                     where: {
-                        request_id: requestId
+                        request_id: requestId,
+                        report: report
                     }
                 }).then(commentRelationRecord => {
                     console.log(commentRelationRecord);
