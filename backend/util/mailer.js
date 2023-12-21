@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
-const { logger } = require('../util/winston');
-const { emailConfig } = require('./constants');
+const { logger } = require('./winston');
+const { emailConfig } = require('../constants');
 
 const ENVIRONMENT = process.env.ENV;
 const devRecipients = [
