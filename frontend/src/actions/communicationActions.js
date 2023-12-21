@@ -67,7 +67,7 @@ export function addInitialComment(
     };
     dispatch({ type: ADD_INITIAL_COMMENT });
     return axios
-      .post(Config.API_ROOT + '/addAndNotifyInitial', { data: commentToSave })
+      .post(Config.API_ROOT + '/qcReport/addAndNotifyInitial', { data: commentToSave })
       .then((response) => {
         return dispatch({
           type: ADD_INITIAL_COMMENT_SUCCESS,

@@ -22,7 +22,7 @@ let transporter = nodemailer.createTransport({
     // }
 });
 
-exports.sendInitialNotification = function(recipients, requestId, report, isDecided, isPathologyReport, isCmoPmProject) {
+exports.sendInitialNotification = function(recipients, requestId, report, author, isDecided, isPathologyReport, isCmoPmProject) {
     const reportType = report.split(' ')[0];
     const actionNotNeeded = isDecided || isPathologyReport || isCmoPmProject;
     const actionText = actionNotNeeded ? '' : ', Pending further action';
@@ -30,14 +30,14 @@ exports.sendInitialNotification = function(recipients, requestId, report, isDeci
     let contentBody;
 
     if (isCmoPmProject) {
-        contentBody = `Hello,<br><br>IGO has completed ${reportType} QC on project ${requestId}. <br><br>You can view the results at <a href="https://igo.mskcc.org/sample-qc/request/${requestId}">igo.mskcc.org/sample-qc/request/${requestId}</a>. Your Project Manager will be handling any QC related decisions and questions.<br><br>Thank you,`;
+        contentBody = `Hello,<br><br>IGO has completed ${reportType} QC on project ${requestId}. <br><br>You can view the results at <a href="https://igo.mskcc.org/sample-qc/request/${requestId}">igo.mskcc.org/sample-qc/request/${requestId}</a>. Your Project Manager will be handling any QC related decisions and questions.<br><br>Thank you,<br><br><span style='color:#f29934; font-weight:bold;'>${author.full_name}</span><br>${author.title}`;
     } else {
-        contentBody = `Hello,<br><br>IGO has completed ${reportType} QC on project ${requestId}. <br><br>Please proceed to <a href="https://igo.mskcc.org/sample-qc/request/${requestId}">igo.mskcc.org/sample-qc/request/${requestId}</a> to ask any questions, download related documents, and to indicate which sample(s) should continue with processing.<br><br>Thank you,`;
+        contentBody = `Hello,<br><br>IGO has completed ${reportType} QC on project ${requestId}. <br><br>Please proceed to <a href="https://igo.mskcc.org/sample-qc/request/${requestId}">igo.mskcc.org/sample-qc/request/${requestId}</a> to ask any questions, download related documents, and to indicate which sample(s) should continue with processing.<br><br>Thank you,<br><br><span style='color:#f29934; font-weight:bold;'>${author.full_name}</span><br>${author.title}`;
     }
 
     // dev testing
     if (ENVIRONMENT === 'development') {
-        contentBody = contentBody + `<br><br>In production, this email would have been sent to: ${recipients.join(', ')}<br><br>`;
+        contentBody = contentBody + `<br><br>In production, this email would have been sent to: ${recipients}<br><br>`;
         email = {
             subject: `${emailConfig.devSubject} ${requestId} ${reportType} QC results available${actionText}`,
             content: contentBody,
@@ -49,7 +49,7 @@ exports.sendInitialNotification = function(recipients, requestId, report, isDeci
             subject: `${emailConfig.subject} ${requestId} ${reportType} QC results available${actionText}`,
             content: contentBody,
             footer: emailConfig.footer,
-            mailTo: recipients.join(',')
+            mailTo: recipients
         };
     }
 

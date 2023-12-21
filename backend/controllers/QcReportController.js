@@ -23,6 +23,7 @@ const {
     buildTableHTML,
     isUserAuthorizedForRequest
 } = require('../util/helpers');
+const mailer = require('../util/mailer');
 const Decisions = db.decisions;
 const CommentRelation = db.commentRelations;
 const Comments = db.comments;
@@ -462,5 +463,74 @@ exports.getComments = [
         }).catch(error => {
             return apiResponse.errorResponse(res, `Failed to retrieve commentRelations from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
         });
+    }
+];
+
+exports.addAndNotifyInitial = [
+    function(req, res) {
+        const reqData = req.body.data;
+        const comment = reqData.comment;
+        const reports = reqData.reports;
+        const requestId = reqData.request_id;
+        const recipients = reqData.recipients;
+        const decisionsMade = reqData.decisions_made;
+        const isCmoProject = reqData.is_cmo_pm_project;
+        const username = reqData.comment.username;
+
+        Users.findOne({
+            where: {
+                username: username
+            }
+        }).then(user => {
+            for(let report in reports) {
+                let isDecided = false;
+                let isPathologyReport = report === 'Pathology Report';
+                CommentRelation.findOne({
+                    where: {
+                        request_id: requestId
+                    }
+                }).then(commentRelationRecord => {
+                    let relationId;
+                    if (!commentRelationRecord || commentRelationRecord.length === 0) {
+                        const commentRelation = CommentRelation.create({
+                            request_id: requestId,
+                            report: report,
+                            recipients: recipients,
+                            is_cmo_pm_project: isCmoProject,
+                            author: username
+                        });
+                        relationId = commentRelation.id;
+                    } else {
+                        relationId = commentRelationRecord.id;
+                    }
+
+                    Comments.create({
+                        comment: comment.content,
+                        commentrelation_id: relationId,
+                        username: username
+                    });
+
+                    // an inital comment was submitted for a report where all decisions have been made in the LIMS already
+                    if (report in decisionsMade) {
+                        isDecided = true;
+                        Decisions.create({
+                            request_id: requestId,
+                            decision_maker: username,
+                            comment_relation_id: relationId,
+                            report: report,
+                            is_submitted: true,
+                            is_igo_decision: true,
+                            decisions: JSON.stringify(decisionsMade[report])
+                        });
+                    }
+
+                    mailer.sendInitialNotification(recipients, requestId, report, user, isDecided, isPathologyReport, isCmoProject);
+                });
+            }
+        }).catch(error => {
+            return apiResponse.errorResponse(res, `Failed to save comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+        });
+        
+        
     }
 ];
