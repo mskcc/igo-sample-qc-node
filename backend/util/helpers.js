@@ -69,7 +69,7 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
         const responseSample = {};
 
         // samples can be selected to be hidden in LIMS
-        if (sample['hideFromSampleQC'] === false) {
+        if (sample['hideFromSampleQC'] === false || sample['hideFromSampleQC'] === null) {
 
             if (tableType === 'attachments') {
                 responseSample['action'] = (`<div record-id=${sample['recordId'].toString()} file-name=${sample['fileName'].toString()} class="download-icon"><i class="material-icons">cloud_download</i></div>`);
