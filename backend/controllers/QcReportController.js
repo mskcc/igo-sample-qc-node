@@ -502,7 +502,7 @@ exports.addAndNotifyInitial = [
                     }
                 }).then(commentRelationRecord => {
                     let relationId;
-                    let createdAtDate = Date.now().toISOString();
+                    let createdAtDate = new Date().toISOString();
                     if (!commentRelationRecord || commentRelationRecord.length === 0) {
                         CommentRelation.create({
                             request_id: requestId,
