@@ -14,6 +14,7 @@ const styles = (theme) => ({
     height: '50vh',
     gridTemplateAreas: '"history" "new-comment"',
     gridTemplateRows: '80% 20%',
+    margin: '30px'
     // borderBottom: "2px solid rgba(0, 0, 0, 0.23)",
     // borderLeft: "2px solid rgba(0, 0, 0, 0.23)",
     // borderRight: "2px solid rgba(0, 0, 0, 0.23)",

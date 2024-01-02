@@ -229,48 +229,50 @@ export class CommentContainer extends Component {
   render() {
     return (
       <React.Fragment>
-        <div className='commentSection'>
         {this.props.report.reportShown &&
         this.props.comments &&
         this.props.report.reportShown.includes('Report') &&
         this.props.comments[this.props.report.reportShown] &&
         this.props.comments[this.props.report.reportShown].comments.length >
           0 ? (
-          <CommentArea
-            currentReportShown={this.props.report.reportShown}
-            numOfReports={
-              Object.keys(this.props.report.tables).filter((commentReport) =>
-                commentReport.includes('Report')
-              ).length
-            }
-            comments={
-              this.props.comments[this.props.report.reportShown].comments
-            }
-            currentUser={this.props.user.username}
-            addComment={this.addComment}
-            addCommentToAllReports={this.addCommentToAllReports}
-          />
+            <CommentArea
+              currentReportShown={this.props.report.reportShown}
+              numOfReports={
+                Object.keys(this.props.report.tables).filter((commentReport) =>
+                  commentReport.includes('Report')
+                ).length
+              }
+              comments={
+                this.props.comments[this.props.report.reportShown].comments
+              }
+              currentUser={this.props.user.username}
+              addComment={this.addComment}
+              addCommentToAllReports={this.addCommentToAllReports}
+            />
         ) : (
           this.props.report.reportShown &&
           this.props.report.reportShown.includes('Report') &&
           this.props.report.tables && (
-            <CommentEditorArea
-              recipe={
-                this.props.report.tables[this.props.report.reportShown].data[0]
-                  .recipe
-              }
-              currentReportShown={this.props.report.reportShown}
-              addInitialComment={this.addInitialComment}
-              handleInitialComment={this.handleInitialComment}
-              request={this.props.report.request}
-              recipients={this.props.recipients}
-              tables={this.props.report.tables}
-              comments={this.props.comments}
-              handleRecipientSubmit={this.handleRecipientSubmit}
-            />
+            <div className='commentSection'>
+
+              <CommentEditorArea
+                recipe={
+                  this.props.report.tables[this.props.report.reportShown].data[0]
+                    .recipe
+                }
+                currentReportShown={this.props.report.reportShown}
+                addInitialComment={this.addInitialComment}
+                handleInitialComment={this.handleInitialComment}
+                request={this.props.report.request}
+                recipients={this.props.recipients}
+                tables={this.props.report.tables}
+                comments={this.props.comments}
+                handleRecipientSubmit={this.handleRecipientSubmit}
+              />
+            </div>
           )
+
         )}
-        </div>
       </React.Fragment>
     );
   }
