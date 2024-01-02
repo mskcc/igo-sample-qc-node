@@ -171,7 +171,7 @@ export function addCommentToAllReports(comment, reports) {
       html:
         "<div class='swal-comment-review'>In production, this comment will trigger an email notification to the following recipients:<br> <br>" +
         recipientsSet.join('<br>') +
-        '<br> During testing, it will be sent to you, Anna and Lisa.</div>',
+        '</div>',
       footer:
         'Please make sure that this comment contains no PHI. This webapp is not PHI secure and submitting PHI would violate MSK policy.',
       type: 'warning',
@@ -189,9 +189,7 @@ export function addCommentToAllReports(comment, reports) {
             username: getState().user.username,
           },
           request_id: getState().report.request.requestId,
-          reports: reports,
-          recipients: recipients.join(),
-          is_cmo_pm_project: isCmoPmProject
+          reports: reports
         };
 
         dispatch({ type: ADD_COMMENT_TO_ALL });

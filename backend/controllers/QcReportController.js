@@ -642,8 +642,6 @@ exports.addToAllAndNotify = [
         const username = reqData.comment.username;
         const reports = reqData.reports;
         const requestId = reqData.request_id;
-        const isCmoProject = reqData.is_cmo_pm_project;
-        const recipients = reqData.recipients;
 
         // return value for comment state:
         const commentsResponse = {};
@@ -669,28 +667,12 @@ exports.addToAllAndNotify = [
                             report: report
                         }
                     }).then(commentRelationRecord => {
-                        // CREATE RELATION RECORDS IF NOT EXISTS
-                        if (!commentRelationRecord || commentRelationRecord.length === 0) {
-                            CommentRelation.create({
-                                request_id: requestId,
-                                report: report,
-                                recipients: recipients,
-                                is_cmo_pm_project: isCmoProject,
-                                author: username
-                            }).then(relation => {
-                                Comments.create({
-                                    comment: comment.content,
-                                    commentrelation_id: relation.id,
-                                    username: username
-                                });
-                            });
-                        } else {
-                            Comments.create({
-                                comment: comment,
-                                commentrelation_id: commentRelationRecord.id,
-                                username: username
-                            });
-                        }
+                        
+                        Comments.create({
+                            comment: comment,
+                            commentrelation_id: commentRelationRecord.id,
+                            username: username
+                        });
                     
                         const commentData = {
                             'comment': comment,
@@ -700,11 +682,11 @@ exports.addToAllAndNotify = [
                             'title': user.title
                         };
 
-                        commentsResponse[report]['recipients'] = recipients;
+                        commentsResponse[report]['recipients'] = commentRelationRecord.recipients;
                         commentsResponse[report]['comments'].push(commentData);
 
                         // if a non-lab member comments, notify intial comment's author
-                        let emailRecipients = recipients;
+                        let emailRecipients = commentRelationRecord.recipients;
                         if (user.role !== 'lab_member') {
                             const authorEmail = `${commentRelationRecord.author}@mskcc.org`;
                             emailRecipients = emailRecipients.concat(',', authorEmail);
