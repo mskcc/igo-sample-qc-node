@@ -229,6 +229,7 @@ export class CommentContainer extends Component {
   render() {
     return (
       <React.Fragment>
+        <div className='commentSection'>
         {this.props.report.reportShown &&
         this.props.comments &&
         this.props.report.reportShown.includes('Report') &&
@@ -269,6 +270,7 @@ export class CommentContainer extends Component {
             />
           )
         )}
+        </div>
       </React.Fragment>
     );
   }
