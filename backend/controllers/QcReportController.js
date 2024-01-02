@@ -423,7 +423,8 @@ exports.getComments = [
                 return Comments.findAll({
                     where: {
                         commentrelation_id: commentRelation.id
-                    }
+                    },
+                    order: [['date_created', 'ASC']]
                 }).then(commentsRecords => {
                     // commentsRecords.forEach(comment => {
                     return Promise.all(commentsRecords.map(comment => {
