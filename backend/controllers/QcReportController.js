@@ -502,7 +502,7 @@ exports.addAndNotifyInitial = [
                     }
                 }).then(commentRelationRecord => {
                     let relationId;
-                    let createdAtDate = new Date().toISOString();
+                    let createdAtDate = new Date().toISOString().replace('T', ' ').replace('Z', '');
                     if (!commentRelationRecord || commentRelationRecord.length === 0) {
                         CommentRelation.create({
                             request_id: requestId,
@@ -607,7 +607,7 @@ exports.addAndNotify = [
                 });
                 const commentData = {
                     'comment': comment,
-                    'date_created': new Date().toISOString(),
+                    'date_created': new Date().toISOString().replace('T', ' ').replace('Z', ''),
                     'username': username,
                     'full_name': user.full_name,
                     'title': user.title
@@ -676,7 +676,7 @@ exports.addToAllAndNotify = [
                     
                         const commentData = {
                             'comment': comment,
-                            'date_created': new Date().toISOString(),
+                            'date_created': new Date().toISOString().replace('T', ' ').replace('Z', ''),
                             'username': username,
                             'full_name': user.full_name,
                             'title': user.title
