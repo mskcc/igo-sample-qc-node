@@ -235,6 +235,7 @@ export class CommentContainer extends Component {
         this.props.comments[this.props.report.reportShown] &&
         this.props.comments[this.props.report.reportShown].comments.length >
           0 ? (
+          <div className='commentSection'>
             <CommentArea
               currentReportShown={this.props.report.reportShown}
               numOfReports={
@@ -249,6 +250,7 @@ export class CommentContainer extends Component {
               addComment={this.addComment}
               addCommentToAllReports={this.addCommentToAllReports}
             />
+          </div>
         ) : (
           this.props.report.reportShown &&
           this.props.report.reportShown.includes('Report') &&

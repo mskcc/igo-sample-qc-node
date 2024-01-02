@@ -10,6 +10,7 @@ const styles = (theme) => ({
     gridArea: 'history',
     width: '100%',
     overflowX: 'auto',
+    marginTop: '15px'
   },
 });
 
