@@ -190,12 +190,16 @@ export function addCommentToAllReports(comment, reports) {
           },
           request_id: getState().report.request.requestId,
           reports: reports,
+          recipients: recipients.join(),
+          is_cmo_pm_project: isCmoPmProject
         };
 
         dispatch({ type: ADD_COMMENT_TO_ALL });
         return axios
           .post(Config.API_ROOT + '/qcReport/addToAllAndNotify', { data: commentToSave })
           .then((response) => {
+            // already comments for report; add onto state instead of overwriting
+            // TODO FIGURE OUT A WAY TO DO THIS - maybe send current comments through to BE?
             const newCommentState = {
               ...getState().communication.comments,
               ...response.data.data

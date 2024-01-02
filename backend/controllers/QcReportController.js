@@ -642,8 +642,10 @@ exports.addToAllAndNotify = [
         const username = reqData.comment.username;
         const reports = reqData.reports;
         const requestId = reqData.request_id;
+        const isCmoProject = reqData.is_cmo_pm_project;
+        const recipients = reqData.recipients;
 
-        //return value for comment state
+        // return value for comment state:
         const commentsResponse = {};
         // const commentsResponse = {
         //     'DNA Report': {'comments': [], 'recipients': ''},
@@ -658,44 +660,63 @@ exports.addToAllAndNotify = [
             }
         }).then(user => {
             Promise.all(reports.map(report => {
-                commentsResponse[report] = {'comments': [], 'recipients': ''};
+                if (report.toLowerCase() !== 'attachments') {
+                    commentsResponse[report] = {'comments': [], 'recipients': ''};
 
-                return CommentRelation.findOne({
-                    where: {
-                        request_id: requestId,
-                        report: report
-                    }
-                }).then(commentRelationRecord => {
-                    Comments.create({
-                        comment: comment,
-                        commentrelation_id: commentRelationRecord.id,
-                        username: username
+                    return CommentRelation.findOne({
+                        where: {
+                            request_id: requestId,
+                            report: report
+                        }
+                    }).then(commentRelationRecord => {
+                        // CREATE RELATION RECORDS IF NOT EXISTS
+                        if (!commentRelationRecord || commentRelationRecord.length === 0) {
+                            CommentRelation.create({
+                                request_id: requestId,
+                                report: report,
+                                recipients: recipients,
+                                is_cmo_pm_project: isCmoProject,
+                                author: username
+                            }).then(relation => {
+                                Comments.create({
+                                    comment: comment.content,
+                                    commentrelation_id: relation.id,
+                                    username: username
+                                });
+                            });
+                        } else {
+                            Comments.create({
+                                comment: comment,
+                                commentrelation_id: commentRelationRecord.id,
+                                username: username
+                            });
+                        }
+                    
+                        const commentData = {
+                            'comment': comment,
+                            'date_created': new Date().toISOString(),
+                            'username': username,
+                            'full_name': user.full_name,
+                            'title': user.title
+                        };
+
+                        commentsResponse[report]['recipients'] = recipients;
+                        commentsResponse[report]['comments'].push(commentData);
+
+                        // if a non-lab member comments, notify intial comment's author
+                        let emailRecipients = recipients;
+                        if (user.role !== 'lab_member') {
+                            const authorEmail = `${commentRelationRecord.author}@mskcc.org`;
+                            emailRecipients = emailRecipients.concat(',', authorEmail);
+                        }
+
+                        mailer.sendNotification(emailRecipients, comment, requestId, report, user);
+
+
+                    }).catch(error => {
+                        return apiResponse.errorResponse(res, `Failed to save user comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                     });
-
-                    const commentData = {
-                        'comment': comment,
-                        'date_created': new Date().toISOString(),
-                        'username': username,
-                        'full_name': user.full_name,
-                        'title': user.title
-                    };
-
-                    commentsResponse[report]['recipients'] = commentRelationRecord.recipients;
-                    commentsResponse[report]['comments'].push(commentData);
-
-                    // if a non-lab member comments, notify intial comment's author
-                    let emailRecipients = commentRelationRecord.recipients;
-                    if (user.role !== 'lab_member') {
-                        const authorEmail = `${commentRelationRecord.author}@mskcc.org`;
-                        emailRecipients = emailRecipients.concat(',', authorEmail);
-                    }
-
-                    mailer.sendNotification(emailRecipients, comment, requestId, report, user);
-
-
-                }).catch(error => {
-                    return apiResponse.errorResponse(res, `Failed to save user comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
-                });
+                }
             })).then(() => {
                 return apiResponse.successResponseWithData(res, 'Successfully saved comments and notified recipients', commentsResponse);
             });
