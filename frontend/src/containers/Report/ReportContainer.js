@@ -24,8 +24,8 @@ export class ReportContainer extends Component {
         <div className="content">
           {this.props.report.loaded && (
             <React.Fragment>
-              <TableContainer />
               <CommentContainer />
+              <TableContainer />
             </React.Fragment>
           )}
           {!this.props.report.loaded && (

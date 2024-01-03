@@ -235,7 +235,6 @@ export class CommentContainer extends Component {
         this.props.comments[this.props.report.reportShown] &&
         this.props.comments[this.props.report.reportShown].comments.length >
           0 ? (
-          <div className='commentSection'>
             <CommentArea
               currentReportShown={this.props.report.reportShown}
               numOfReports={
@@ -250,13 +249,10 @@ export class CommentContainer extends Component {
               addComment={this.addComment}
               addCommentToAllReports={this.addCommentToAllReports}
             />
-          </div>
         ) : (
           this.props.report.reportShown &&
           this.props.report.reportShown.includes('Report') &&
           this.props.report.tables && (
-            <div className='commentSection'>
-
               <CommentEditorArea
                 recipe={
                   this.props.report.tables[this.props.report.reportShown].data[0]
@@ -271,7 +267,6 @@ export class CommentContainer extends Component {
                 comments={this.props.comments}
                 handleRecipientSubmit={this.handleRecipientSubmit}
               />
-            </div>
           )
 
         )}
