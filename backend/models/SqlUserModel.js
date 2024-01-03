@@ -16,11 +16,11 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.DataTypes.TEXT,
         },
         createdAt: {
-            field: 'date_created',
+            field: 'login_first_date',
             type: Sequelize.DataTypes.DATE,
         },
         updatedAt: {
-            field: 'date_updated',
+            field: 'login_latest_date',
             type: Sequelize.DataTypes.DATE,
         }
     }, {

@@ -67,11 +67,15 @@ export function addInitialComment(
     };
     dispatch({ type: ADD_INITIAL_COMMENT });
     return axios
-      .post(Config.API_ROOT + '/addAndNotifyInitial', { data: commentToSave })
+      .post(Config.API_ROOT + '/qcReport/addAndNotifyInitial', { data: commentToSave })
       .then((response) => {
+        const newCommentState = {
+          ...getState().communication.comments,
+          ...response.data.data
+        }
         return dispatch({
           type: ADD_INITIAL_COMMENT_SUCCESS,
-          payload: response.data.comments,
+          payload: newCommentState,
           message: 'Saved and notified!',
         });
       })
@@ -91,7 +95,6 @@ export const ADD_COMMENT_FAIL = 'ADD_COMMENT_FAIL';
 
 export function addComment(comment, report) {
   return (dispatch, getState) => {
-    console.log(getState().communication.comments[report].recipients);
     Swal.fire({
       title: 'Are you sure?',
       html:
@@ -122,11 +125,22 @@ export function addComment(comment, report) {
 
         dispatch({ type: ADD_COMMENT });
         return axios
-          .post(Config.API_ROOT + '/addAndNotify', { data: commentToSave })
+          .post(Config.API_ROOT + '/qcReport/addAndNotify', { data: commentToSave })
           .then((response) => {
+            // already comments for report; add onto state instead of overwriting
+            let newCommentData = response.data.data[report].comments[0];
+            const currentComments = getState().communication.comments;
+            const currentCommentsForReport = currentComments[report];
+            
+            currentCommentsForReport.comments.push(newCommentData);
+            
+            const newCommentState = {
+              ...getState().communication.comments,
+              ...currentCommentsForReport
+            }
             return dispatch({
               type: ADD_COMMENT_SUCCESS,
-              payload: response.data.comments,
+              payload: newCommentState,
               message: 'Saved and notified!',
             });
           })
@@ -157,7 +171,7 @@ export function addCommentToAllReports(comment, reports) {
       html:
         "<div class='swal-comment-review'>In production, this comment will trigger an email notification to the following recipients:<br> <br>" +
         recipientsSet.join('<br>') +
-        '<br> During testing, it will be sent to you, Anna and Lisa.</div>',
+        '</div>',
       footer:
         'Please make sure that this comment contains no PHI. This webapp is not PHI secure and submitting PHI would violate MSK policy.',
       type: 'warning',
@@ -175,16 +189,33 @@ export function addCommentToAllReports(comment, reports) {
             username: getState().user.username,
           },
           request_id: getState().report.request.requestId,
-          reports: reports,
+          reports: reports
         };
 
         dispatch({ type: ADD_COMMENT_TO_ALL });
         return axios
-          .post(Config.API_ROOT + '/addToAllAndNotify', { data: commentToSave })
+          .post(Config.API_ROOT + '/qcReport/addToAllAndNotify', { data: commentToSave })
           .then((response) => {
+            // recreate proper comment state with new comment for each report
+            const currentComments = getState().communication.comments;
+            const allComments = {};
+            reports.forEach(report => {
+              if (report.toLowerCase() !== 'attachments') {
+                let newCommentData = response.data.data[report].comments[0];
+                const currentCommentsForReport = currentComments[report];
+
+                currentCommentsForReport.comments.push(newCommentData);
+
+                allComments[report] = currentCommentsForReport;
+              }
+            })
+
+            const newCommentState = {
+              ...allComments
+            }
             return dispatch({
               type: ADD_COMMENT_TO_ALL_SUCCESS,
-              payload: response.data.comments,
+              payload: newCommentState,
               message: 'Saved and notified!',
             });
           })
@@ -211,15 +242,15 @@ export function getComments() {
 
     dispatch({ type: GET_COMMENTS });
     return axios
-      .get(Config.API_ROOT + '/qcReport/getComments', {
-        params: {
-          request_id: requestId,
-        },
+      .get(Config.API_ROOT + `/qcReport/getComments?request_id=${requestId}`, {
+        // params: {
+        //   request_id: requestId,
+        // },
       })
       .then((response) => {
         return dispatch({
           type: GET_COMMENTS_SUCCESS,
-          payload: response.data.comments,
+          payload: response.data.data.comments,
         });
       })
       .catch((error) => {

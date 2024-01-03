@@ -10,6 +10,7 @@ const styles = (theme) => ({
     gridArea: 'history',
     width: '100%',
     overflowX: 'auto',
+    marginTop: '15px'
   },
 });
 
@@ -26,7 +27,7 @@ const CommentBox = ({ comments, currentUser, classes }) => {
           title={comment.title}
           fullName={comment.full_name}
           comment={comment.comment}
-          date={comment.date_created}
+          date={comment.date_created.replace('T', ' ').replace('Z', '')}
           alignment={currentUser === comment.username ? 'right' : 'left'}
           id={`item_${i + 1}`}
           key={i}

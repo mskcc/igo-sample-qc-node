@@ -23,8 +23,11 @@ const {
     buildTableHTML,
     isUserAuthorizedForRequest
 } = require('../util/helpers');
+const mailer = require('../util/mailer');
 const Decisions = db.decisions;
 const CommentRelation = db.commentRelations;
+const Comments = db.comments;
+const Users = db.users;
 
 
 exports.getRequestSamples = [
@@ -147,7 +150,7 @@ exports.getQcReportSamples = [
                     }
                     for (let field of Object.keys(qcReportResults)) {
                         if (field === 'dnaReportSamples') {
-                            if (reports.includes('DNA Report')) {
+                            if ((reports.includes('DNA Report') && isAuthed) || isLabMember) {
                                 readOnly = isCmoPmOnlyAndNotPmUser || isDecisionMade(qcReportResults[field]);
                                 constantColumnFeatures = mergeColumns(sharedColumns, dnaColumns);
                                 constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
@@ -165,7 +168,7 @@ exports.getQcReportSamples = [
                             }
                         }
                         if (field === 'rnaReportSamples') {
-                            if (reports.includes('RNA Report')) {
+                            if ((reports.includes('RNA Report') && isAuthed) || isLabMember) {
                                 readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                                 constantColumnFeatures = mergeColumns(sharedColumns, rnaColumns);
                                 constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
@@ -183,7 +186,7 @@ exports.getQcReportSamples = [
                             }
                         }
                         if (field === 'libraryReportSamples') {
-                            if (reports.includes('Library Report')) {
+                            if ((reports.includes('Library Report') && isAuthed) || isLabMember) {
                                 readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                                 constantColumnFeatures = mergeColumns(sharedColumns, libraryColumns);
                                 constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
@@ -201,7 +204,7 @@ exports.getQcReportSamples = [
                             }
                         }
                         if (field === 'poolReportSamples') {
-                            if (reports.includes('Pool Report')) {
+                            if ((reports.includes('Pool Report') && isAuthed) || isLabMember) {
                                 readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
                                 constantColumnFeatures = mergeColumns(sharedColumns, poolColumns);
                                 constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
@@ -219,7 +222,7 @@ exports.getQcReportSamples = [
                             }
                         }
                         if (field === 'pathologyReportSamples') {
-                            if (reports.includes('Pathology Report')) {
+                            if ((reports.includes('Pathology Report') && isAuthed) || isLabMember) {
 
                                 tables[field] = buildTableHTML(
                                     field,
@@ -389,9 +392,319 @@ exports.setQCInvestigatorDecision = [
     }
 ];
 
-// exports.getComments = [
-//     param('request_id').exists().withMessage('request ID must be specified.'),
-//     function(req, res) {
-//         const requestId = req.param.request_id;
-//     }
-// ]
+exports.getComments = [
+    query('request_id').exists().withMessage('request ID must be specified.'),
+    function(req, res) {
+        const requestId = req.query.request_id;
+        const responseObj = {'comments': null};
+
+        CommentRelation.findAll({
+            where: {
+                request_id: requestId
+            }
+        }).then(commentRelationRecords => {
+            if (!commentRelationRecords || commentRelationRecords.length === 0) {
+                return apiResponse.successResponseWithData(res, 'No comments for request', responseObj);
+            }
+            // response should look like: 
+            
+            const commentsResponse = {
+                'DNA Report': {'comments': [], 'recipients': ''},
+                'RNA Report': {'comments': [], 'recipients': ''},
+                'Pool Report': {'comments': [], 'recipients': ''},
+                'Library Report': {'comments': [], 'recipients': ''},
+                'Pathology Report': {'comments': [], 'recipients': ''}
+            };
+
+            
+            return Promise.all(commentRelationRecords.map(commentRelation => {
+                commentsResponse[commentRelation.report]['recipients'] = commentRelation.recipients;
+
+                return Comments.findAll({
+                    where: {
+                        commentrelation_id: commentRelation.id
+                    },
+                    order: [['date_created', 'ASC']]
+                }).then(commentsRecords => {
+                    // commentsRecords.forEach(comment => {
+                    return Promise.all(commentsRecords.map(comment => {
+                        return Users.findOne({
+                            where: {
+                                username: comment.username
+                            }
+                        }).then(user => {
+
+                            const commentData = {
+                                'comment': comment.comment,
+                                'date_created': comment.createdAt,
+                                'username': comment.username,
+                                'full_name': user.full_name,
+                                'title': user.title
+                            };
+                            commentsResponse[commentRelation.report]['comments'].push(commentData);
+                        });
+                        
+                        
+                    }));
+                     
+                }).catch(error => {
+                    return apiResponse.errorResponse(res, `Failed to retrieve comments from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+                });
+            })).then(() => {
+                // delete reports without comments
+                for (const report in commentsResponse) {
+                    if (commentsResponse[report]['comments'].length === 0) {
+                        delete commentsResponse[report];
+                    }
+                }
+                const response = {'comments': commentsResponse};
+                return apiResponse.successResponseWithData(res, 'Successfully retrieved comments', response); 
+            });
+
+        }).catch(error => {
+            return apiResponse.errorResponse(res, `Failed to retrieve commentRelations from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+        });
+    }
+];
+
+exports.addAndNotifyInitial = [
+    function(req, res) {
+        const reqData = req.body.data;
+        const comment = reqData.comment;
+        const reports = reqData.reports;
+        const requestId = reqData.request_id;
+        const recipients = reqData.recipients;
+        const decisionsMade = reqData.decisions_made;
+        const isCmoProject = reqData.is_cmo_pm_project;
+        const username = reqData.comment.username;
+
+        //return value for comment state
+        const commentsResponse = {};
+        // const commentsResponse = {
+        //     'DNA Report': {'comments': [], 'recipients': ''},
+        //     'RNA Report': {'comments': [], 'recipients': ''},
+        //     'Pool Report': {'comments': [], 'recipients': ''},
+        //     'Library Report': {'comments': [], 'recipients': ''},
+        //     'Pathology Report': {'comments': [], 'recipients': ''}
+        // };
+
+        Users.findOne({
+            where: {
+                username: username
+            }
+        }).then(user => {
+            Promise.all(reports.map(report => {
+                let isDecided = false;
+                let isPathologyReport = report === 'Pathology Report';
+                return CommentRelation.findOne({
+                    where: {
+                        request_id: requestId,
+                        report: report
+                    }
+                }).then(commentRelationRecord => {
+                    let relationId;
+                    let createdAtDate = new Date().toISOString().replace('T', ' ').replace('Z', '');
+                    if (!commentRelationRecord || commentRelationRecord.length === 0) {
+                        CommentRelation.create({
+                            request_id: requestId,
+                            report: report,
+                            recipients: recipients,
+                            is_cmo_pm_project: isCmoProject,
+                            author: username
+                        }).then(relation => {
+                            relationId = relation.id;
+                            createdAtDate = relation.createdAt;
+                            Comments.create({
+                                comment: comment.content,
+                                commentrelation_id: relation.id,
+                                username: username
+                            });
+                        });
+
+                        
+                        
+                    } else {
+                        relationId = commentRelationRecord.id;
+                        Comments.create({
+                            comment: comment.content,
+                            commentrelation_id: commentRelationRecord.id,
+                            username: username
+                        }).then(comment => {
+                            createdAtDate = comment.createdAt;
+                        });
+                    }
+
+                    // create commentData for response
+                    commentsResponse[report] = {'comments': [], 'recipients': ''};
+                    const commentData = {
+                        'comment': comment.content,
+                        'date_created': createdAtDate,
+                        'username': username,
+                        'full_name': user.full_name,
+                        'title': user.title
+                    };
+                    commentsResponse[report]['recipients'] = recipients;
+                    commentsResponse[report]['comments'].push(commentData);
+
+
+                    // an inital comment was submitted for a report where all decisions have been made in the LIMS already
+                    if (report in decisionsMade) {
+                        isDecided = true;
+                        Decisions.create({
+                            request_id: requestId,
+                            decision_maker: username,
+                            comment_relation_id: relationId,
+                            report: report,
+                            is_submitted: true,
+                            is_igo_decision: true,
+                            decisions: JSON.stringify(decisionsMade[report])
+                        });
+                    }
+
+                    mailer.sendInitialNotification(recipients, requestId, report, user, isDecided, isPathologyReport, isCmoProject);
+
+                }).catch(error => {
+                    return apiResponse.errorResponse(res, `Failed to save comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+                });
+            })).then(() => {
+                return apiResponse.successResponseWithData(res, 'Successfully saved comments and notified recipients', commentsResponse);
+            });
+
+        }).catch(error => {
+            return apiResponse.errorResponse(res, `Failed to save user comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+        });
+        
+        
+    }
+];
+
+exports.addAndNotify = [
+    function(req, res) {
+        const reqData = req.body.data;
+        const comment = reqData.comment.content;
+        const username = reqData.comment.username;
+        const report = reqData.report;
+        const requestId = reqData.request_id;
+
+        //return value for comment state
+        const commentsResponse = {};
+        commentsResponse[report] = {'comments': [], 'recipients': ''};
+
+        Users.findOne({
+            where: {
+                username: username
+            }
+        }).then(user => {
+            CommentRelation.findOne({
+                where: {
+                    request_id: requestId,
+                    report: report
+                }
+            }).then(commentRelationRecord => {
+                Comments.create({
+                    comment: comment,
+                    commentrelation_id: commentRelationRecord.id,
+                    username: username
+                });
+                const commentData = {
+                    'comment': comment,
+                    'date_created': new Date().toISOString().replace('T', ' ').replace('Z', ''),
+                    'username': username,
+                    'full_name': user.full_name,
+                    'title': user.title
+                };
+                commentsResponse[report]['recipients'] = commentRelationRecord.recipients;
+                commentsResponse[report]['comments'].push(commentData);
+
+                // if a non-lab member comments, notify intial comment's author
+                let emailRecipients = commentRelationRecord.recipients;
+                if (user.role !== 'lab_member') {
+                    const authorEmail = `${commentRelationRecord.author}@mskcc.org`;
+                    emailRecipients = emailRecipients.concat(',', authorEmail);
+                }
+
+                mailer.sendNotification(emailRecipients, comment, requestId, report, user);
+
+                return apiResponse.successResponseWithData(res, 'Successfully saved comment and notified recipients', commentsResponse);
+
+            }).catch(error => {
+                return apiResponse.errorResponse(res, `Failed to save user comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+            });
+        }).catch(error => {
+            return apiResponse.errorResponse(res, `Failed to get user from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+        });
+    }
+];
+
+exports.addToAllAndNotify = [
+    function(req, res) {
+        const reqData = req.body.data;
+        const comment = reqData.comment.content;
+        const username = reqData.comment.username;
+        const reports = reqData.reports;
+        const requestId = reqData.request_id;
+
+        // return value for comment state:
+        const commentsResponse = {};
+        // const commentsResponse = {
+        //     'DNA Report': {'comments': [], 'recipients': ''},
+        //     'RNA Report': {'comments': [], 'recipients': ''},
+        //     'Pool Report': {'comments': [], 'recipients': ''},
+        //     'Library Report': {'comments': [], 'recipients': ''},
+        //     'Pathology Report': {'comments': [], 'recipients': ''}
+        // };
+        Users.findOne({
+            where: {
+                username: username
+            }
+        }).then(user => {
+            Promise.all(reports.map(report => {
+                if (report.toLowerCase() !== 'attachments') {
+                    commentsResponse[report] = {'comments': [], 'recipients': ''};
+
+                    return CommentRelation.findOne({
+                        where: {
+                            request_id: requestId,
+                            report: report
+                        }
+                    }).then(commentRelationRecord => {
+                        
+                        Comments.create({
+                            comment: comment,
+                            commentrelation_id: commentRelationRecord.id,
+                            username: username
+                        });
+                    
+                        const commentData = {
+                            'comment': comment,
+                            'date_created': new Date().toISOString().replace('T', ' ').replace('Z', ''),
+                            'username': username,
+                            'full_name': user.full_name,
+                            'title': user.title
+                        };
+
+                        commentsResponse[report]['recipients'] = commentRelationRecord.recipients;
+                        commentsResponse[report]['comments'].push(commentData);
+
+                        // if a non-lab member comments, notify intial comment's author
+                        let emailRecipients = commentRelationRecord.recipients;
+                        if (user.role !== 'lab_member') {
+                            const authorEmail = `${commentRelationRecord.author}@mskcc.org`;
+                            emailRecipients = emailRecipients.concat(',', authorEmail);
+                        }
+
+                        mailer.sendNotification(emailRecipients, comment, requestId, report, user);
+
+
+                    }).catch(error => {
+                        return apiResponse.errorResponse(res, `Failed to save user comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+                    });
+                }
+            })).then(() => {
+                return apiResponse.successResponseWithData(res, 'Successfully saved comments and notified recipients', commentsResponse);
+            });
+        }).catch(error => {
+            return apiResponse.errorResponse(res, `Failed to get user from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+        });
+    }
+];
