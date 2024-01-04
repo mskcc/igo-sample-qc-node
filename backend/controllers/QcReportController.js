@@ -1,6 +1,9 @@
 const services = require('../services/services');
 const apiResponse = require('../util/apiResponse');
 const { query } = require('express-validator');
+const PDFDocument = require('pdfkit');
+const FileSaver = require('file-saver');
+// const blobStream = require('blob-stream');
 const db = require('../models');
 const {
     sharedColumns,
@@ -705,6 +708,39 @@ exports.addToAllAndNotify = [
             });
         }).catch(error => {
             return apiResponse.errorResponse(res, `Failed to get user from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+        });
+    }
+];
+
+exports.downloadAttachment = [
+    function(req, res) {
+        const recordId = req.query.recordId;
+        const fileName = req.query.fileName;
+
+        const attachmentFilePromise = services.getAttachmentFile(recordId);
+
+        Promise.all([attachmentFilePromise]).then(result => {
+            if (!result || result.length === 0) {
+                return apiResponse.errorResponse(res, 'Could not find request data.');
+            }
+
+            let [attachment] = result;
+            const docData = attachment.content;
+            console.log(docData);
+            const doc = new PDFDocument;
+            const fileType = 'application/pdf';
+            const fileExtension = '.pdf';
+
+            // const stream = doc.pipe(blobStream());
+            doc.addContent(docData);
+            doc.end();
+
+            const blob = new Blob([doc], {type: fileType});
+            FileSaver.saveAs(blob, fileName + fileExtension);
+
+            // stream.on('finish', function() {
+            //     const blob = stream.toBlob('application/pdf');
+            // })
         });
     }
 ];
