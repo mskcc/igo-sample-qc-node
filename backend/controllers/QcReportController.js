@@ -726,8 +726,7 @@ exports.downloadAttachment = [
             }
 
             let [attachment] = result;
-            console.log(attachment);
-            const docData = attachment.content;
+            const docData = attachment;
             const doc = new PDFDocument;
             const fileType = 'application/pdf';
             // const fileExtension = '.pdf';
