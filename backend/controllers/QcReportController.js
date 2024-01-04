@@ -720,7 +720,7 @@ exports.addToAllAndNotify = [
 exports.downloadAttachment = [
     function(req, res) {
         const recordId = req.query.recordId;
-        // const fileName = req.query.fileName;
+        const fileName = req.query.fileName;
 
         const attachmentFilePromise = services.getAttachmentFile(recordId);
 
@@ -732,34 +732,45 @@ exports.downloadAttachment = [
             let [attachment] = result;
             const docData = attachment;
 
-            const blob = new Buffer.Blob([docData]);
+            // DO WE NEED TO CONVERT BUFFER TO BLOB??
+            // const blob = new Buffer.Blob([docData]);
 
-            return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
+            // return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
 
-            // const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
+            const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
 
-            // glob(filePath, async(error, file) => {
-            //     if (error) {
-            //         console.log(error);
-            //         return apiResponse.errorResponse(res, 'Could not find attachment file.');
-            //     }
-            //     if (!file || file.length === 0) {
-            //         //create
-            //         fs.writeFile(filePath, docData, {}, err => {
-            //             if (err) {
-            //                 console.log(err);
-            //                 return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
+            glob(filePath, async(error, file) => {
+                if (error) {
+                    console.log(error);
+                    return apiResponse.errorResponse(res, 'Could not find attachment file.');
+                }
+                if (!file || file.length === 0) {
+                    //create
+                    fs.writeFile(filePath, docData, {}, err => {
+                        if (err) {
+                            console.log(err);
+                            return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
+                        }
+                        fs.readFile(filePath, (err, data) => {
+                            if (err) {
+                                console.log(err);
+                                return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
+                            }
+                            return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
+                        });
 
-            //             }
-                        
-            //             return apiResponse.successResponseWithData(res, 'Sending back PDF.', file);
+                    });
+                } else {
+                    fs.readFile(filePath, (err, data) => {
+                        if (err) {
+                            console.log(err);
+                            return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
+                        }
+                        return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
+                    });
+                }
 
-            //         });
-            //     } else {
-            //         return apiResponse.successResponseWithData(res, 'Sending back PDF.', file);
-            //     }
-
-            // });
+            });
             
 
 
