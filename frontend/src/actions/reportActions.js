@@ -338,7 +338,7 @@ export function downloadAttachment(attachmentRecordId, fileName) {
       loadingMessage: 'Fetching your data..',
     });
     return axios
-      .get(Config.API_ROOT + '/downloadAttachment', {
+      .get(Config.API_ROOT + '/qcReport/downloadAttachment', {
         params: {
           recordId: attachmentRecordId,
           fileName: fileName,
