@@ -735,7 +735,7 @@ exports.downloadAttachment = [
 
                 const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
 
-                glob(filePath, async(error, file) => {
+                return glob(filePath, async(error, file) => {
                     if (error) {
                         reject(error);
                     }
