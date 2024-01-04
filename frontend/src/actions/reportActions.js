@@ -346,6 +346,7 @@ export function downloadAttachment(attachmentRecordId, fileName) {
         responseType: 'blob',
       })
       .then((response) => {
+        console.log(response);
         dispatch({
           type: ATTACHMENT_DOWNLOAD_SUCCESS,
           message: 'reset',

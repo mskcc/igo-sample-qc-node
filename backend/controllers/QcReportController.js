@@ -3,7 +3,7 @@ const apiResponse = require('../util/apiResponse');
 const { query } = require('express-validator');
 const PDFDocument = require('pdfkit');
 // const FileSaver = require('file-saver');
-// const blobStream = require('blob-stream');
+const blobStream = require('blob-stream');
 // const Blob = require('buffer');
 const db = require('../models');
 const {
@@ -728,21 +728,24 @@ exports.downloadAttachment = [
             let [attachment] = result;
             const docData = attachment;
             const doc = new PDFDocument;
-            const fileType = 'application/pdf';
+            // const fileType = 'application/pdf';
             // const fileExtension = '.pdf';
 
-            // const stream = doc.pipe(blobStream());
-            doc.pipe(res);
-            doc.addContent(docData);
+            const stream = doc.pipe(blobStream());
+            // doc.pipe(res);
+            // doc.addContent(docData);
+            doc.write(docData);
             doc.end();
 
-            res.writeHead(200, {
-                'Content-Type': fileType
-            });
-            // stream.on('finish', function() {
-            //     const blob = stream.toBlob('application/pdf');
-            //     FileSaver.saveAs(blob, fileName + fileExtension);
+            // res.writeHead(200, {
+            //     'Content-Type': fileType
             // });
+            stream.on('finish', function() {
+                const blob = stream.toBlob('application/pdf');
+                return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
+
+                // FileSaver.saveAs(blob, fileName + fileExtension);
+            });
         });
     }
 ];
