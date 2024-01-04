@@ -726,32 +726,34 @@ exports.downloadAttachment = [
 
         Promise.all([attachmentFilePromise]).then(result => {
             if (!result || result.length === 0) {
-                return apiResponse.errorResponse(res, 'Could not find request data.');
+                return apiResponse.errorResponse(res, 'Could not retreive attachment data.');
             }
 
-            return new Promise((resolve, reject) => {
-                let [attachment] = result;
-                const docData = attachment;
+            let [attachment] = result;
+            const docData = attachment;
 
-                const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
+            const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
 
-                return glob(filePath, async(error, file) => {
-                    if (error) {
-                        reject(error);
-                    }
-                    if (!file || file.length === 0) {
-                        //create
-                        fs.writeFile(filePath, docData, {}, err => {
-                            if (err) {
-                                console.log(err);
-                            }
-                            resolve(filePath);
-                        });
-                    } else {
-                        resolve(file);
-                    }
+            glob(filePath, async(error, file) => {
+                if (error) {
+                    console.log(error);
+                    return apiResponse.errorResponse(res, 'Could not find attachment file.');
+                }
+                if (!file || file.length === 0) {
+                    //create
+                    fs.writeFile(filePath, docData, {}, err => {
+                        if (err) {
+                            console.log(err);
+                            return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
 
-                });
+                        }
+                        return apiResponse.successResponseWithData(res, 'Sending back PDF.', file);
+
+                    });
+                } else {
+                    return apiResponse.successResponseWithData(res, 'Sending back PDF.', file);
+                }
+
             });
             
 
