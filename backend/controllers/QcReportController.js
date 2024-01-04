@@ -3,8 +3,9 @@ const apiResponse = require('../util/apiResponse');
 const { query } = require('express-validator');
 // const PDFDocument = require('pdfkit');
 // const blobStream = require('blob-stream');
-// const Blob = require('buffer');
-const Blob = require('cross-blob');
+const Buffer = require('buffer');
+// const Blob = require('cross-blob');
+// const fs = require('fs');
 const db = require('../models');
 const {
     sharedColumns,
@@ -728,8 +729,14 @@ exports.downloadAttachment = [
             let [attachment] = result;
             const docData = attachment;
 
-            const blob = new Blob([docData]);
+            const blob = new Buffer.Blob([docData]);
             return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
+
+
+            // const file = fs.createReadStream(docData)
+
+            // const blob = new Blob([docData]);
+            // return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
 
 
 
