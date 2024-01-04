@@ -732,7 +732,7 @@ exports.downloadAttachment = [
             let [attachment] = result;
             const docData = attachment;
 
-            return res.status(200).blob(docData);
+            return apiResponse.successResponseWithData(res, 'Sending back PDF.', docData);
 
             // const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
 
