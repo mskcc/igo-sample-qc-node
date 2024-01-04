@@ -1,10 +1,10 @@
 const services = require('../services/services');
 const apiResponse = require('../util/apiResponse');
 const { query } = require('express-validator');
-const PDFDocument = require('pdfkit');
-// const FileSaver = require('file-saver');
-const blobStream = require('blob-stream');
+// const PDFDocument = require('pdfkit');
+// const blobStream = require('blob-stream');
 // const Blob = require('buffer');
+const Blob = require('cross-blob');
 const db = require('../models');
 const {
     sharedColumns,
@@ -727,25 +727,31 @@ exports.downloadAttachment = [
 
             let [attachment] = result;
             const docData = attachment;
-            const doc = new PDFDocument;
+
+            const blob = new Blob([docData]);
+            return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
+
+
+
+            // const doc = new PDFDocument;
             // const fileType = 'application/pdf';
             // const fileExtension = '.pdf';
 
-            const stream = doc.pipe(blobStream());
+            // const stream = doc.pipe(blobStream());
             // doc.pipe(res);
-            doc.addContent(docData);
+            // doc.addContent(docData);
             // doc.write(docData);
-            doc.end();
+            // doc.end();
 
             // res.writeHead(200, {
             //     'Content-Type': fileType
             // });
-            stream.on('finish', function() {
-                const blob = stream.toBlob('application/pdf');
-                return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
+            // stream.on('finish', function() {
+            //     const blob = stream.toBlob('application/pdf');
+            //     return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
 
-                // FileSaver.saveAs(blob, fileName + fileExtension);
-            });
+            //     //FileSaver.saveAs(blob, fileName + fileExtension);
+            // });
         });
     }
 ];
