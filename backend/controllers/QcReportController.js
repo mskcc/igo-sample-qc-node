@@ -3,7 +3,7 @@ const apiResponse = require('../util/apiResponse');
 const { query } = require('express-validator');
 // const PDFDocument = require('pdfkit');
 // const blobStream = require('blob-stream');
-// const Buffer = require('buffer');
+const Buffer = require('buffer');
 // const Blob = require('cross-blob');
 const fs = require('fs');
 const glob = require('glob');
@@ -732,7 +732,9 @@ exports.downloadAttachment = [
             let [attachment] = result;
             const docData = attachment;
 
-            return apiResponse.successResponseWithData(res, 'Sending back PDF.', docData);
+            const blob = new Buffer.Blob([docData]);
+
+            return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
 
             // const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
 
