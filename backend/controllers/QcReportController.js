@@ -756,7 +756,8 @@ exports.downloadAttachment = [
                                 console.log(err);
                                 return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
                             }
-                            return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
+                            const blob = new Buffer.Blob([data]);
+                            return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
                         });
 
                     });
@@ -766,7 +767,8 @@ exports.downloadAttachment = [
                             console.log(err);
                             return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
                         }
-                        return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
+                        const blob = new Buffer.Blob([data]);
+                        return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
                     });
                 }
 
