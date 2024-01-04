@@ -4,6 +4,7 @@ const { query } = require('express-validator');
 const PDFDocument = require('pdfkit');
 // const FileSaver = require('file-saver');
 // const blobStream = require('blob-stream');
+const Blob = require('buffer');
 const db = require('../models');
 const {
     sharedColumns,
