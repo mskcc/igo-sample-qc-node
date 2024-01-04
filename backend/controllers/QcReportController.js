@@ -733,8 +733,8 @@ exports.downloadAttachment = [
 
             const stream = doc.pipe(blobStream());
             // doc.pipe(res);
-            // doc.addContent(docData);
-            doc.write(docData);
+            doc.addContent(docData);
+            // doc.write(docData);
             doc.end();
 
             // res.writeHead(200, {
