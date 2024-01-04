@@ -751,24 +751,24 @@ exports.downloadAttachment = [
                             console.log(err);
                             return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
                         }
-                        fs.readFile(filePath, 'buffer', (err, data) => {
+                        fs.readFile(filePath, (err, data) => {
                             if (err) {
                                 console.log(err);
                                 return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
                             }
-                            
-                            return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
+                            res.download(filePath);
+                            // return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
                         });
 
                     });
                 } else {
-                    fs.readFile(filePath, 'buffer', (err, data) => {
+                    fs.readFile(filePath, (err, data) => {
                         if (err) {
                             console.log(err);
                             return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
                         }
-                        
-                        return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
+                        res.download(filePath);
+                        // return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
                     });
                 }
 
