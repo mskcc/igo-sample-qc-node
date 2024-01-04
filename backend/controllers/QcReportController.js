@@ -3,7 +3,7 @@ const apiResponse = require('../util/apiResponse');
 const { query } = require('express-validator');
 const PDFDocument = require('pdfkit');
 const FileSaver = require('file-saver');
-// const blobStream = require('blob-stream');
+const blobStream = require('blob-stream');
 const db = require('../models');
 const {
     sharedColumns,
@@ -728,19 +728,19 @@ exports.downloadAttachment = [
             const docData = attachment.content;
             console.log(docData);
             const doc = new PDFDocument;
-            const fileType = 'application/pdf';
+            // const fileType = 'application/pdf';
             const fileExtension = '.pdf';
 
-            // const stream = doc.pipe(blobStream());
+            const stream = doc.pipe(blobStream());
             doc.addContent(docData);
             doc.end();
 
-            const blob = new Blob([doc], {type: fileType});
-            FileSaver.saveAs(blob, fileName + fileExtension);
+            // const blob = new Blob([doc], {type: fileType});
 
-            // stream.on('finish', function() {
-            //     const blob = stream.toBlob('application/pdf');
-            // })
+            stream.on('finish', function() {
+                const blob = stream.toBlob('application/pdf');
+                FileSaver.saveAs(blob, fileName + fileExtension);
+            });
         });
     }
 ];
