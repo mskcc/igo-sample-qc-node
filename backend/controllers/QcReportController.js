@@ -3,9 +3,10 @@ const apiResponse = require('../util/apiResponse');
 const { query } = require('express-validator');
 // const PDFDocument = require('pdfkit');
 // const blobStream = require('blob-stream');
-const Buffer = require('buffer');
+// const Buffer = require('buffer');
 // const Blob = require('cross-blob');
-// const fs = require('fs');
+const fs = require('fs');
+const glob = require('glob');
 const db = require('../models');
 const {
     sharedColumns,
@@ -33,6 +34,8 @@ const Decisions = db.decisions;
 const CommentRelation = db.commentRelations;
 const Comments = db.comments;
 const Users = db.users;
+
+const TMP_ATTACHMENT_PATH = process.env.TMP_FOLDER;
 
 
 exports.getRequestSamples = [
@@ -717,7 +720,7 @@ exports.addToAllAndNotify = [
 exports.downloadAttachment = [
     function(req, res) {
         const recordId = req.query.recordId;
-        // const fileName = req.query.fileName;
+        const fileName = req.query.fileName;
 
         const attachmentFilePromise = services.getAttachmentFile(recordId);
 
@@ -726,11 +729,35 @@ exports.downloadAttachment = [
                 return apiResponse.errorResponse(res, 'Could not find request data.');
             }
 
-            let [attachment] = result;
-            const docData = attachment;
+            return new Promise((resolve, reject) => {
+                let [attachment] = result;
+                const docData = attachment;
+
+                const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
+
+                glob(filePath, async(error, file) => {
+                    if (error) {
+                        reject(error);
+                    }
+                    if (!file || file.length === 0) {
+                        //create
+                        fs.writeFile(filePath, docData, {}, err => {
+                            if (err) {
+                                console.log(err);
+                            }
+                            resolve(filePath);
+                        });
+                    } else {
+                        resolve(file);
+                    }
+
+                });
+            });
+            
+
 
             // const blob = new Buffer.Blob([docData]);
-            return apiResponse.successResponseWithData(res, 'Sending back PDF.', docData);
+            // return apiResponse.successResponseWithData(res, 'Sending back PDF.', docData);
 
 
             // const file = fs.createReadStream(docData)
