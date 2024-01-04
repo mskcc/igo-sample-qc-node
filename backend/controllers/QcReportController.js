@@ -1,6 +1,12 @@
 const services = require('../services/services');
 const apiResponse = require('../util/apiResponse');
 const { query } = require('express-validator');
+// const PDFDocument = require('pdfkit');
+// const blobStream = require('blob-stream');
+const Buffer = require('buffer');
+// const Blob = require('cross-blob');
+const fs = require('fs');
+const glob = require('glob');
 const db = require('../models');
 const {
     sharedColumns,
@@ -28,6 +34,8 @@ const Decisions = db.decisions;
 const CommentRelation = db.commentRelations;
 const Comments = db.comments;
 const Users = db.users;
+
+const TMP_ATTACHMENT_PATH = process.env.TMP_FOLDER;
 
 
 exports.getRequestSamples = [
@@ -705,6 +713,101 @@ exports.addToAllAndNotify = [
             });
         }).catch(error => {
             return apiResponse.errorResponse(res, `Failed to get user from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+        });
+    }
+];
+
+exports.downloadAttachment = [
+    function(req, res) {
+        const recordId = req.query.recordId;
+        const fileName = req.query.fileName;
+
+        const attachmentFilePromise = services.getAttachmentFile(recordId);
+
+        Promise.all([attachmentFilePromise]).then(result => {
+            if (!result || result.length === 0) {
+                return apiResponse.errorResponse(res, 'Could not retreive attachment data.');
+            }
+
+            let [attachment] = result;
+            const docData = attachment;
+
+            // DO WE NEED TO CONVERT BUFFER TO BLOB??
+            // const blob = new Buffer.Blob([docData]);
+
+            // return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
+
+            const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
+
+            glob(filePath, async(error, file) => {
+                if (error) {
+                    console.log(error);
+                    return apiResponse.errorResponse(res, 'Could not find attachment file.');
+                }
+                if (!file || file.length === 0) {
+                    //create
+                    fs.writeFile(filePath, docData, {}, err => {
+                        if (err) {
+                            console.log(err);
+                            return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
+                        }
+                        res.download(filePath);
+
+                        // fs.readFile(filePath, (err, data) => {
+                        //     if (err) {
+                        //         console.log(err);
+                        //         return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
+                        //     }
+                        //     // return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
+                        // });
+
+                    });
+                } else {
+                    res.download(filePath);
+                    // fs.readFile(filePath, (err, data) => {
+                    //     if (err) {
+                    //         console.log(err);
+                    //         return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
+                    //     }
+                        
+                    //     // return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
+                    // });
+                }
+
+            });
+            
+
+
+            // const blob = new Buffer.Blob([docData]);
+            // return apiResponse.successResponseWithData(res, 'Sending back PDF.', docData);
+
+
+            // const file = fs.createReadStream(docData)
+
+            // const blob = new Blob([docData]);
+            // return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
+
+
+
+            // const doc = new PDFDocument;
+            // const fileType = 'application/pdf';
+            // const fileExtension = '.pdf';
+
+            // const stream = doc.pipe(blobStream());
+            // doc.pipe(res);
+            // doc.addContent(docData);
+            // doc.write(docData);
+            // doc.end();
+
+            // res.writeHead(200, {
+            //     'Content-Type': fileType
+            // });
+            // stream.on('finish', function() {
+            //     const blob = stream.toBlob('application/pdf');
+            //     return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
+
+            //     //FileSaver.saveAs(blob, fileName + fileExtension);
+            // });
         });
     }
 ];
