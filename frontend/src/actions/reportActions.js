@@ -350,7 +350,7 @@ export function downloadAttachment(attachmentRecordId, fileName) {
         dispatch({
           type: ATTACHMENT_DOWNLOAD_SUCCESS,
           message: 'reset',
-          file: response,
+          file: response.data,
           fileName: fileName,
         });
       })
