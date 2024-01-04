@@ -729,8 +729,8 @@ exports.downloadAttachment = [
             let [attachment] = result;
             const docData = attachment;
 
-            const blob = new Buffer.Blob([docData]);
-            return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
+            // const blob = new Buffer.Blob([docData]);
+            return apiResponse.successResponseWithData(res, 'Sending back PDF.', docData);
 
 
             // const file = fs.createReadStream(docData)
