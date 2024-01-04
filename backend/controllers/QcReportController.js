@@ -4,7 +4,7 @@ const { query } = require('express-validator');
 const PDFDocument = require('pdfkit');
 // const FileSaver = require('file-saver');
 // const blobStream = require('blob-stream');
-const Blob = require('buffer');
+// const Blob = require('buffer');
 const db = require('../models');
 const {
     sharedColumns,
@@ -726,18 +726,20 @@ exports.downloadAttachment = [
             }
 
             let [attachment] = result;
+            console.log(attachment);
             const docData = attachment.content;
             const doc = new PDFDocument;
             const fileType = 'application/pdf';
             // const fileExtension = '.pdf';
 
             // const stream = doc.pipe(blobStream());
+            doc.pipe(res);
             doc.addContent(docData);
             doc.end();
 
-            const blob = new Blob([doc], {type: fileType});
-            return blob;
-
+            res.writeHead(200, {
+                'Content-Type': fileType
+            });
             // stream.on('finish', function() {
             //     const blob = stream.toBlob('application/pdf');
             //     FileSaver.saveAs(blob, fileName + fileExtension);
