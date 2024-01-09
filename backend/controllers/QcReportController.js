@@ -733,50 +733,55 @@ exports.downloadAttachment = [
             const docData = attachment;
 
             // DO WE NEED TO CONVERT BUFFER TO BLOB??
-            // const blob = new Buffer.Blob([docData]);
+            const blob = new Buffer.Blob([docData]);
 
-            // return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
+            return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
 
-            const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
+            // const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
 
-            glob(filePath, async(error, file) => {
-                if (error) {
-                    console.log(error);
-                    return apiResponse.errorResponse(res, 'Could not find attachment file.');
-                }
-                if (!file || file.length === 0) {
-                    //create
-                    fs.writeFile(filePath, docData, {}, err => {
-                        if (err) {
-                            console.log(err);
-                            return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
-                        }
-                        res.set('Content-Type', 'application/pdf');
-                        res.send(Buffer.from(filePath));
+            
 
-                        // fs.readFile(filePath, (err, data) => {
-                        //     if (err) {
-                        //         console.log(err);
-                        //         return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
-                        //     }
-                        //     // return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
-                        // });
 
-                    });
-                } else {
-                    res.set('Content-Type', 'application/pdf');
-                    res.send(Buffer.from(filePath));
-                    // fs.readFile(filePath, (err, data) => {
-                    //     if (err) {
-                    //         console.log(err);
-                    //         return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
-                    //     }
+            // glob(filePath, async(error, file) => {
+            //     if (error) {
+            //         console.log(error);
+            //         return apiResponse.errorResponse(res, 'Could not find attachment file.');
+            //     }
+            //     if (!file || file.length === 0) {
+            //         //create
+            //         fs.writeFile(filePath, docData, {}, err => {
+            //             if (err) {
+            //                 console.log(err);
+            //                 return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
+            //             }
+            //             res.set('Content-Type', 'application/pdf');
+            //             res.send(Buffer.from(filePath));
+
+            //             // fs.readFile(filePath, (err, data) => {
+            //             //     if (err) {
+            //             //         console.log(err);
+            //             //         return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
+            //             //     }
+            //             //     // return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
+            //             // });
+
+            //         });
+            //     } else {
+            //         // res.set('Content-Type', 'application/pdf');
+            //         res.send(Buffer.from(filePath));
+
+
+            //         // fs.readFile(filePath, (err, data) => {
+            //         //     if (err) {
+            //         //         console.log(err);
+            //         //         return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
+            //         //     }
                         
-                    //     // return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
-                    // });
-                }
+            //         //     // return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
+            //         // });
+            //     }
 
-            });
+            // });
             
 
 
