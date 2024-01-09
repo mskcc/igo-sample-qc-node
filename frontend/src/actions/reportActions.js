@@ -343,6 +343,9 @@ export function downloadAttachment(attachmentRecordId, fileName) {
           recordId: attachmentRecordId,
           fileName: fileName,
         },
+        headers: {
+          'Accept': 'application/pdf',
+        },
         responseType: 'arraybuffer',
       })
       .then((response) => {
@@ -351,7 +354,7 @@ export function downloadAttachment(attachmentRecordId, fileName) {
         dispatch({
           type: ATTACHMENT_DOWNLOAD_SUCCESS,
           message: 'reset',
-          file: response.payload,
+          file: response.data,
           fileName: fileName,
         });
       })
