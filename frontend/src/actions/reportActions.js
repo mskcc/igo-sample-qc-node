@@ -347,10 +347,11 @@ export function downloadAttachment(attachmentRecordId, fileName) {
       })
       .then((response) => {
         console.log(response);
+
         dispatch({
           type: ATTACHMENT_DOWNLOAD_SUCCESS,
           message: 'reset',
-          file: response.payload,
+          file: response.blob(),
           fileName: fileName,
         });
       })

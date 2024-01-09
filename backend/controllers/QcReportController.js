@@ -767,7 +767,7 @@ exports.downloadAttachment = [
 
                     });
                 } else {
-                    // res.set('Content-Type', 'application/pdf');
+                    res.set('Content-Type', 'application/pdf');
                     res.download(filePath);
 
 
