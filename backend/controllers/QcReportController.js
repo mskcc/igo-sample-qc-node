@@ -751,7 +751,8 @@ exports.downloadAttachment = [
                             console.log(err);
                             return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
                         }
-                        res.sendFile(filePath);
+                        res.set('Content-Type', 'application/pdf');
+                        res.send(Buffer.from(filePath));
 
                         // fs.readFile(filePath, (err, data) => {
                         //     if (err) {
@@ -763,7 +764,8 @@ exports.downloadAttachment = [
 
                     });
                 } else {
-                    res.sendFile(filePath);
+                    res.set('Content-Type', 'application/pdf');
+                    res.send(Buffer.from(filePath));
                     // fs.readFile(filePath, (err, data) => {
                     //     if (err) {
                     //         console.log(err);
