@@ -343,7 +343,7 @@ export function downloadAttachment(attachmentRecordId, fileName) {
           recordId: attachmentRecordId,
           fileName: fileName,
         },
-        responseType: 'blob',
+        responseType: 'arraybuffer',
       })
       .then((response) => {
         console.log(response);
@@ -351,7 +351,7 @@ export function downloadAttachment(attachmentRecordId, fileName) {
         dispatch({
           type: ATTACHMENT_DOWNLOAD_SUCCESS,
           message: 'reset',
-          file: response.blob(),
+          file: response.payload,
           fileName: fileName,
         });
       })
