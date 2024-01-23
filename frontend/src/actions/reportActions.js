@@ -349,7 +349,7 @@ export function downloadAttachment(attachmentRecordId, fileName) {
         responseType: 'arraybuffer',
       })
       .then((response) => {
-        console.log(response.blob());
+        console.log(response);
 
         dispatch({
           type: ATTACHMENT_DOWNLOAD_SUCCESS,
