@@ -347,6 +347,7 @@ export function downloadAttachment(attachmentRecordId, fileName) {
           'Accept': 'application/pdf',
         },
         responseType: 'arraybuffer',
+        responseEncoding: 'binary'
       })
       .then((response) => {
         console.log(response);
