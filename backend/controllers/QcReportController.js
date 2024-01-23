@@ -755,7 +755,6 @@ exports.downloadAttachment = [
                             return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
                         }
                         res.set('Content-Type', 'application/pdf');
-                        res.set('Content-Transfer-Encoding', 'Binary');
                         const filestream = fs.createReadStream(filePath);
                         filestream.pipe(res);
                         res.download(filePath);
@@ -771,7 +770,6 @@ exports.downloadAttachment = [
                     });
                 } else {
                     res.set('Content-Type', 'application/pdf');
-                    res.set('Content-Transfer-Encoding', 'Binary');
                     const filestream = fs.createReadStream(filePath);
                     filestream.pipe(res);
                     res.download(filePath);
