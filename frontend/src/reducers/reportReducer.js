@@ -84,8 +84,9 @@ function reportReducer(state = initialState, action) {
       const file = new Blob([action.file], {
             type: 'application/pdf',
           });
-        const fileUrl = URL.createObjectURL(file);
-        download(fileUrl);
+      console.log(file);
+      const fileUrl = URL.createObjectURL(file);
+      download(fileUrl, action.fileName);
       // FileSaver.saveAs(
       //   new Blob([action.file], {
       //     type: 'application/pdf',
