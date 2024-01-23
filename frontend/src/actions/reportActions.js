@@ -346,7 +346,7 @@ export function downloadAttachment(attachmentRecordId, fileName) {
         headers: {
           'Accept': 'application/pdf',
         },
-        responseType: 'arraybuffer',
+        responseType: 'blob',
       })
       .then((response) => {
         console.log(response);
