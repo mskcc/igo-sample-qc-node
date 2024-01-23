@@ -770,8 +770,8 @@ exports.downloadAttachment = [
 
                     });
                 } else {
-                    res.set('Content-Type', 'application/pdf');
-                    res.set('Content-Transfer-Encoding', 'Binary');
+                    res.set('Content-Type', 'application/pdf; charset=UTF-8');
+                    // res.set('Content-Transfer-Encoding', 'Binary');
                     const filestream = fs.createReadStream(filePath);
                     filestream.pipe(res);
                     // res.download(filePath);
