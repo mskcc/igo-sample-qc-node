@@ -757,7 +757,7 @@ exports.downloadAttachment = [
                         res.set('Content-Type', 'application/pdf');
                         const filestream = fs.createReadStream(filePath);
                         filestream.pipe(res);
-                        res.download(filePath);
+                        // res.download(filePath);
 
                         // fs.readFile(filePath, (err, data) => {
                         //     if (err) {
@@ -772,7 +772,7 @@ exports.downloadAttachment = [
                     res.set('Content-Type', 'application/pdf');
                     const filestream = fs.createReadStream(filePath);
                     filestream.pipe(res);
-                    res.download(filePath);
+                    // res.download(filePath);
 
 
                     // fs.readFile(filePath, (err, data) => {
