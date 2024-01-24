@@ -374,7 +374,7 @@ export function downloadAttachment(attachmentRecordId, fileName) {
             throw error;
         })
         .then((resp) => {
-            return formatData(resp);
+            return resp;
         });
     // return axios
     //   .get(Config.API_ROOT + '/qcReport/downloadAttachment', {
