@@ -734,15 +734,12 @@ exports.downloadAttachment = [
             const docData = attachment;
 
 
-            // const buffer = Buffer.from(docData, 'base64');
-            zlib.deflate(docData, (err, buffer) => {
+            const buffer = Buffer.from(docData, 'base64');
+            zlib.unzip(buffer, (err, unZippedbuffer) => {
                 if (err) {
                     console.error('An error occurred:', err);
                     process.exitCode = 1;
                 }
-                const deflatedData = buffer.toString('base64');
-            
-
 
                 // return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
 
@@ -756,7 +753,7 @@ exports.downloadAttachment = [
                     }
                     if (!file || file.length === 0) {
                     //create
-                        fs.writeFile(filePath, deflatedData, {}, err => {
+                        fs.writeFile(filePath, unZippedbuffer.toString(), {}, err => {
                             if (err) {
                                 console.log(err);
                                 return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
