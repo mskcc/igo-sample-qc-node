@@ -105,16 +105,16 @@ class Table extends React.Component {
             }
           }}
           rowHeights="35"
-          afterOnCellMouseDown={(event, coords, TD) => {
-            if (isAttachmentTable && event.button === 0 && coords.row > -1) {
-              if (coords.col === 1) {
-                this.props.handleAttachmentDownload(
-                  TD.firstElementChild.getAttribute('record-id'),
-                  TD.firstElementChild.getAttribute('file-name')
-                );
-              }
-            }
-          }}
+          // afterOnCellMouseDown={(event, coords, TD) => {
+          //   if (isAttachmentTable && event.button === 0 && coords.row > -1) {
+          //     if (coords.col === 1) {
+          //       this.props.handleAttachmentDownload(
+          //         TD.firstElementChild.getAttribute('record-id'),
+          //         TD.firstElementChild.getAttribute('file-name')
+          //       );
+          //     }
+          //   }
+          // }}
         />
       </div>
     );
