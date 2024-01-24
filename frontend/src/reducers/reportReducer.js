@@ -81,18 +81,18 @@ function reportReducer(state = initialState, action) {
       };
 
     case ActionTypes.ATTACHMENT_DOWNLOAD_SUCCESS:
-      const file = new Blob([action.file], {
-            type: 'application/pdf',
-          });
-      console.log(file);
+      // const file = new Blob([action.file], {
+      //       type: 'application/pdf',
+      //     });
+      // console.log(file);
       // const fileUrl = URL.createObjectURL(file);
       // download(fileUrl);
-      FileSaver.saveAs(
-        new Blob([action.file], {
-          type: 'application/pdf',
-        }),
-        action.fileName
-      );
+      // FileSaver.saveAs(
+      //   new Blob([action.file], {
+      //     type: 'application/pdf',
+      //   }),
+      //   action.fileName
+      // );
       return {
         ...state,
       };

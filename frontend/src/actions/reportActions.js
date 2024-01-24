@@ -36,6 +36,17 @@ axios.interceptors.response.use(
   }
 );
 
+export const LIMS_AUTH = {
+    username: Config.LIMS_USER,
+    password: Config.LIMS_PW,
+};
+const agent = new https.Agent({
+  rejectUnauthorized: false,
+});
+const axiosConfig = {
+  httpsAgent: agent
+};
+
 export const GET_REQUEST_REQUEST = 'GET_REQUEST_REQUEST';
 
 export const EXPIRED = 'EXPIRED';
@@ -337,35 +348,62 @@ export function downloadAttachment(attachmentRecordId, fileName) {
       loading: true,
       loadingMessage: 'Fetching your data..',
     });
+    const url = `${Config.LIMS_URL}/getAttachmentFile?recordId=${attachmentRecordId}`;
     return axios
-      .get(Config.API_ROOT + '/qcReport/downloadAttachment', {
-        params: {
-          recordId: attachmentRecordId,
-          fileName: fileName,
-        },
-        headers: {
-          'Accept': 'application/pdf',
-        },
-        responseType: 'arraybuffer',
-      })
-      .then((response) => {
-        console.log(response);
-
-        dispatch({
-          type: ATTACHMENT_DOWNLOAD_SUCCESS,
-          message: 'reset',
-          file: response.data,
-          fileName: fileName,
+        .get(url, {
+            auth: { ...LIMS_AUTH },
+            ...axiosConfig,
+        })
+        .then((resp) => {
+            if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
+                // errorlog(url, resp.data[0]);
+                return [];
+            }
+            // info(url);
+            dispatch({
+              type: ATTACHMENT_DOWNLOAD_SUCCESS,
+              message: 'reset',
+              file: resp.data,
+              fileName: fileName,
+            });
+            return resp;
+        })
+        .catch((error) => {
+            errorlog(url, error);
+            throw error;
+        })
+        .then((resp) => {
+            return formatData(resp);
         });
-      })
-      .catch((error) => {
-        return dispatch({
-          type: ATTACHMENT_DOWNLOAD_FAIL,
-          error: error,
+    // return axios
+    //   .get(Config.API_ROOT + '/qcReport/downloadAttachment', {
+    //     params: {
+    //       recordId: attachmentRecordId,
+    //       fileName: fileName,
+    //     },
+    //     headers: {
+    //       'Accept': 'application/pdf',
+    //     },
+    //     responseType: 'arraybuffer',
+    //   })
+    //   .then((response) => {
+    //     console.log(response);
 
-          loading: false,
-        });
-      });
+    //     dispatch({
+    //       type: ATTACHMENT_DOWNLOAD_SUCCESS,
+    //       message: 'reset',
+    //       file: response.data,
+    //       fileName: fileName,
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     return dispatch({
+    //       type: ATTACHMENT_DOWNLOAD_FAIL,
+    //       error: error,
+
+    //       loading: false,
+    //     });
+    //   });
   };
 }
 
