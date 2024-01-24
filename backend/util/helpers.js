@@ -72,9 +72,10 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
         if (sample['hideFromSampleQC'] === false || !sample['hideFromSampleQC']) {
 
             if (tableType === 'attachments') {
+                const downloadUrl = process.env.LIMS_API_ROOT.split('https://')[1];
                 responseSample['action'] = (
                     `<div record-id=${sample['recordId'].toString()} file-name=${sample['fileName'].toString()} class="download-icon">
-                    <a href="http://${process.env.LIMS_USER}:${process.env.LIMS_PW}@${process.env.LIMS_API_ROOT}/getAttachmentFile?recordId=${sample['recordId'].toString()}" download>
+                    <a href="https://${process.env.LIMS_USER}:${process.env.LIMS_PW}@${downloadUrl}/getAttachmentFile?recordId=${sample['recordId'].toString()}" download>
                     <i class="material-icons">cloud_download</i>
                     </a>
                     </div>`
