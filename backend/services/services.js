@@ -138,28 +138,3 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
             return formatData(resp);
         });
 };
-
-exports.getAttachmentFile = (recordId) => {
-    const url = `${LIMS_URL}/getAttachmentFile?recordId=${recordId}`;
-    logger.info(`Sending request to ${url}`);
-    return axios
-        .get(url, {
-            auth: { ...LIMS_AUTH },
-            ...axiosConfig,
-        })
-        .then((resp) => {
-            if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
-                errorlog(url, resp.data[0]);
-                return [];
-            }
-            info(url);
-            return resp;
-        })
-        .catch((error) => {
-            errorlog(url, error);
-            throw error;
-        })
-        .then((resp) => {
-            return formatData(resp);
-        });
-};

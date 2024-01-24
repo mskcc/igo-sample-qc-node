@@ -74,7 +74,7 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
             if (tableType === 'attachments') {
                 responseSample['action'] = (
                     `<div record-id=${sample['recordId'].toString()} file-name=${sample['fileName'].toString()} class="download-icon">
-                    <a href="http://pms:tiagostarbuckslightbike@igo-lims03.mskcc.org:8443/LimsRest/getAttachmentFile?recordId=${sample['recordId'].toString()}" target="_blank">
+                    <a href="http://${process.env.LIMS_USER}:${process.env.LIMS_PW}@${process.env.LIMS_API_ROOT}/getAttachmentFile?recordId=${sample['recordId'].toString()}" download>
                     <i class="material-icons">cloud_download</i>
                     </a>
                     </div>`

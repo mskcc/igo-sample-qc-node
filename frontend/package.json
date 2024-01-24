@@ -19,7 +19,6 @@
         "clsx": "^1.1.1",
         "dotenv": "6.0.0",
         "dotenv-expand": "4.2.0",
-        "downloadjs": "^1.4.7",
         "file-saver": "^2.0.5",
         "handsontable": "^7.4.2",
         "html-webpack-plugin": "4.0.0-alpha.2",

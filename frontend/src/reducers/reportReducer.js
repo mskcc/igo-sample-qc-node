@@ -1,6 +1,4 @@
 import { reportActions as ActionTypes } from '../actions';
-import FileSaver from 'file-saver';
-import download from 'downloadjs';
 import Swal from 'sweetalert2';
 
 const initialState = {
@@ -81,18 +79,6 @@ function reportReducer(state = initialState, action) {
       };
 
     case ActionTypes.ATTACHMENT_DOWNLOAD_SUCCESS:
-      // const file = new Blob([action.file], {
-      //       type: 'application/pdf',
-      //     });
-      // console.log(file);
-      // const fileUrl = URL.createObjectURL(file);
-      // download(fileUrl);
-      // FileSaver.saveAs(
-      //   new Blob([action.file], {
-      //     type: 'application/pdf',
-      //   }),
-      //   action.fileName
-      // );
       return {
         ...state,
       };

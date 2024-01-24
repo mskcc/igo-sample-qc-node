@@ -14,6 +14,4 @@ router.post('/getQcReportSamples', qcReportController.getQcReportSamples);
 router.post('/savePartialSubmission', qcReportController.savePartialSubmission);
 router.post('/setQCInvestigatorDecision', qcReportController.setQCInvestigatorDecision);
 
-router.get('/downloadAttachment', qcReportController.downloadAttachment);
-
 module.exports = router;
