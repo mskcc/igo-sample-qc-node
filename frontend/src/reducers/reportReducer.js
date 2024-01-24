@@ -85,14 +85,14 @@ function reportReducer(state = initialState, action) {
             type: 'application/pdf',
           });
       console.log(file);
-      const fileUrl = URL.createObjectURL(file);
-      download(fileUrl);
-      // FileSaver.saveAs(
-      //   new Blob([action.file], {
-      //     type: 'application/pdf',
-      //   }),
-      //   action.fileName
-      // );
+      // const fileUrl = URL.createObjectURL(file);
+      // download(fileUrl);
+      FileSaver.saveAs(
+        new Blob([action.file], {
+          type: 'application/pdf',
+        }),
+        action.fileName
+      );
       return {
         ...state,
       };
