@@ -64,12 +64,6 @@ const useStyles = makeStyles((theme) => ({
   decisions: {
     paddingBottom: '11px',
   },
-
-  indicator: {
-    '& > span': {
-      backgroundColor: '#f29934',
-    },
-  },
 }));
 
 function TabPanel(props) {
@@ -228,15 +222,10 @@ export default function TableArea(props) {
         <Tabs
           value={index}
           onChange={handleChange}
-          // TabIndicatorProps={{
-          //   style: {
-          //     backgroundColor: "#f29934"
-          //   }
-          // }}
           aria-label="table tabs"
         >
           {Object.keys(props.report.tables).map((report, index) => (
-            (!report.readOnly ? 
+            (!report.readOnly && report !== 'Attachments' ? 
               <Tab key={report} icon={<ErrorIcon/>} label={report} {...a11yProps(index)} />
             : 
               <Tab key={report} label={report} {...a11yProps(index)} />
