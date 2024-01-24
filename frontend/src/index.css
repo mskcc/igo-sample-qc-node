@@ -118,6 +118,11 @@ code {
 .show-icon {
     cursor: pointer;
     color: #006098;
+    white-space: normal !important;
+}
+.download-icon a {
+    text-decoration: none;
+    color: inherit;
 }
 
 .swal2-content .swal-comment-review {
