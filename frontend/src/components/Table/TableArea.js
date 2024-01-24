@@ -12,6 +12,7 @@ import {
   Zoom,
 } from '@material-ui/core';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import ErrorIcon from '@material-ui/icons/Error';
 import Table from './Table';
 import RequestInfo from './RequestInfo';
 import 'handsontable/dist/handsontable.full.css';
@@ -62,6 +63,12 @@ const useStyles = makeStyles((theme) => ({
   },
   decisions: {
     paddingBottom: '11px',
+  },
+
+  indicator: {
+    '& > span': {
+      backgroundColor: '#f29934',
+    },
   },
 }));
 
@@ -221,10 +228,20 @@ export default function TableArea(props) {
         <Tabs
           value={index}
           onChange={handleChange}
-          aria-label="simple tabs example"
+          // TabIndicatorProps={{
+          //   style: {
+          //     backgroundColor: "#f29934"
+          //   }
+          // }}
+          aria-label="table tabs"
         >
           {Object.keys(props.report.tables).map((report, index) => (
-            <Tab key={report} label={report} {...a11yProps(index)} />
+            (!report.readOnly ? 
+              <Tab key={report} icon={<ErrorIcon/>} label={report} {...a11yProps(index)} />
+            : 
+              <Tab key={report} label={report} {...a11yProps(index)} />
+            )
+            
           ))}
         </Tabs>
 
