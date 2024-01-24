@@ -5,6 +5,7 @@ const { query } = require('express-validator');
 // const blobStream = require('blob-stream');
 const { Buffer } = require('buffer');
 // const Blob = require('cross-blob');
+const zlib = require('node:zlib');
 const fs = require('fs');
 const glob = require('glob');
 const db = require('../models');
@@ -732,62 +733,68 @@ exports.downloadAttachment = [
             let [attachment] = result;
             const docData = attachment;
 
-            // DO WE NEED TO CONVERT BUFFER TO BLOB??
-            // const blob = new Buffer.Blob([docData]);
 
-            // return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
-
-            const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
-
+            // const buffer = Buffer.from(docData, 'base64');
+            zlib.deflate(docData, (err, buffer) => {
+                if (err) {
+                    console.error('An error occurred:', err);
+                    process.exitCode = 1;
+                }
+                const deflatedData = buffer.toString('base64');
             
 
 
-            glob(filePath, async(error, file) => {
-                if (error) {
-                    console.log(error);
-                    return apiResponse.errorResponse(res, 'Could not find attachment file.');
-                }
-                if (!file || file.length === 0) {
+                // return apiResponse.successResponseWithData(res, 'Sending back PDF.', blob);
+
+                const filePath = `${TMP_ATTACHMENT_PATH}${fileName}`;
+
+
+                glob(filePath, async(error, file) => {
+                    if (error) {
+                        console.log(error);
+                        return apiResponse.errorResponse(res, 'Could not find attachment file.');
+                    }
+                    if (!file || file.length === 0) {
                     //create
-                    fs.writeFile(filePath, docData, 'binary', err => {
-                        if (err) {
-                            console.log(err);
-                            return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
-                        }
+                        fs.writeFile(filePath, deflatedData, {}, err => {
+                            if (err) {
+                                console.log(err);
+                                return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
+                            }
+                            res.set('Content-Type', 'application/pdf');
+                            const filestream = fs.createReadStream(filePath);
+                            filestream.pipe(res);
+                            // res.download(filePath);
+
+                            // fs.readFile(filePath, (err, data) => {
+                            //     if (err) {
+                            //         console.log(err);
+                            //         return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
+                            //     }
+                            //     // return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
+                            // });
+
+                        });
+                    } else {
                         res.set('Content-Type', 'application/pdf');
                         const filestream = fs.createReadStream(filePath);
                         filestream.pipe(res);
                         // res.download(filePath);
+
 
                         // fs.readFile(filePath, (err, data) => {
                         //     if (err) {
                         //         console.log(err);
                         //         return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
                         //     }
-                        //     // return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
-                        // });
-
-                    });
-                } else {
-                    res.set('Content-Type', 'application/pdf');
-                    const filestream = fs.createReadStream(filePath);
-                    filestream.pipe(res);
-                    // res.download(filePath);
-
-
-                    // fs.readFile(filePath, (err, data) => {
-                    //     if (err) {
-                    //         console.log(err);
-                    //         return apiResponse.errorResponse(res, 'There was a problem downloading attachment.');
-                    //     }
                         
                     //     // return apiResponse.successResponseWithData(res, 'Sending back PDF.', data);
                     // });
-                }
+                    }
 
-            });
+                });
             
-
+            });
 
             // const blob = new Buffer.Blob([docData]);
             // return apiResponse.successResponseWithData(res, 'Sending back PDF.', docData);
