@@ -72,7 +72,13 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
         if (sample['hideFromSampleQC'] === false || !sample['hideFromSampleQC']) {
 
             if (tableType === 'attachments') {
-                responseSample['action'] = (`<div record-id=${sample['recordId'].toString()} file-name=${sample['fileName'].toString()} class="download-icon"><i class="material-icons">cloud_download</i></div>`);
+                responseSample['action'] = (
+                    `<div record-id=${sample['recordId'].toString()} file-name=${sample['fileName'].toString()} class="download-icon">
+                    <a href="http://pms:tiagostarbuckslightbike@igo-lims03.mskcc.org:8443/LimsRest/getAttachmentFile?recordId=${sample['recordId'].toString()}" target="_blank">
+                    <i class="material-icons">cloud_download</i>
+                    </a>
+                    </div>`
+                );
             }
 
             for (let dataField of Object.keys(sample)) {
