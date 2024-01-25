@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import ErrorIcon from '@material-ui/icons/Error';
+import SpeakerNotesOffIcon from '@material-ui/icons/SpeakerNotesOff';
 import Table from './Table';
 import RequestInfo from './RequestInfo';
 import 'handsontable/dist/handsontable.full.css';
@@ -120,17 +121,6 @@ export default function TableArea(props) {
         <RequestInfo request={props.report.request} />
         {props.isNormalReport && (
           <React.Fragment>
-            {(props.username === 'MirhajF' ||
-              props.username === 'delbels') && (
-              <Button
-                onClick={props.manuallyAddDecision}
-                variant="contained"
-                color="primary"
-                className={classes.submitBtn}
-              >
-                Manually Add Decision
-              </Button>
-            )}
             {props.role === 'lab_member' ? (
               <Card>
                 {' '}
@@ -225,8 +215,10 @@ export default function TableArea(props) {
           aria-label="table tabs"
         >
           {Object.keys(props.report.tables).map((report, index) => (
-            (report.readOnly !== true && report !== 'Attachments' ? 
-              <Tab key={report} icon={<ErrorIcon color="primary"/>} label={report} {...a11yProps(index)} />
+            (props.role === 'lab_member' && !props.reportsWithComments.includes(report) ? 
+              <Tab key={report} icon={<SpeakerNotesOffIcon color="primary"/>} label={report} {...a11yProps(index)} />
+            : props.report.tables[report].readOnly !== true && report !== 'Attachments' ? 
+              <Tab key={report} icon={<ErrorIcon color="secondary"/>} label={report} {...a11yProps(index)} />
             : 
               <Tab key={report} label={report} {...a11yProps(index)} />
             )
@@ -238,7 +230,7 @@ export default function TableArea(props) {
           <TabPanel key={report} value={index} index={index}>
             {index === mapIndex && (
               <Table
-                handleAttachmentDownload={props.handleAttachmentDownload}
+                // handleAttachmentDownload={props.handleAttachmentDownload}
                 registerChange={props.registerChange}
                 role={props.role}
                 data={props.report.tables[report]}
