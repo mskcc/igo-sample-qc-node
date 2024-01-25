@@ -130,6 +130,8 @@ export default function TableArea(props) {
                     // gutterBottom
                   >
                     Lab members must submit decisions in LIMS.
+                    <br></br>
+                    <SpeakerNotesOffIcon color="primary"/> indicates Report has not been sent
                   </Typography>
                 </CardContent>
               </Card>
@@ -215,7 +217,7 @@ export default function TableArea(props) {
           aria-label="table tabs"
         >
           {Object.keys(props.report.tables).map((report, index) => (
-            (props.role === 'lab_member' && !props.reportsWithComments.includes(report) ? 
+            (props.role === 'lab_member' && report !== 'Attachments' && !props.reportsWithComments.includes(report) ? 
               <Tab key={report} icon={<SpeakerNotesOffIcon color="primary"/>} label={report} {...a11yProps(index)} />
             : props.report.tables[report].readOnly !== true && report !== 'Attachments' ? 
               <Tab key={report} icon={<ErrorIcon color="secondary"/>} label={report} {...a11yProps(index)} />
