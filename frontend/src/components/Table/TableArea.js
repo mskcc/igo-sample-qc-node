@@ -131,7 +131,8 @@ export default function TableArea(props) {
                   >
                     Lab members must submit decisions in LIMS.
                     <br></br>
-                    <SpeakerNotesOffIcon color="primary"/> indicates Report has not been sent
+                    <br></br>
+                    <SpeakerNotesOffIcon color="primary" fontSize="small"/> indicates Report has not been sent
                   </Typography>
                 </CardContent>
               </Card>

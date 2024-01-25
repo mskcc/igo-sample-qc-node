@@ -180,3 +180,11 @@ code {
     flex-direction: row-reverse !important;
     gap: 5px;
 }
+
+.icon-key {
+    font-size: small;
+    color: gray;
+}
+.icon-key svg {
+    vertical-align: middle;
+}
