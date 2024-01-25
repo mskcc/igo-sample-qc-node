@@ -20,10 +20,10 @@ function userReducer(state = initialState, action) {
       };
 
     default:
-      // return state;
-      return {
-        ...mockUser
-      }
+      return state;
+      // return {
+      //   ...mockUser
+      // }
   }
 }
 export default userReducer;
