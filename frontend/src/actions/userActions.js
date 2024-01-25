@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Config } from '../secret_config.js';
-import { services } from '../../util';
+import { services } from '../util';
 
 // Add a request interceptor
 axios.defaults.withCredentials = true;
