@@ -46,8 +46,10 @@ class Root extends Component {
   }
 
   componentDidMount() {
-    //   // making sure BE and FE versions match - shows info message if not
-    // this.props.checkVersion();
+    const { username, fetchUser } = this.props;
+    if (!username) {
+      fetchUser();
+    }
     document.addEventListener('keydown', this.escFunction, false);
   }
   componentWillUnmount() {
