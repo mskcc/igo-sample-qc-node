@@ -225,8 +225,8 @@ export default function TableArea(props) {
           aria-label="table tabs"
         >
           {Object.keys(props.report.tables).map((report, index) => (
-            (!report.readOnly && report !== 'Attachments' ? 
-              <Tab key={report} icon={<ErrorIcon/>} label={report} {...a11yProps(index)} />
+            (report.readOnly !== true && report !== 'Attachments' ? 
+              <Tab key={report} icon={<ErrorIcon color="primary"/>} label={report} {...a11yProps(index)} />
             : 
               <Tab key={report} label={report} {...a11yProps(index)} />
             )

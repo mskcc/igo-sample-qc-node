@@ -175,3 +175,8 @@ code {
 .handsontable.listbox tr:hover td {
     background: rgba(143, 199, 232, 0.4) !important;
 }
+
+.MuiTab-wrapper {
+    flex-direction: row-reverse !important;
+    gap: 5px;
+}
