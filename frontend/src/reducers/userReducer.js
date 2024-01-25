@@ -1,4 +1,5 @@
 import { reportActions as ReportActionTypes } from '../actions';
+import { userActions as ActionTypes } from '../actions';
 const mockUser = {
   loggedIn: true,
   username: 'lawala',
