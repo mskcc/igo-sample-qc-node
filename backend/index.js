@@ -4,8 +4,6 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const { authenticate } = require('./util/jwt');
-
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
@@ -43,7 +41,7 @@ app.use(express.static(path.resolve(__dirname, '../frontend/build')));
 // app.get("/api", (req, res) => {
 //     res.json({ message: "Hello from server!" });
 // });
-app.use('/api/', authenticate, apiRouter);
+app.use('/api/', apiRouter);
 
 // All other GET requests not handled before will return our React app
 app.use('*', (req, res) => {
