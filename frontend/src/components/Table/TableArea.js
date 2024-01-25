@@ -124,7 +124,7 @@ export default function TableArea(props) {
             {props.role === 'lab_member' ? (
               <Card>
                 {' '}
-                <CardContent className={classes.decisions}>
+                <CardContent className='lab-card-content'>
                   <Typography
                     color="textSecondary"
                     // gutterBottom
@@ -132,7 +132,7 @@ export default function TableArea(props) {
                     Lab members must submit decisions in LIMS.
                     <br></br>
                     <br></br>
-                    <SpeakerNotesOffIcon color="primary" fontSize="small"/> indicates Report has not been sent
+                    <SpeakerNotesOffIcon color="primary" fontSize="small"/> indicates report has not been sent
                   </Typography>
                 </CardContent>
               </Card>
