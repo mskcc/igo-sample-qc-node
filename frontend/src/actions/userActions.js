@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Config } from '../secret_config.js';
-import { services } from '../util';
+import { fetchUser } from '../util/services';
 
 // Add a request interceptor
 axios.defaults.withCredentials = true;
@@ -39,8 +39,7 @@ export const FETCH_USER_FAIL = 'FETCH_USER_FAIL';
 export function fetchUser() {
     return (dispatch) => {
         dispatch({ type: FETCH_USER });
-        return services
-            .fetchUser()
+        return fetchUser()
             .then((response) => {
                 return dispatch({
                     type: FETCH_USER_SUCCESS,
