@@ -75,7 +75,7 @@
     "proxy": "http://localhost:3300/",
     "babel": {
         "presets": [
-          "react-app"
+            "react-app"
         ]
     }
 }

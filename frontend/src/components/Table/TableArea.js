@@ -12,6 +12,8 @@ import {
   Zoom,
 } from '@material-ui/core';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import ErrorIcon from '@material-ui/icons/Error';
+import SpeakerNotesOffIcon from '@material-ui/icons/SpeakerNotesOff';
 import Table from './Table';
 import RequestInfo from './RequestInfo';
 import 'handsontable/dist/handsontable.full.css';
@@ -119,26 +121,18 @@ export default function TableArea(props) {
         <RequestInfo request={props.report.request} />
         {props.isNormalReport && (
           <React.Fragment>
-            {(props.username === 'MirhajF' ||
-              props.username === 'delbels') && (
-              <Button
-                onClick={props.manuallyAddDecision}
-                variant="contained"
-                color="primary"
-                className={classes.submitBtn}
-              >
-                Manually Add Decision
-              </Button>
-            )}
             {props.role === 'lab_member' ? (
               <Card>
                 {' '}
-                <CardContent className={classes.decisions}>
+                <CardContent className='lab-card-content'>
                   <Typography
                     color="textSecondary"
                     // gutterBottom
                   >
                     Lab members must submit decisions in LIMS.
+                    <br></br>
+                    <br></br>
+                    <SpeakerNotesOffIcon color="primary" fontSize="small"/> indicates report has not been sent
                   </Typography>
                 </CardContent>
               </Card>
@@ -221,10 +215,17 @@ export default function TableArea(props) {
         <Tabs
           value={index}
           onChange={handleChange}
-          aria-label="simple tabs example"
+          aria-label="table tabs"
         >
           {Object.keys(props.report.tables).map((report, index) => (
-            <Tab key={report} label={report} {...a11yProps(index)} />
+            (props.role === 'lab_member' && report !== 'Attachments' && !props.reportsWithComments.includes(report) ? 
+              <Tab key={report} icon={<SpeakerNotesOffIcon color="primary"/>} label={report} {...a11yProps(index)} />
+            : props.report.tables[report].readOnly !== true && report !== 'Attachments' ? 
+              <Tab key={report} icon={<ErrorIcon color="secondary"/>} label={report} {...a11yProps(index)} />
+            : 
+              <Tab key={report} label={report} {...a11yProps(index)} />
+            )
+            
           ))}
         </Tabs>
 
@@ -232,7 +233,7 @@ export default function TableArea(props) {
           <TabPanel key={report} value={index} index={index}>
             {index === mapIndex && (
               <Table
-                handleAttachmentDownload={props.handleAttachmentDownload}
+                // handleAttachmentDownload={props.handleAttachmentDownload}
                 registerChange={props.registerChange}
                 role={props.role}
                 data={props.report.tables[report]}

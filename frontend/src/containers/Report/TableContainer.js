@@ -75,16 +75,13 @@ export class TableContainer extends Component {
   handlePartialDecision = () => {
     this.props.savePartialDecision();
   };
-  manuallyAddDecision = () => {
-    this.props.manuallyAddDecision();
-  };
 
   registerChange = () => {
     this.props.registerChange();
   };
-  handleAttachmentDownload = (recordId, fileName) => {
-    this.props.downloadAttachment(recordId, fileName);
-  };
+  // handleAttachmentDownload = (recordId, fileName) => {
+  //   this.props.downloadAttachment(recordId, fileName);
+  // };
 
   handleReportDownload = (report) => {
     this.props.downloadReport(
@@ -112,12 +109,12 @@ export class TableContainer extends Component {
             isNormalReport={isNormalReport}
             role={this.props.user.role}
             username={this.props.user.username}
+            reportsWithComments={Object.keys(this.props.comments)}
             updateReportShown={this.updateReportShown}
             handleSubmit={this.handleInvestigatorSubmit}
-            manuallyAddDecision={this.manuallyAddDecision}
             handleSave={this.handlePartialDecision}
             registerChange={this.registerChange}
-            handleAttachmentDownload={this.handleAttachmentDownload}
+            // handleAttachmentDownload={this.handleAttachmentDownload}
             handleReportDownload={this.handleReportDownload}
           />
         )}
@@ -128,7 +125,11 @@ export class TableContainer extends Component {
 
 TableContainer.defaultProps = {};
 
-const mapStateToProps = (state) => ({ report: state.report, user: state.user });
+const mapStateToProps = (state) => ({
+  report: state.report,
+  user: state.user,
+  comments: state.communication.comments
+});
 
 export default withLocalize(
   connect(mapStateToProps, {

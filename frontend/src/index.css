@@ -114,10 +114,15 @@ code {
     cursor: pointer;
     color: #006098;
     text-align: center;
+    white-space: normal !important;
 }
 .show-icon {
     cursor: pointer;
     color: #006098;
+}
+.download-icon a {
+    text-decoration: none;
+    color: inherit;
 }
 
 .swal2-content .swal-comment-review {
@@ -169,4 +174,20 @@ code {
 .handsontable.listbox tr td.current,
 .handsontable.listbox tr:hover td {
     background: rgba(143, 199, 232, 0.4) !important;
+}
+
+.MuiTab-wrapper {
+    flex-direction: row-reverse !important;
+    gap: 5px;
+}
+
+.icon-key {
+    font-size: small;
+    color: gray;
+}
+.icon-key svg {
+    vertical-align: middle;
+}
+.lab-card-content svg {
+    vertical-align: middle;
 }

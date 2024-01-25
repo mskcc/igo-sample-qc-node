@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import ErrorIcon from '@material-ui/icons/Error';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -29,6 +30,9 @@ export default function RequestInfo(props) {
           </div>
           <div>
             <strong>Investigator:</strong> {props.request.investigatorName}
+          </div>
+          <div className='icon-key'>
+            <ErrorIcon color="secondary" fontSize="small"/> indicates a decision is needed
           </div>
         </div>
       </div>
