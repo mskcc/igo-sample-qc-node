@@ -8,9 +8,8 @@ const styles = (theme) => ({
     width: '100%',
     overflowX: 'auto',
     display: 'grid',
-  },
-  reportTable: {
     maxHeight: '500px'
+
   },
 
 });
@@ -101,6 +100,7 @@ class Table extends React.Component {
           //       }
           //     : {}
           // }
+          height='75vh'
           columnSorting="true"
           manualColumnResize={true}
           modifyColWidth={function (width, col) {
