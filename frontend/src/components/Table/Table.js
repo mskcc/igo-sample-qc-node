@@ -9,6 +9,10 @@ const styles = (theme) => ({
     overflowX: 'auto',
     display: 'grid',
   },
+  reportTable: {
+    maxHeight: '500px'
+  },
+
 });
 
 class Table extends React.Component {
@@ -76,6 +80,7 @@ class Table extends React.Component {
         <HotTable
           licenseKey="non-commercial-and-evaluation"
           id="hot"
+          className={classes.reportTable}
           ref={this.hotTableComponent}
           data={this.props.data.data}
           columns={this.props.data.columnFeatures}
@@ -97,7 +102,6 @@ class Table extends React.Component {
           //     : {}
           // }
           columnSorting="true"
-          height="500"
           manualColumnResize={true}
           modifyColWidth={function (width, col) {
             if (width > 500) {
