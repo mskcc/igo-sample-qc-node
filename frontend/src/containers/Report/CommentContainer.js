@@ -229,6 +229,7 @@ export class CommentContainer extends Component {
   render() {
     return (
       <React.Fragment>
+        <div className='report-comment-title'>Report Comments</div>
         {this.props.report.reportShown &&
         this.props.comments &&
         this.props.report.reportShown.includes('Report') &&

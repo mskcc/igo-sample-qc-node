@@ -100,7 +100,7 @@ class Table extends React.Component {
           //       }
           //     : {}
           // }
-          height='75vh'
+          height='40vh'
           columnSorting="true"
           manualColumnResize={true}
           modifyColWidth={function (width, col) {
