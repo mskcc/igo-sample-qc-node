@@ -229,7 +229,9 @@ export class CommentContainer extends Component {
   render() {
     return (
       <React.Fragment>
-        <div className='report-comment-title'>Report Comments</div>
+        <Typography variant="h5">
+          <strong>Report Comments</strong>
+        </Typography>
         {this.props.report.reportShown &&
         this.props.comments &&
         this.props.report.reportShown.includes('Report') &&
