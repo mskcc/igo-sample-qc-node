@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Config } from '../../secret_config.js';
-
 import Swal from 'sweetalert2';
-
 import { withLocalize } from 'react-localize-redux';
 import { connect } from 'react-redux';
 import { communicationActions } from '../../actions';
@@ -10,11 +8,11 @@ import {
   cleanAndFilterRecipients,
   allIntialCommentsSent,
 } from '../../actions/helpers';
-
+import Typography from '@material-ui/core/Typography';
 import { CommentArea, CommentEditorArea } from '../../components/Comments';
 
-export class CommentContainer extends Component {
 
+export class CommentContainer extends Component {
   componentDidMount() {
     this.props.getComments();
   }
