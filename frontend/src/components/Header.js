@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
@@ -60,7 +60,7 @@ const Header = (props) => {
             </Button>
 
             <Button>
-              <NavLink
+              <Link
                 to="https://genomics.mskcc.org/criteria/dna"
                 activeClassName={'active'}
                 className={'navlink'}
@@ -69,7 +69,7 @@ const Header = (props) => {
                 <Typography color="inherit" variant="h6">
                   Pass/Fail Criteria
                 </Typography>
-              </NavLink>
+              </Link>
             </Button>
 
             <Paper className={'search'}>
