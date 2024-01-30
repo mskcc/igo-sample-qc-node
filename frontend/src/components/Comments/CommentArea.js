@@ -16,8 +16,12 @@ const styles = (theme) => ({
     marginTop: '25px',
     marginBottom: '45px',
     paddingRight: '10%',
-    paddingLeft: '10%',
+    paddingLeft: '8%',
   },
+  commentsTitle: {
+    paddingLeft: '2em',
+    marginTop: '1em'
+  }
 });
 
 const CommentArea = ({
@@ -29,7 +33,7 @@ const CommentArea = ({
   addCommentToAllReports,
   classes,
 }) => (
-  <div className='comments-title'>
+  <div className={classes.commentsTitle}>
     <Typography variant="h5">
       <strong>Report Comments</strong>
     </Typography>
