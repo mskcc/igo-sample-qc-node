@@ -9,7 +9,9 @@ const styles = (theme) => ({
     textAlign: 'center',
     gridArea: 'history',
     width: '100%',
-    marginTop: '15px'
+    marginTop: '15px',
+    padding: '1em',
+    backgroundColor: 'rgba(0, 148, 144, .08)'
   },
 });
 

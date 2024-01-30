@@ -29,8 +29,7 @@ const useStyles = makeStyles((theme) => ({
     gridRowGap: '1em',
     gridColumnGap: '2em',
     overflow: 'scroll',
-    paddingBottom: theme.spacing(2),
-    backgroundColor: 'rgba(0, 148, 144, .08)',
+    // backgroundColor: 'rgba(0, 148, 144, .08)',
     borderTop: '2px solid darkgray',
   },
 
