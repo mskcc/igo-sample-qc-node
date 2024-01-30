@@ -16,8 +16,10 @@ const initialState = {
 function userReducer(state = initialState, action) {
   switch (action.type) {
     case ActionTypes.FETCH_USER_SUCCESS: {
-      console.log(action.user);
-      // let role = action.user.payload.isLabMember ? 'lab_member' : 'user';
+      return {
+          ...mockUser
+        }
+      
       let user = action.user.payload;
       let role;
       if (user.isLabMember) {
