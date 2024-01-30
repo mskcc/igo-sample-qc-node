@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
   buttons: {
     display: 'grid',
-    minHeight: '50%',
+    height: '100%',
   },
 }));
 
