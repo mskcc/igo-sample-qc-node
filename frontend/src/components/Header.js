@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import { Config } from '../secret_config';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -16,6 +16,7 @@ import image from '../igo.png';
 
 const Header = (props) => {
   const [values, setValues] = React.useState({ requestId: '' });
+  let history = useHistory();
 
   const handleChange = (requestId) => (event) => {
     setValues({ ...values, [requestId]: event.target.value });
@@ -23,7 +24,9 @@ const Header = (props) => {
 
   const handleSearch = () => {
     const request = values.requestId.toUpperCase().trim();
-    window.location.assign(`${Config.APP_ROOT}${Config.BASENAME}/request/${request}`);
+    history.push('/request/' + request);
+
+    // window.location.assign(`${Config.APP_ROOT}${Config.BASENAME}/request/${request}`);
     // props.history.push('/request/' + request);
     // props.getRequest(request);
   };
