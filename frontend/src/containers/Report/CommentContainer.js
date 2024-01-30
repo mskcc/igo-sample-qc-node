@@ -8,7 +8,6 @@ import {
   cleanAndFilterRecipients,
   allIntialCommentsSent,
 } from '../../actions/helpers';
-import Typography from '@material-ui/core/Typography';
 import { CommentArea, CommentEditorArea } from '../../components/Comments';
 
 
@@ -227,9 +226,6 @@ export class CommentContainer extends Component {
   render() {
     return (
       <React.Fragment>
-        <Typography variant="h5">
-          <strong>Report Comments</strong>
-        </Typography>
         {this.props.report.reportShown &&
         this.props.comments &&
         this.props.report.reportShown.includes('Report') &&

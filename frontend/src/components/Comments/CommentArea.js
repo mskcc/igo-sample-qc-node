@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import CommentBox from './CommentBox';
 import NewCommentArea from './NewCommentArea';
+import Typography from '@material-ui/core/Typography';
 
 const styles = (theme) => ({
   container: {
@@ -16,7 +17,6 @@ const styles = (theme) => ({
     marginBottom: '45px',
     paddingRight: '10%',
     paddingLeft: '10%',
-    backgroundColor: '#f2f4f6'
   },
 });
 
@@ -30,6 +30,9 @@ const CommentArea = ({
   classes,
 }) => (
   <div className={classes.container}>
+    <Typography variant="h5">
+      <strong>Report Comments</strong>
+    </Typography>
     <NewCommentArea
       numOfReports={numOfReports}
       currentReportShown={currentReportShown}
