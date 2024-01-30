@@ -191,3 +191,7 @@ code {
 .lab-card-content svg {
     vertical-align: middle;
 }
+
+.report-comment-title {
+    font-size: x-large;
+}

@@ -3,22 +3,25 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import CommentBox from './CommentBox';
 import NewCommentArea from './NewCommentArea';
+import Typography from '@material-ui/core/Typography';
 
 const styles = (theme) => ({
   container: {
     textAlign: 'center',
     gridArea: 'comments',
-    overflowX: 'hidden',
-    overflowY: 'scroll',
     display: 'grid',
-    height: '50vh',
+    height: '100%',
     gridTemplateAreas: '"history" "new-comment"',
     gridTemplateRows: '80% 20%',
-    // borderBottom: "2px solid rgba(0, 0, 0, 0.23)",
-    // borderLeft: "2px solid rgba(0, 0, 0, 0.23)",
-    // borderRight: "2px solid rgba(0, 0, 0, 0.23)",
-    // borderRadius: "4px"
+    marginTop: '25px',
+    marginBottom: '45px',
+    paddingRight: '10%',
+    paddingLeft: '8%',
   },
+  commentsTitle: {
+    paddingLeft: '2em',
+    marginTop: '1em'
+  }
 });
 
 const CommentArea = ({
@@ -30,14 +33,19 @@ const CommentArea = ({
   addCommentToAllReports,
   classes,
 }) => (
-  <div className={classes.container}>
-    <NewCommentArea
-      numOfReports={numOfReports}
-      currentReportShown={currentReportShown}
-      addComment={addComment}
-      addCommentToAllReports={addCommentToAllReports}
-    />
-    <CommentBox comments={comments} currentUser={currentUser} />
+  <div className={classes.commentsTitle}>
+    <Typography variant="h5">
+      <strong>Report Comments</strong>
+    </Typography>
+    <div className={classes.container}>
+      <NewCommentArea
+        numOfReports={numOfReports}
+        currentReportShown={currentReportShown}
+        addComment={addComment}
+        addCommentToAllReports={addCommentToAllReports}
+      />
+      <CommentBox comments={comments} currentUser={currentUser} />
+    </div>
   </div>
 );
 

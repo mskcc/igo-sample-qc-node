@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     width: '100%',
     alignItems: 'end',
+    gap: '1%',
   },
   textField: {
     width: '100%',
@@ -30,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
   buttons: {
     display: 'grid',
-    minHeight: '50%',
+    height: '100%',
   },
 }));
 

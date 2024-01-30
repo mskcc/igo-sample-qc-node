@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
@@ -15,6 +15,7 @@ import image from '../igo.png';
 
 const Header = (props) => {
   const [values, setValues] = React.useState({ requestId: '' });
+  let history = useHistory();
 
   const handleChange = (requestId) => (event) => {
     setValues({ ...values, [requestId]: event.target.value });
@@ -22,7 +23,7 @@ const Header = (props) => {
 
   const handleSearch = () => {
     const request = values.requestId.toUpperCase().trim();
-    props.history.push('/request/' + request);
+    history.push('/request/' + request);
     props.getRequest(request);
   };
 
@@ -60,16 +61,15 @@ const Header = (props) => {
             </Button>
 
             <Button>
-              <NavLink
-                to="https://genomics.mskcc.org/criteria/dna"
-                activeClassName={'active'}
+              <a
+                href="https://genomics.mskcc.org/criteria/dna"
                 className={'navlink'}
                 target="_blank"
               >
                 <Typography color="inherit" variant="h6">
                   Pass/Fail Criteria
                 </Typography>
-              </NavLink>
+              </a>
             </Button>
 
             <Paper className={'search'}>

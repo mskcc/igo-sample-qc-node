@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Config } from '../../secret_config.js';
-
 import Swal from 'sweetalert2';
-
 import { withLocalize } from 'react-localize-redux';
 import { connect } from 'react-redux';
 import { communicationActions } from '../../actions';
@@ -10,11 +8,10 @@ import {
   cleanAndFilterRecipients,
   allIntialCommentsSent,
 } from '../../actions/helpers';
-
 import { CommentArea, CommentEditorArea } from '../../components/Comments';
 
-export class CommentContainer extends Component {
 
+export class CommentContainer extends Component {
   componentDidMount() {
     this.props.getComments();
   }
@@ -235,6 +232,9 @@ export class CommentContainer extends Component {
         this.props.comments[this.props.report.reportShown] &&
         this.props.comments[this.props.report.reportShown].comments.length >
           0 ? (
+            // <Typography variant="h5">
+            //   <strong>Report Comments</strong>
+            // </Typography>
             <CommentArea
               currentReportShown={this.props.report.reportShown}
               numOfReports={
@@ -253,6 +253,9 @@ export class CommentContainer extends Component {
           this.props.report.reportShown &&
           this.props.report.reportShown.includes('Report') &&
           this.props.report.tables && (
+              // <Typography variant="h5">
+              //   <strong>Report Comments</strong>
+              // </Typography>
               <CommentEditorArea
                 recipe={
                   this.props.report.tables[this.props.report.reportShown].data[0]

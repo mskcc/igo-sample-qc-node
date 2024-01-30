@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 import { connect } from 'react-redux';
-import { userActions } from '../actions';
+import { commonActions, reportActions, userActions } from '../actions';
 
 import { withLocalize } from 'react-localize-redux';
 
@@ -81,6 +81,7 @@ class Root extends Component {
                 <Header
                   className="header"
                   role={this.props.user.role}
+                  getRequest={this.props.getRequest}
                 />
                 {this.props.common.serverError ? (
                   <ErrorPage />
@@ -135,7 +136,9 @@ const mapStateToProps = (state) => ({
   report: state.report,
 });
 const mapDispatchToProps = {
+  ...commonActions,
   ...userActions,
+  ...reportActions
 };
 
 export default withLocalize(connect(mapStateToProps, mapDispatchToProps)(Root));
