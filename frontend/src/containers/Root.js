@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 import { connect } from 'react-redux';
-import { reportActions, userActions } from '../actions';
+import { commonActions, reportActions, userActions } from '../actions';
 
 import { withLocalize } from 'react-localize-redux';
 
@@ -136,6 +136,7 @@ const mapStateToProps = (state) => ({
   report: state.report,
 });
 const mapDispatchToProps = {
+  ...commonActions,
   ...userActions,
   ...reportActions
 };

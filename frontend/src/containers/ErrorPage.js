@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { commonActions } from '../actions';
 import { Redirect } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Message } from '../components';
@@ -22,6 +23,7 @@ const mapStateToProps = (state) => ({
   ...state.common,
 });
 const mapDispatchToProps = {
+  ...commonActions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ErrorPage);
