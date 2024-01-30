@@ -29,17 +29,19 @@ const CommentArea = ({
   addCommentToAllReports,
   classes,
 }) => (
-  <div className={classes.container}>
+  <div className='comments-title'>
     <Typography variant="h5">
       <strong>Report Comments</strong>
     </Typography>
-    <NewCommentArea
-      numOfReports={numOfReports}
-      currentReportShown={currentReportShown}
-      addComment={addComment}
-      addCommentToAllReports={addCommentToAllReports}
-    />
-    <CommentBox comments={comments} currentUser={currentUser} />
+    <div className={classes.container}>
+      <NewCommentArea
+        numOfReports={numOfReports}
+        currentReportShown={currentReportShown}
+        addComment={addComment}
+        addCommentToAllReports={addCommentToAllReports}
+      />
+      <CommentBox comments={comments} currentUser={currentUser} />
+    </div>
   </div>
 );
 

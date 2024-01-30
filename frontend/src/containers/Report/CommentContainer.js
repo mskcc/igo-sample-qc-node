@@ -232,6 +232,9 @@ export class CommentContainer extends Component {
         this.props.comments[this.props.report.reportShown] &&
         this.props.comments[this.props.report.reportShown].comments.length >
           0 ? (
+            // <Typography variant="h5">
+            //   <strong>Report Comments</strong>
+            // </Typography>
             <CommentArea
               currentReportShown={this.props.report.reportShown}
               numOfReports={
@@ -250,6 +253,9 @@ export class CommentContainer extends Component {
           this.props.report.reportShown &&
           this.props.report.reportShown.includes('Report') &&
           this.props.report.tables && (
+              // <Typography variant="h5">
+              //   <strong>Report Comments</strong>
+              // </Typography>
               <CommentEditorArea
                 recipe={
                   this.props.report.tables[this.props.report.reportShown].data[0]
