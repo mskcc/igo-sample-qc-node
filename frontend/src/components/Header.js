@@ -22,8 +22,9 @@ const Header = (props) => {
 
   const handleSearch = () => {
     const request = values.requestId.toUpperCase().trim();
-    props.history.push('/request/' + request);
-    props.getRequest(request);
+    window.open(`/${Config.BASENAME}/request/${request}`);
+    // props.history.push('/request/' + request);
+    // props.getRequest(request);
   };
 
   return (
