@@ -168,50 +168,27 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
 };
 
 exports.buildPendingList = (pendings, isUser) => {
-    const responsePendings = [];
-    for (let pending of pendings) {
-        // console.log(pending.dataValues.request_id);
-        const responsePending = {};
-        responsePending['request_id'] = pending.request_id;
-        responsePending['date'] = pending.createdAt.toLocaleString();
+    // const responsePendings = [];
+    // for (let pending of pendings) {
+    //     // console.log(pending.dataValues.request_id);
+    //     const responsePending = {};
+    //     responsePending['request_id'] = pending.request_id;
+    //     responsePending['date'] = pending.date;
+    //     responsePending['most_recent_date'] = pending.mostRecentDate;
+    //     responsePending['report'] = pending.report;
+    //     responsePending['show'] = `<span pending-id='${pending.request_id}' class ='show-icon'><i class='material-icons'>forward</i></span>`;
 
-        responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
+    //     // show additional fields for lab_member and project_manager roles
+    //     if (!isUser) {
+    //         responsePending['author'] = pending.author;
+    //         responsePending['recipients'] = `<div class='recipients-col'>${pending.recipients.replaceAll(',', '\n')}</div>`;
+    //         responsePending['lab_notifications'] = pending.labNotifications;
+    //         responsePending['pm_notifications'] = pending.PmNotifications;
+    //         responsePending['user_replies'] = pending.userReplies;
+    //     }
 
-        // TODO FIX LAST CHILD DATE BEFORE DEPLOY
-        // if (pending.children() && pending.children().length > 0) {
-        //     responsePending['most_recent_date'] = pending.children[-1].createdAt.toLocaleString();
-        // } else {
-        //     responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
-        // }
-
-        responsePending['report'] = pending.report;
-        responsePending['show'] = `<span pending-id='${pending.request_id}' class ='show-icon'><i class='material-icons'>forward</i></span>`;
-
-        // show additional fields for lab_member and project_manager roles
-        if (!isUser) {
-            responsePending['author'] = pending.author;
-            responsePending['recipients'] = `<div class='recipients-col'>${pending.recipients.replaceAll(',', '\n')}</div>`;
-            responsePending['lab_notifications'] = 0;
-            responsePending['pm_notifications'] = 0;
-            responsePending['user_replies'] = 0;
-    
-            // TODO - PROPERLY QUERY FOR COMMENT COUNT BEFORE DEPLOYMENT
-            // const comments = pending.children();
-            // for (let comment in comments) {
-            //     if (comment.author.role === 'lab_member') {
-            //         responsePending['lab_notifications'] += 1;
-            //     }
-            //     if (comment.author.role === 'project_manager') {
-            //         responsePending['pm_notifications'] += 1;
-            //     }
-            //     if (comment.author.role === 'user') {
-            //         responsePending['user_replies'] += 1;
-            //     }
-            // }
-        }
-
-        responsePendings.push(responsePending);
-    }
+    //     responsePendings.push(responsePending);
+    // }
 
     const columnFeatures = isUser ? [
         {data: 'request_id', readOnly: true},
@@ -233,7 +210,7 @@ exports.buildPendingList = (pendings, isUser) => {
     ];
 
     return {
-        data: responsePendings,
+        data: pendings,
         columnFeatures: columnFeatures,
         columnHeaders: isUser ? constants.user_pending_order : constants.pending_order
     };
