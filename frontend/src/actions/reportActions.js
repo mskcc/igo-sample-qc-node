@@ -158,11 +158,7 @@ export function getPending() {
       loadingMessage: 'Submitting...',
     });
     return axios
-      .get(Config.API_ROOT + '/pending/getPendingRequests', {
-        params: {
-          userRole: getState().user.role
-        }
-      })
+      .get(Config.API_ROOT + `/pending/getPendingRequests?userRole=${getState().user.role}`, {})
       .then((response) => {
         dispatch({
           type: GET_PENDING_SUCCESS,

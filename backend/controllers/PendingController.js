@@ -8,8 +8,8 @@ const { buildPendingList } = require('../util/helpers');
 
 exports.getPendingRequests = [
     function(req, res) {
-        console.log(req);
         const userType = req.params.userRole;
+        console.log(userType);
         const responseData = [];
         // [{request_id: '', date: '', most_recent_date: '', report: ''}]
         // MORE FIELDS FOR LAB_MEMBERS {author: '', recipients: '', lab_notifications: 0, pm_notifications: 0, user_replies: 0}
