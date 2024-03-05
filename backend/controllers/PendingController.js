@@ -9,7 +9,6 @@ const { buildPendingList } = require('../util/helpers');
 exports.getPendingRequests = [
     function(req, res) {
         const userType = req.params.userRole;
-        console.log(userType);
         const responseData = [];
         // [{request_id: '', date: '', most_recent_date: '', report: ''}]
         // MORE FIELDS FOR LAB_MEMBERS {author: '', recipients: '', lab_notifications: 0, pm_notifications: 0, user_replies: 0}
@@ -83,12 +82,15 @@ exports.getPendingRequests = [
                         return apiResponse.successResponseWithData(res, 'success', pendingTable);
 
                     });
-                });
+                }).catch(e => {
+                    console.log(e);
+                    return apiResponse.errorResponse(res, `ERROR querying MySQL database: ${e}`);
+                });;
             });
             
         }).catch(e => {
             console.log(e);
-            return apiResponse.errorResponse(res, `ERROR querying MySQL database: ${e}`);
+            return apiResponse.errorResponse(res, `ERROR querying LIMS: ${e}`);
         });
     }
 ];

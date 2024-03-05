@@ -17,6 +17,7 @@ function userReducer(state = initialState, action) {
   switch (action.type) {
     case ActionTypes.FETCH_USER_SUCCESS: {
       return {
+          ...state,
           ...mockUser
         }
       
@@ -42,10 +43,10 @@ function userReducer(state = initialState, action) {
       };
 
     default:
-      return state;
-      // return {
-      //   ...mockUser
-      // }
+      // return state;
+      return {
+        ...mockUser
+      }
   }
 }
 export default userReducer;
