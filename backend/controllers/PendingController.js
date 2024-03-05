@@ -17,7 +17,7 @@ exports.getPendingRequests = [
 
         Promise.all([pendingPromise]).then((pendingResponseData) => {
             // console.log(Object.keys(pendingResponseData));
-            Object.keys(pendingResponseData).map(pendingRequestId => {
+            Object.keys(pendingResponseData).forEach(pendingRequestId => {
                 // console.log(pendingResponseData[pendingRequestId]);
                 CommentRelation.findOne({
                     where: {
@@ -75,12 +75,13 @@ exports.getPendingRequests = [
                                 });
                             }
                     }
+                }).catch(e => {
+                    console.log(e);
+                    return apiResponse.errorResponse(res, `ERROR querying MySQL database: ${e}`);
                 });
-            }).catch(e => {
-                console.log(e);
-                return apiResponse.errorResponse(res, `ERROR querying MySQL database: ${e}`);
+            
             });
-
+            
             let pendingTable = {};
             if (userType === 'lab_member' || userType === 'cmo_pm') {
                 pendingTable = buildPendingList(responseData, false);
@@ -91,7 +92,7 @@ exports.getPendingRequests = [
 
             return apiResponse.successResponseWithData(res, 'success', pendingTable);
 
-            
+
         }).catch(e => {
             console.log(e);
             return apiResponse.errorResponse(res, `ERROR querying LIMS: ${e}`);
