@@ -8,7 +8,7 @@ const { buildPendingList } = require('../util/helpers');
 
 exports.getPendingRequests = [
     function(req, res) {
-        console.log(res);
+        console.log(req);
         const userType = req.params.userRole;
         const responseData = [];
         // [{request_id: '', date: '', most_recent_date: '', report: ''}]
@@ -72,18 +72,20 @@ exports.getPendingRequests = [
                             });
                         }
                         
+                        let pendingTable = {};
+                        if (userType === 'lab_member' || userType === 'cmo_pm') {
+                            pendingTable = buildPendingList(responseData, false);
+                        } else {
+                            // userType === 'user'
+                            pendingTable = buildPendingList(responseData, true);
+                        }
+
+                        return apiResponse.successResponseWithData(res, 'success', pendingTable);
+
                     });
                 });
             });
-            let pendingTable = {};
-            if (userType === 'lab_member' || userType === 'project_manager') {
-                pendingTable = buildPendingList(responseData, false);
-            } else {
-                // userType === 'user'
-                pendingTable = buildPendingList(responseData, true);
-            }
-
-            return apiResponse.successResponseWithData(res, 'success', pendingTable);
+            
         }).catch(e => {
             console.log(e);
             return apiResponse.errorResponse(res, `ERROR querying MySQL database: ${e}`);
