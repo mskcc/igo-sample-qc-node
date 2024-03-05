@@ -219,7 +219,7 @@ export default function TableArea(props) {
           {Object.keys(props.report.tables).map((report, index) => (
             (props.role === 'lab_member' && report !== 'Attachments' && !props.reportsWithComments.includes(report) ? 
               <Tab key={report} icon={<SpeakerNotesOffIcon color="primary"/>} label={report} {...a11yProps(index)} />
-            : props.report.tables[report].readOnly !== true && report !== 'Attachments' ? 
+            : props.report.tables[report].readOnly !== true && report !== 'Attachments' && report !== 'Pathology Report' ? 
               <Tab key={report} icon={<ErrorIcon color="secondary"/>} label={report} {...a11yProps(index)} />
             : 
               <Tab key={report} label={report} {...a11yProps(index)} />
