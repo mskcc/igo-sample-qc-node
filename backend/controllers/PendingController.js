@@ -16,7 +16,9 @@ exports.getPendingRequests = [
         const pendingPromise = services.getPendingRequests();
 
         Promise.all([pendingPromise]).then((pendingResponseData) => {
-            Object.keys(pendingPromise).map(pendingRequestId => {
+            // console.log(Object.keys(pendingResponseData));
+            Object.keys(pendingResponseData).map(pendingRequestId => {
+                // console.log(pendingResponseData[pendingRequestId]);
                 CommentRelation.findOne({
                     where: {
                         request_id: pendingRequestId,
