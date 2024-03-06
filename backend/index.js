@@ -23,8 +23,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
-// const jwtInCookie = require('jwt-in-cookie');
-// jwtInCookie.configure({ secret: process.env.JWT_SECRET_KEY });
+const jwtInCookie = require('jwt-in-cookie');
+jwtInCookie.configure({ secret: process.env.JWT_SECRET_KEY });
 
 const corsConfig = {
     origin: true,
