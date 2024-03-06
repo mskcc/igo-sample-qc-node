@@ -34,7 +34,7 @@ export class PendingContainer extends Component {
 
 PendingContainer.defaultProps = {};
 
-const mapStateToProps = (state) => ({ report: state.report });
+const mapStateToProps = (state) => ({ report: state.report, user: state.user });
 
 export default withLocalize(
   connect(mapStateToProps, {

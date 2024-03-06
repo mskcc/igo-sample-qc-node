@@ -2,8 +2,6 @@ import React from 'react';
 import { HotTable } from '@handsontable/react';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-
-// import Checkbox from "@material-ui/core/Checkbox";
 import Swal from 'sweetalert2';
 
 const styles = (theme) => ({

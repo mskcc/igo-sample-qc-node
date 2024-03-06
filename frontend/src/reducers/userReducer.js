@@ -33,6 +33,7 @@ function userReducer(state = initialState, action) {
       return {
           ...state,
           ...user,
+          loggedIn: true,
           username: action.user.payload.username,
           role: role,
       };
