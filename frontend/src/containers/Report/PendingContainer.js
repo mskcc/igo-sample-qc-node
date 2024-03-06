@@ -10,7 +10,6 @@ import { Config } from '../../secret_config';
 export class PendingContainer extends Component {
   componentDidMount() {
     if (!this.props.report.pending) {
-      console.log(this.props.user);
       const userType = this.props.user.role;
       this.props.getPending(userType);
     }
