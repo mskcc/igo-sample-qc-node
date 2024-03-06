@@ -157,6 +157,7 @@ export function getPending() {
       loading: true,
       loadingMessage: 'Loading pending requests...',
     });
+    console.log(getState().user);
     return axios
       .get(Config.API_ROOT + `/pending/getPendingRequests?userRole=${getState().user.role}`, {})
       .then((response) => {
