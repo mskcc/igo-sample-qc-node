@@ -30,9 +30,6 @@ class Table extends React.Component {
     return (
       <div className={classes.container}>
         <Typography variant="h5">Waiting for Investigator Decision</Typography>
-        <Typography variant="body1">
-          To send reminders, click on show and add a new comment.
-        </Typography>
         <HotTable
           licenseKey="non-commercial-and-evaluation"
           id="hot"

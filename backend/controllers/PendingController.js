@@ -10,9 +10,7 @@ exports.getPendingRequests = [
     function(req, res) {
         const userType = req.params.userRole;
         const responseData = [];
-        // [{request_id: '', date: '', most_recent_date: '', report: ''}]
-        // MORE FIELDS FOR LAB_MEMBERS {author: '', recipients: '', lab_notifications: 0, pm_notifications: 0, user_replies: 0}
-
+        
         const pendingPromise = services.getPendingRequests();
 
         Promise.all([pendingPromise]).then((pendingResponseData) => {
@@ -81,7 +79,7 @@ exports.getPendingRequests = [
                 });
             
             });
-            
+
             let pendingTable = {};
             if (userType === 'lab_member' || userType === 'cmo_pm') {
                 pendingTable = buildPendingList(responseData, false);
