@@ -192,16 +192,16 @@ exports.buildPendingList = (pendings, isUser) => {
 
     const columnFeatures = isUser ? [
         {data: 'request_id', readOnly: true},
-        {data: 'date', readOnly: true},
         // {data: 'most_recent_date', readOnly: true},
         {data: 'report', readOnly: true},
+        {data: 'date', readOnly: true},
         {data: 'show', readOnly: true, renderer: 'html'},
     ] : [
         {data: 'request_id', readOnly: true},
-        {data: 'date', readOnly: true},
         // {data: 'most_recent_date', readOnly: true},
         {data: 'report', readOnly: true},
         {data: 'author', readOnly: true},
+        {data: 'date', readOnly: true},
         // {data: 'lab_notifications', readOnly: true},
         // {data: 'pm_notifications', readOnly: true},
         // {data: 'user_replies', readOnly: true},

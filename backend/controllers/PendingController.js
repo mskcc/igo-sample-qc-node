@@ -13,14 +13,18 @@ exports.getPendingRequests = [
         
         const pendingPromise = services.getPendingRequests();
 
-        Promise.all([pendingPromise]).then((pendingResponseData) => {
-            // console.log(Object.keys(pendingResponseData));
-            Object.keys(pendingResponseData).forEach(pendingRequestId => {
+        Promise.all([pendingPromise]).then((pendingResponse) => {
+            if (!pendingResponse || pendingResponse.length === 0) {
+                return apiResponse.errorResponse(res, 'No pending request data available.');
+            }
+            
+            const [pendingRequests] = pendingResponse;
+            Object.keys(pendingRequests).forEach(pendingRequestId => {
                 // console.log(pendingResponseData[pendingRequestId]);
                 CommentRelation.findOne({
                     where: {
                         request_id: pendingRequestId,
-                        report: pendingResponseData[pendingRequestId]
+                        report: pendingRequests[pendingRequestId]
                     }
                 }).then(commentRelationRecord => {
                     if (commentRelationRecord && commentRelationRecord.length > 0) {

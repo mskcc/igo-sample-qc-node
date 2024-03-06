@@ -390,10 +390,10 @@ exports.attachmentOrder = ['FileName', 'Action', 'RecordId'];
 
 exports.pending_order = [
     'Request',
-    'QC Report Sent',
     // 'Most recent notification',
     'Report',
     'Author',
+    'QC Report Sent',
     // 'Lab Notifications',
     // 'PM Notifications',
     // 'User Replies',
@@ -403,9 +403,9 @@ exports.pending_order = [
 
 exports.user_pending_order = [
     'Request',
-    'QC Report Sent',
     // 'Most recent notification',
     'Report',
+    'QC Report Sent',
     'Show',
 ];
 
