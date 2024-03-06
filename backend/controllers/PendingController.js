@@ -8,6 +8,7 @@ const { buildPendingList } = require('../util/helpers');
 
 exports.getPendingRequests = [
     function(req, res) {
+        console.log(res.user);
         const userType = req.params.userRole;
         const responseData = [];
         
