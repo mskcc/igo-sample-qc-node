@@ -9,7 +9,7 @@ const { buildPendingList } = require('../util/helpers');
 
 exports.getPendingRequests = [
     function(req, res) {
-        const userType = req.params.userRole;
+        const userType = req.params.userRole || 'user';
         const responseData = [];
         
         const pendingPromise = services.getPendingRequests();
@@ -36,12 +36,9 @@ exports.getPendingRequests = [
                     [Op.or]: conditions
                 }
             }).then(commentRelationRecords => {
-                console.log(`RECORDS ${commentRelationRecords}`);
-                
                 if (commentRelationRecords && commentRelationRecords.length > 0) {
                     commentRelationRecords.forEach(record => {
-
-                        const isAuthed = userType === 'lab_member'; // || isAuthorizedForRequest()
+                        const isAuthed = userType === 'lab_member' || true; // || isAuthorizedForRequest()
 
                         if (isAuthed) {
                             if (userType === 'user') {
