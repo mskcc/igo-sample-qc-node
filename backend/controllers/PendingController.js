@@ -58,11 +58,11 @@ exports.getPendingRequests = [
                                     date: record.createdAt.toLocaleString(),
                                     // most_recent_date: allReportComments[0].createdAt.toLocaleString(),
                                     author: record.author,
-                                    recipients: record.recipients,
+                                    recipients: `<div class='recipients-col'>${record.recipients.replaceAll(',', '\n')}</div>`,
                                     // lab_notifications: labNotifications,
                                     // pm_notifications: PmNotifications,
                                     // user_replies: userReplies,
-                                    show: `<span pending-id='${record.request_id}' class ='show-icon'><i class='material-icons'>forward</i></span>`
+                                    show: `<span pending-id='${record.request_id}' class='show-icon'><i class='material-icons'>forward</i></span>`
                                 });
                         }
                     }})
