@@ -9,8 +9,7 @@ const styles = (theme) => ({
     textAlign: 'center',
     gridArea: 'history',
     width: '100%',
-    padding: '1em',
-    backgroundColor: 'rgba(0, 148, 144, .06)'
+    padding: '1em'
   },
 });
 
