@@ -38,7 +38,6 @@ axios.interceptors.response.use(
 
 export const GET_REQUEST_REQUEST = 'GET_REQUEST_REQUEST';
 
-export const EXPIRED = 'EXPIRED';
 export const GET_REQUEST_FAIL = 'GET_REQUEST_FAIL';
 export const GET_REQUEST_SUCCESS = 'GET_REQUEST_SUCCESS';
 export function getRequest(requestId) {
@@ -66,17 +65,11 @@ export function getRequest(requestId) {
         });
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          return dispatch({
-            type: EXPIRED,
-            error: error,
-          });
-        } else {
-          return dispatch({
-            type: GET_REQUEST_FAIL,
-            message: 'reset',
-          });
-        }
+        return dispatch({
+          type: GET_REQUEST_FAIL,
+          message: 'reset',
+        });
+        
       });
   };
 }
