@@ -25,8 +25,7 @@ const appReducer = combineReducers({
 const rootReducer = (state, action) => {
   if (action.user) {
     state = {
-        ...state,
-        user: { ...action.user },
+        ...state
     };
   }
   return appReducer(state, action);
