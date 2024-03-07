@@ -36,9 +36,11 @@ exports.getPendingRequests = [
                     [Op.or]: conditions
                 }
             }).then(commentRelationRecords => {
+                console.log(`RECORDS ${commentRelationRecords}`);
                 
                 if (commentRelationRecords && commentRelationRecords.length > 0) {
                     commentRelationRecords.forEach(record => {
+
                         const isAuthed = userType === 'lab_member'; // || isAuthorizedForRequest()
 
                         if (isAuthed) {
