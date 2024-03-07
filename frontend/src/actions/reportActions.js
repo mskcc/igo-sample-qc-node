@@ -150,7 +150,7 @@ export function getQcReports(requestId, otherSampleIds) {
 export const GET_PENDING_REQUEST = 'GET_PENDING_REQUEST';
 export const GET_PENDING_FAIL = 'GET_PENDING_FAIL';
 export const GET_PENDING_SUCCESS = 'GET_PENDING_SUCCESS';
-export function getPending(userType) {
+export function getPending() {
   return (dispatch, getState) => {
     dispatch({
       type: GET_PENDING_REQUEST,
@@ -158,7 +158,11 @@ export function getPending(userType) {
       loadingMessage: 'Loading pending requests...',
     });
     return axios
-      .get(Config.API_ROOT + `/pending/getPendingRequests?userRole=${userType}`, {})
+      .post(Config.API_ROOT + `/pending/getPendingRequests`, {
+        data: {
+          user: getState().user,
+        },
+      })
       .then((response) => {
         dispatch({
           type: GET_PENDING_SUCCESS,

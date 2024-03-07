@@ -5,11 +5,13 @@ const Comments = db.comments;
 const Users = db.users;
 const apiResponse = require('../util/apiResponse');
 const services = require('../services/services');
-const { buildPendingList } = require('../util/helpers');
+const { buildPendingList, isUserAuthorizedForRequest } = require('../util/helpers');
 
 exports.getPendingRequests = [
     function(req, res) {
-        const userType = req.params.userRole || 'user';
+        const reqData = req.body.data;
+        const user = reqData.user;
+        const userType = user.role || 'user';
         const responseData = [];
         
         const pendingPromise = services.getPendingRequests();
@@ -38,7 +40,7 @@ exports.getPendingRequests = [
             }).then(commentRelationRecords => {
                 if (commentRelationRecords && commentRelationRecords.length > 0) {
                     commentRelationRecords.forEach(record => {
-                        const isAuthed = userType === 'lab_member' || true; // || isAuthorizedForRequest()
+                        const isAuthed = userType === 'lab_member' || isUserAuthorizedForRequest(record, user);
 
                         if (isAuthed) {
                             if (userType === 'user') {
