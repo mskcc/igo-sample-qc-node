@@ -12,7 +12,7 @@ const styles = (theme) => ({
     display: 'grid',
     height: '100%',
     gridTemplateAreas: '"history" "new-comment"',
-    gridTemplateRows: '80% 20%',
+    // gridTemplateRows: '80% 20%',
     marginTop: '25px',
     marginBottom: '45px',
     paddingRight: '10%',

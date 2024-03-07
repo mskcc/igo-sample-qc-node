@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
   },
   singleButton: {
     // float: "right",
-    minHeight: '100%',
     width: '100%',
     height: '132px',
     // marginBottom: "1em"
