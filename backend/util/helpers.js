@@ -224,7 +224,7 @@ exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
         const username = user.username.toLowerCase();
         for (let i = 0; i < commentRelationsForRequest.length; i++) {
             const relationData = commentRelationsForRequest[i].dataValues;
-
+            console.log(relationData);
             //username listed specifically
             if (relationData.recipients.toLowerCase().includes(username) ||
                 relationData.author.toLowerCase() === username) {
