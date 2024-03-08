@@ -63,7 +63,7 @@ export const LOGOUT_FAIL = 'LOGOUT_FAIL';
 export function logout() {
     return (dispatch) => {
         dispatch({ type: LOGOUT });
-        return logout()
+        return logoutUser()
             .then(() => {
                 return dispatch({
                     type: LOGOUT_SUCCESS,

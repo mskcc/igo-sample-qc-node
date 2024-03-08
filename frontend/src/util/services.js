@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Config } from '../secret_config';
 
-export const logout = (data) => {
+export const logoutUser = (data) => {
     const url = `${Config.AUTH_URL}/api/auth/logout`;
     return axios
         .get(url)
