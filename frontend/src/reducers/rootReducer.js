@@ -32,7 +32,7 @@ const rootReducer = (state, action) => {
   if (action.type === 'LOGOUT_SUCCESS' || action.type === 'LOGOUT_FAIL') {
     console.log('goodbye');
     sessionStorage.removeItem('persist:root');
-    window.location.href = `${Config.AUTH_URL}/${Config.HOME_PAGE_PATH}`;
+    window.location.href = `${Config.AUTH_URL}/${Config.BASENAME}`;
   }
 
   return appReducer(state, action);
