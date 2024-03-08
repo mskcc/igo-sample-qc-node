@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Config } from '../secret_config.js';
-import { fetchCurrentUser, logout } from '../util/services';
+import { fetchCurrentUser, logoutUser } from '../util/services';
 
 // Add a request interceptor
 axios.defaults.withCredentials = true;
