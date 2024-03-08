@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Config } from '../secret_config.js';
-import { fetchCurrentUser } from '../util/services';
+import { fetchCurrentUser, logout } from '../util/services';
 
 // Add a request interceptor
 axios.defaults.withCredentials = true;
@@ -63,8 +63,7 @@ export const LOGOUT_FAIL = 'LOGOUT_FAIL';
 export function logout() {
     return (dispatch) => {
         dispatch({ type: LOGOUT });
-        return services
-            .logout()
+        return logout()
             .then(() => {
                 return dispatch({
                     type: LOGOUT_SUCCESS,
