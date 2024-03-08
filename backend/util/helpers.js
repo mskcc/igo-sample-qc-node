@@ -224,7 +224,7 @@ exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
         const username = user.username.toLowerCase();
         for (let i = 0; i < commentRelationsForRequest.length; i++) {
             const relationData = commentRelationsForRequest[i].dataValues;
-            console.log(relationData);
+            
             //username listed specifically
             if (relationData.recipients.toLowerCase().includes(username) ||
                 relationData.author.toLowerCase() === username) {
@@ -268,6 +268,25 @@ exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
         return isAuthorized;
     }
 };
+
+exports.isUserAuthorizedForPendingRequest = (commentRelationRecord, user) => {
+    let isAuthorized = false;
+    const username = user.username.toLowerCase();
+
+    //username listed specifically
+    if (commentRelationRecord.recipients.toLowerCase().includes(username) ||
+        commentRelationRecord.author.toLowerCase() === username) {
+
+        isAuthorized = true;
+    }
+
+    // user is PM and skicmopm recipient (PMs do not use zzPDLs for this to be able to communicate with outside investigators)
+    if (commentRelationRecord.recipients.toLowerCase().includes(constants.PM_EMAIL_LIST) && user.role === 'cmo_pm') {
+        isAuthorized = true;
+    }
+
+    return isAuthorized;
+}
 
 exports.getCommentRelationsForRequest = (requestId) => {
     CommentRelations.findAll({

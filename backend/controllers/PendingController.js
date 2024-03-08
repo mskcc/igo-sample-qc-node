@@ -5,7 +5,7 @@ const Comments = db.comments;
 const Users = db.users;
 const apiResponse = require('../util/apiResponse');
 const services = require('../services/services');
-const { buildPendingList, isUserAuthorizedForRequest } = require('../util/helpers');
+const { buildPendingList, isUserAuthorizedForPendingRequest } = require('../util/helpers');
 
 exports.getPendingRequests = [
     function(req, res) {
@@ -40,7 +40,7 @@ exports.getPendingRequests = [
             }).then(commentRelationRecords => {
                 if (commentRelationRecords && commentRelationRecords.length > 0) {
                     commentRelationRecords.forEach(record => {
-                        const isAuthed = userType === 'lab_member' || isUserAuthorizedForRequest(record, user);
+                        const isAuthed = userType === 'lab_member' || isUserAuthorizedForPendingRequest(record, user);
 
                         if (isAuthed) {
                             if (userType === 'user') {
