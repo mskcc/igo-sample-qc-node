@@ -1,8 +1,8 @@
 const db = require('../models');
 const CommentRelation = db.commentRelations;
 const { Op } = require('sequelize');
-const Comments = db.comments;
-const Users = db.users;
+// const Comments = db.comments;
+// const Users = db.users;
 const apiResponse = require('../util/apiResponse');
 const services = require('../services/services');
 const { buildPendingList, isUserAuthorizedForPendingRequest } = require('../util/helpers');
