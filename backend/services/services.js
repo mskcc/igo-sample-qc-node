@@ -111,6 +111,7 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
     //     url,
     //   };
     logger.info(`Sending request to ${url}`);
+    const data = qs.stringify({...decisionsData});
     return axios
         .post(
             url,
@@ -118,7 +119,7 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
             {
                 auth: { ...LIMS_AUTH },
                 httpsAgent: agent,
-                params: { ...decisionsData },
+                params: { data },
                 ...axiosConfig,
             }
         )
