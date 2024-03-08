@@ -168,72 +168,49 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
 };
 
 exports.buildPendingList = (pendings, isUser) => {
-    const responsePendings = [];
-    for (let pending of pendings) {
-        // console.log(pending.dataValues.request_id);
-        const responsePending = {};
-        responsePending['request_id'] = pending.request_id;
-        responsePending['date'] = pending.createdAt.toLocaleString();
+    // const responsePendings = [];
+    // for (let pending of pendings) {
+    //     // console.log(pending.dataValues.request_id);
+    //     const responsePending = {};
+    //     responsePending['request_id'] = pending.request_id;
+    //     responsePending['date'] = pending.date;
+    //     responsePending['most_recent_date'] = pending.mostRecentDate;
+    //     responsePending['report'] = pending.report;
+    //     responsePending['show'] = `<span pending-id='${pending.request_id}' class ='show-icon'><i class='material-icons'>forward</i></span>`;
 
-        responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
+    //     // show additional fields for lab_member and project_manager roles
+    //     if (!isUser) {
+    //         responsePending['author'] = pending.author;
+    //         responsePending['recipients'] = `<div class='recipients-col'>${pending.recipients.replaceAll(',', '\n')}</div>`;
+    //         responsePending['lab_notifications'] = pending.labNotifications;
+    //         responsePending['pm_notifications'] = pending.PmNotifications;
+    //         responsePending['user_replies'] = pending.userReplies;
+    //     }
 
-        // TODO FIX LAST CHILD DATE BEFORE DEPLOY
-        // if (pending.children() && pending.children().length > 0) {
-        //     responsePending['most_recent_date'] = pending.children[-1].createdAt.toLocaleString();
-        // } else {
-        //     responsePending['most_recent_date'] = pending.createdAt.toLocaleString();
-        // }
-
-        responsePending['report'] = pending.report;
-        responsePending['show'] = `<span pending-id='${pending.request_id}' class ='show-icon'><i class='material-icons'>forward</i></span>`;
-
-        // show additional fields for lab_member and project_manager roles
-        if (!isUser) {
-            responsePending['author'] = pending.author;
-            responsePending['recipients'] = `<div class='recipients-col'>${pending.recipients.replaceAll(',', '\n')}</div>`;
-            responsePending['lab_notifications'] = 0;
-            responsePending['pm_notifications'] = 0;
-            responsePending['user_replies'] = 0;
-    
-            // TODO - PROPERLY QUERY FOR COMMENT COUNT BEFORE DEPLOYMENT
-            // const comments = pending.children();
-            // for (let comment in comments) {
-            //     if (comment.author.role === 'lab_member') {
-            //         responsePending['lab_notifications'] += 1;
-            //     }
-            //     if (comment.author.role === 'project_manager') {
-            //         responsePending['pm_notifications'] += 1;
-            //     }
-            //     if (comment.author.role === 'user') {
-            //         responsePending['user_replies'] += 1;
-            //     }
-            // }
-        }
-
-        responsePendings.push(responsePending);
-    }
+    //     responsePendings.push(responsePending);
+    // }
 
     const columnFeatures = isUser ? [
         {data: 'request_id', readOnly: true},
-        {data: 'date', readOnly: true},
-        {data: 'most_recent_date', readOnly: true},
+        // {data: 'most_recent_date', readOnly: true},
         {data: 'report', readOnly: true},
+        {data: 'date', readOnly: true},
         {data: 'show', readOnly: true, renderer: 'html'},
     ] : [
         {data: 'request_id', readOnly: true},
-        {data: 'date', readOnly: true},
-        {data: 'most_recent_date', readOnly: true},
+        // {data: 'most_recent_date', readOnly: true},
         {data: 'report', readOnly: true},
         {data: 'author', readOnly: true},
-        {data: 'lab_notifications', readOnly: true},
-        {data: 'pm_notifications', readOnly: true},
-        {data: 'user_replies', readOnly: true},
+        {data: 'date', readOnly: true},
+        // {data: 'lab_notifications', readOnly: true},
+        // {data: 'pm_notifications', readOnly: true},
+        // {data: 'user_replies', readOnly: true},
         {data: 'recipients', readOnly: true, renderer: 'html'},
         {data: 'show', readOnly: true, renderer: 'html'},
     ];
 
     return {
-        data: responsePendings,
+        data: pendings,
         columnFeatures: columnFeatures,
         columnHeaders: isUser ? constants.user_pending_order : constants.pending_order
     };
@@ -247,7 +224,7 @@ exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
         const username = user.username.toLowerCase();
         for (let i = 0; i < commentRelationsForRequest.length; i++) {
             const relationData = commentRelationsForRequest[i].dataValues;
-
+            
             //username listed specifically
             if (relationData.recipients.toLowerCase().includes(username) ||
                 relationData.author.toLowerCase() === username) {
@@ -291,6 +268,25 @@ exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
         return isAuthorized;
     }
 };
+
+exports.isUserAuthorizedForPendingRequest = (commentRelationRecord, user) => {
+    let isAuthorized = false;
+    const username = user.username.toLowerCase();
+
+    //username listed specifically
+    if (commentRelationRecord.recipients.toLowerCase().includes(username) ||
+        commentRelationRecord.author.toLowerCase() === username) {
+
+        isAuthorized = true;
+    }
+
+    // user is PM and skicmopm recipient (PMs do not use zzPDLs for this to be able to communicate with outside investigators)
+    if (commentRelationRecord.recipients.toLowerCase().includes(constants.PM_EMAIL_LIST) && user.role === 'cmo_pm') {
+        isAuthorized = true;
+    }
+
+    return isAuthorized;
+}
 
 exports.getCommentRelationsForRequest = (requestId) => {
     CommentRelations.findAll({

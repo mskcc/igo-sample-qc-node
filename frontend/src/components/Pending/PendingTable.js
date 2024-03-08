@@ -2,8 +2,6 @@ import React from 'react';
 import { HotTable } from '@handsontable/react';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-
-// import Checkbox from "@material-ui/core/Checkbox";
 import Swal from 'sweetalert2';
 
 const styles = (theme) => ({
@@ -30,9 +28,6 @@ class Table extends React.Component {
     return (
       <div className={classes.container}>
         <Typography variant="h5">Waiting for Investigator Decision</Typography>
-        <Typography variant="body1">
-          To send reminders, click on show and add a new comment.
-        </Typography>
         <HotTable
           licenseKey="non-commercial-and-evaluation"
           id="hot"

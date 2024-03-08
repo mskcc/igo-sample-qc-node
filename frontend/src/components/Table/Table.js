@@ -8,8 +8,7 @@ const styles = (theme) => ({
     width: '100%',
     overflowX: 'auto',
     display: 'grid',
-    maxHeight: '500px'
-
+    maxHeight: '515px'
   },
 
 });

@@ -14,7 +14,7 @@ import { Header, SnackMessage, Instructions } from '../components';
 
 import PendingContainer from './Report/PendingContainer';
 import ReportContainer from './Report/ReportContainer';
-
+import Logout from './Logout';
 import ErrorPage from './ErrorPage';
 
 import { Config } from '../secret_config.js';
@@ -109,6 +109,8 @@ class Root extends Component {
                       path="/instructions"
                       component={Instructions}
                     />
+                    <PrivateRoute path='/logout' component={Logout} />
+
                   </React.Fragment>
                 )}
                 {this.props.common.message &&

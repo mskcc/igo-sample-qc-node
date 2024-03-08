@@ -10,6 +10,7 @@ import { Config } from '../../secret_config';
 export class PendingContainer extends Component {
   componentDidMount() {
     if (!this.props.report.pending) {
+      // const userType = this.props.user.role;
       this.props.getPending();
     }
   }
@@ -34,7 +35,7 @@ export class PendingContainer extends Component {
 
 PendingContainer.defaultProps = {};
 
-const mapStateToProps = (state) => ({ report: state.report });
+const mapStateToProps = (state) => ({ report: state.report, user: state.user });
 
 export default withLocalize(
   connect(mapStateToProps, {

@@ -71,6 +71,16 @@ const Header = (props) => {
                 </Typography>
               </a>
             </Button>
+            <Button>
+                <NavLink
+                  to='/logout'
+                  activeClassName={'active'}
+                  className={'navlink'}>
+                      <Typography color='inherit' variant='h6'>
+                          Logout
+                      </Typography>
+                  </NavLink>
+              </Button>
 
             <Paper className={'search'}>
               <InputBase

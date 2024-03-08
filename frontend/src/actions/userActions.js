@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Config } from '../secret_config.js';
-import { fetchCurrentUser } from '../util/services';
+import { fetchCurrentUser, logoutUser } from '../util/services';
 
 // Add a request interceptor
 axios.defaults.withCredentials = true;
@@ -51,6 +51,27 @@ export function fetchUser() {
                 
                 return dispatch({
                     type: FETCH_USER_FAIL,
+                    error: error,
+                });
+            });
+    };
+}
+
+export const LOGOUT = 'LOGOUT';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+export const LOGOUT_FAIL = 'LOGOUT_FAIL';
+export function logout() {
+    return (dispatch) => {
+        dispatch({ type: LOGOUT });
+        return logoutUser()
+            .then(() => {
+                return dispatch({
+                    type: LOGOUT_SUCCESS,
+                });
+            })
+            .catch((error) => {
+                return dispatch({
+                    type: LOGOUT_FAIL,
                     error: error,
                 });
             });

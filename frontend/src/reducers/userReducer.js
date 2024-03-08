@@ -1,5 +1,5 @@
-import { reportActions as ReportActionTypes } from '../actions';
 import { userActions as ActionTypes } from '../actions';
+
 const mockUser = {
   loggedIn: true,
   username: 'lawala',
@@ -15,10 +15,11 @@ const initialState = {
 
 function userReducer(state = initialState, action) {
   switch (action.type) {
-    case ActionTypes.FETCH_USER_SUCCESS: {
-      // return {
-      //     ...mockUser
-      //   }
+    case ActionTypes.FETCH_USER_SUCCESS: 
+      return {
+          ...state,
+          ...mockUser
+        }
       
       let user = action.user.payload;
       let role;
@@ -32,20 +33,17 @@ function userReducer(state = initialState, action) {
       return {
           ...state,
           ...user,
+          loggedIn: true,
           username: action.user.payload.username,
           role: role,
       };
-  }
-    case ReportActionTypes.EXPIRED:
-      return {
-        ...initialState,
-      };
+  
 
     default:
       return state;
-      // return {
-      //   ...mockUser
-      // }
+      return {
+        ...mockUser
+      }
   }
 }
 export default userReducer;

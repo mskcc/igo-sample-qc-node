@@ -6,6 +6,7 @@ import userReducer from './userReducer';
 import reportReducer from './reportReducer';
 import { persistReducer } from 'redux-persist';
 import sessionStorage from 'redux-persist/lib/storage/session'; // defaults to localStorage for web and AsyncStorage for react-native
+import { Config } from '../secret_config';
 
 const persistConfig = {
   key: 'root',
@@ -18,11 +19,22 @@ const appReducer = combineReducers({
   common: commonReducer,
   user: userReducer,
   report: reportReducer,
-
   localize: localizeReducer,
 });
 
 const rootReducer = (state, action) => {
+  if (action.user) {
+    state = {
+        ...state
+    };
+  }
+
+  if (action.type === 'LOGOUT_SUCCESS' || action.type === 'LOGOUT_FAIL') {
+    console.log('goodbye');
+    sessionStorage.removeItem('persist:root');
+    window.location.href = `${Config.AUTH_URL}/${Config.BASENAME}`;
+  }
+
   return appReducer(state, action);
 };
 
