@@ -118,9 +118,7 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
             {
                 auth: { ...LIMS_AUTH },
                 httpsAgent: agent,
-                data: decisionsData,
-                params: decisionsData,
-                headers: { 'content-type': 'application/x-www-form-urlencoded' },
+                params: { ...decisionsData },
                 ...axiosConfig,
             }
         )
