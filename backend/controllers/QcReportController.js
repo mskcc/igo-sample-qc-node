@@ -331,6 +331,7 @@ exports.setQCInvestigatorDecision = [
         const reqData = req.body.data;
         const decisions = reqData.decisions;
         const username = reqData.username;
+        const fullName = reqData.userFullName;
         const requestId = reqData.request_id;
         const report = reqData.report;
 
@@ -349,7 +350,7 @@ exports.setQCInvestigatorDecision = [
             Promise.all([saveQcDecisionPromise]).then(results => {
                 //figure out what we get back from POST??
                 console.log(results);
-
+                
                 // save/update Decisions table
                 Decisions.findOne({
                     where: {
@@ -376,6 +377,16 @@ exports.setQCInvestigatorDecision = [
                             }
                         });
                     }
+
+                    const decisionsMade = JSON.stringify(decisions);
+                    const allRecipients = commentRelationRecord.recipients.concat(`${commentRelationRecord.author}@mskcc.org`);
+                
+                    if (decisionsMade.includes('Stop processing')) {
+                        mailer.sendStopProcessingNotification(commentRelationRecord, fullName, allRecipients)
+                    } else {
+                        mailer.sendDecisionNotification(commentRelationRecord, fullName, allRecipients);
+                    }
+
                 }).catch(error => {
                     return apiResponse.errorResponse(res, `Failed to save decision to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                 });
