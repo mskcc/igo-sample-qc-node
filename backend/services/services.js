@@ -100,7 +100,7 @@ exports.getPicklist = () => {
 };
 
 exports.setQCInvestigatorDecision = (decisionsData) => {
-    // console.log(qs.stringify(decisionsData));
+    console.log(JSON.stringify(decisionsData));
     const url = `${LIMS_URL}/setInvestigatorDecision`;
     // const options = {
     //     method: 'POST',
@@ -111,7 +111,6 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
     //     url,
     //   };
     logger.info(`Sending request to ${url}`);
-    const data = qs.stringify({...decisionsData});
     return axios
         .post(
             url,
@@ -119,7 +118,7 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
             {
                 auth: { ...LIMS_AUTH },
                 httpsAgent: agent,
-                params: { data },
+                params: JSON.stringify(decisionsData),
                 ...axiosConfig,
             }
         )
