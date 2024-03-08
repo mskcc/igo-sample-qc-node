@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { userActions } from '../redux/actions';
+import { userActions } from '../actions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 class Logout extends React.Component {
