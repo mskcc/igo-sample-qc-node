@@ -100,7 +100,7 @@ exports.getPicklist = () => {
 };
 
 exports.setQCInvestigatorDecision = (decisionsData) => {
-    // console.log(JSON.stringify(decisionsData));
+    console.log(JSON.stringify(decisionsData));
     const url = `${LIMS_URL}/setInvestigatorDecision`;
     // const options = {
     //     method: 'POST',
