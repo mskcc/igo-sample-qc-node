@@ -110,6 +110,10 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
     //     data: qs.stringify(decisionsData),
     //     url,
     //   };
+    let headers = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+    };
     logger.info(`Sending request to ${url}`);
     return axios
         .post(
@@ -119,8 +123,7 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
                 auth: { ...LIMS_AUTH },
                 httpsAgent: agent,
                 headers: { 'content-type': 'application/json; charset=utf-8' },
-                params: decisionsData,
-                ...axiosConfig,
+                params: { ...decisionsData },
             }
         )
         .then((resp) => {
