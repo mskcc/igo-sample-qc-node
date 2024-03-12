@@ -122,8 +122,8 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
             {
                 auth: { ...LIMS_AUTH },
                 httpsAgent: agent,
-                headers: { 'content-type': 'application/json; charset=utf-8' },
-                params: decisionsData,
+                headers: { 'content-type': 'application/json', Accept: 'application/json' },
+                params: {decisionsData},
             }
         )
         .then((resp) => {
