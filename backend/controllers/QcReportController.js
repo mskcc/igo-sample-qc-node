@@ -348,8 +348,14 @@ exports.setQCInvestigatorDecision = [
             // save to LIMS
             const qcDecisionPromises = [];
             decisions.forEach(decisionsPerReport => {
-                qcDecisionPromises.push(services.setQCInvestigatorDecision(decisionsPerReport));
-            })
+                const decisionObj = {
+                    dataType: decisionsPerReport.dataType,
+                }
+                decisionsPerReport.samples.forEach(sampleData => {
+                    decisionObj[sampleData.sampleId] = sampleData.InvestigatorDecision;
+                });
+                qcDecisionPromises.push(services.setQCInvestigatorDecision(decisionObj));
+            });
             Promise.all([qcDecisionPromises]).then(results => {
                 //figure out what we get back from POST??
                 console.log(results);
