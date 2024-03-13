@@ -130,7 +130,7 @@ export default function CommentEditor(props) {
     const isCMOproject = 
       props.recipients.InvestigatorEmail.includes('skicmopm@mskcc.org') ||
       props.recipients.LabHeadEmail.includes('skicmopm@mskcc.org') ||
-      props.recipients.OtherContactEmails.includes('skicmopm@mskcc.org');
+      (props.recipients.OtherContactEmails && props.recipients.OtherContactEmails.includes('skicmopm@mskcc.org'));
       return isCMOproject && values.downstreamProcess === 'WholeExomeSequencing';
   };
 
