@@ -112,11 +112,13 @@ exports.sendDecisionNotification = function(decision, decisionUser, recipients) 
             mailTo: devRecipients.join(',')
         };
     } else {
+        contentBody = contentBody + `<br><br>In production, this email would have been sent to: ${recipients}<br><br>`;
+
         email = {
             subject: `${emailConfig.subject} ${decision.request_id} Decisions Submitted for ${decision.report}`,
             content: contentBody,
             footer: emailConfig.footer,
-            mailTo: recipients
+            mailTo: devRecipients.join(',')
         };
     }
 
@@ -145,11 +147,13 @@ exports.sendStopProcessingNotification = function (decision, decisionUser, recip
             mailTo: devRecipients.join(',')
         };
     } else {
+        contentBody = contentBody + `<br><br>In production, this email would have been sent to: ${recipients}<br><br>`;
+
         email = {
             subject: `${emailConfig.subject} ${decision.request_id} Stop Processing Decision(s) Submitted for ${decision.report}`,
             content: contentBody,
             footer: emailConfig.footer,
-            mailTo: recipients
+            mailTo: devRecipients.join(',')
         };
     }
 
