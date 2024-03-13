@@ -25,14 +25,21 @@ exports.getPendingRequests = [
 
             // build where clause conditions
             const conditions = [];
+            let lastYearTimestamp = new Date();
+            const pastYear = lastYearTimestamp.getFullYear() - 1;
+            lastYearTimestamp.setFullYear(pastYear);
+            console.log(`TIMESTAMP: ${lastYearTimestamp}`);
+
             Object.keys(pendingRequests).forEach(pendingRequestId => {
                 conditions.push({
                     request_id: pendingRequestId,
-                    report: pendingRequests[pendingRequestId]
+                    report: pendingRequests[pendingRequestId],
+                    createdAt: {
+                        [Op.gt]: lastYearTimestamp
+                    }
                 });
             });
 
-                
             CommentRelation.findAll({
                 where: {
                     [Op.or]: conditions
