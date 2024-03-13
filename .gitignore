@@ -133,3 +133,4 @@ dist
 frontend/src/secret_config.js
 backend/db.config.js
 backend/services/services.js
+backend/package-lock.json
