@@ -346,20 +346,10 @@ exports.setQCInvestigatorDecision = [
             }
 
             // save to LIMS
-            // const qcDecisionPromises = [];
-            // decisions.forEach(decisionsPerReport => {
-            //     const decisionObj = {
-            //         dataType: decisionsPerReport.dataType,
-            //     }
-            //     decisionsPerReport.samples.forEach(sampleData => {
-            //         decisionObj[sampleData.sampleId] = sampleData.InvestigatorDecision;
-            //     });
-            //     qcDecisionPromises.push(services.setQCInvestigatorDecision(decisionObj));
-            // });
             const qcDecisionPromise = services.setQCInvestigatorDecision(decisions);
             Promise.all([qcDecisionPromise]).then(results => {
                 //figure out what we get back from POST??
-                console.log(results);
+                // console.log(results);
                 
                 // save/update Decisions table
                 Decisions.findOne({
@@ -389,7 +379,7 @@ exports.setQCInvestigatorDecision = [
                     }
 
                     const decisionsMade = JSON.stringify(decisions);
-                    const allRecipients = commentRelationRecord.recipients.concat(`${commentRelationRecord.author}@mskcc.org`);
+                    const allRecipients = commentRelationRecord.recipients.concat(`,${commentRelationRecord.author}@mskcc.org`);
                 
                     if (decisionsMade.includes('Stop processing')) {
                         mailer.sendStopProcessingNotification(commentRelationRecord, fullName, allRecipients)
