@@ -2,7 +2,6 @@ const https = require('https');
 const axios = require('axios');
 const qs = require('qs');
 const { logger } = require('../util/winston');
-// const fetch = require('node-fetch');
 
 const LIMS_AUTH = {
     username: process.env.LIMS_USER,
@@ -107,12 +106,11 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
     return axios
         .post(
             url,
-            {},
+            decisionsData,
             {
                 auth: { ...LIMS_AUTH },
                 httpsAgent: agent,
-                ...axiosConfig,
-                params: { ...decisionsData },
+                ...axiosConfig
             }
         )
         .then((resp) => {

@@ -346,17 +346,18 @@ exports.setQCInvestigatorDecision = [
             }
 
             // save to LIMS
-            const qcDecisionPromises = [];
-            decisions.forEach(decisionsPerReport => {
-                const decisionObj = {
-                    dataType: decisionsPerReport.dataType,
-                }
-                decisionsPerReport.samples.forEach(sampleData => {
-                    decisionObj[sampleData.sampleId] = sampleData.InvestigatorDecision;
-                });
-                qcDecisionPromises.push(services.setQCInvestigatorDecision(decisionObj));
-            });
-            Promise.all([qcDecisionPromises]).then(results => {
+            // const qcDecisionPromises = [];
+            // decisions.forEach(decisionsPerReport => {
+            //     const decisionObj = {
+            //         dataType: decisionsPerReport.dataType,
+            //     }
+            //     decisionsPerReport.samples.forEach(sampleData => {
+            //         decisionObj[sampleData.sampleId] = sampleData.InvestigatorDecision;
+            //     });
+            //     qcDecisionPromises.push(services.setQCInvestigatorDecision(decisionObj));
+            // });
+            const qcDecisionPromise = services.setQCInvestigatorDecision(decisions);
+            Promise.all([qcDecisionPromise]).then(results => {
                 //figure out what we get back from POST??
                 console.log(results);
                 
