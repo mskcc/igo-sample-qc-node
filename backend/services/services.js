@@ -110,25 +110,30 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
     //     data: qs.stringify(decisionsData),
     //     url,
     //   };
-    let headers = {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-    };
+    const options = {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+        body: JSON.stringify(decisionsData),
+      };
     logger.info(`Sending request to ${url}`);
-    return axios
-        .post(
-            url,
-            {},
-            {
-                auth: { ...LIMS_AUTH },
-                httpsAgent: agent,
-                headers: { 'content-type': 'application/json', Accept: 'application/json' },
-                params: JSON.stringify(decisionsData),
-            }
-        )
+    return fetch(url, options)
+    // return axios
+    //     .post(
+    //         url,
+    //         {},
+    //         {
+    //             auth: { ...LIMS_AUTH },
+    //             httpsAgent: agent,
+    //             headers: { 'content-type': 'application/json', Accept: 'application/json' },
+    //             params: JSON.stringify(decisionsData),
+    //         }
+    //     )
         .then((resp) => {
             info(url);
-            return resp;
+            return resp.json();
         })
         .catch((error) => {
             errorlog(url, error);
