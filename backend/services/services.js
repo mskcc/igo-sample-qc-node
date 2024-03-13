@@ -2,7 +2,7 @@ const https = require('https');
 const axios = require('axios');
 const qs = require('qs');
 const { logger } = require('../util/winston');
-const fetch = require('node-fetch');
+// const fetch = require('node-fetch');
 
 const LIMS_AUTH = {
     username: process.env.LIMS_USER,
@@ -111,27 +111,27 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
     //     data: qs.stringify(decisionsData),
     //     url,
     //   };
-    const options = {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=UTF-8",
-        },
-        body: JSON.stringify(decisionsData),
-      };
+    // const options = {
+    //     method: "POST",
+    //     headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json;charset=UTF-8",
+    //     },
+    //     body: JSON.stringify(decisionsData),
+    //   };
     logger.info(`Sending request to ${url}`);
-    return fetch(url, options)
-    // return axios
-    //     .post(
-    //         url,
-    //         {},
-    //         {
-    //             auth: { ...LIMS_AUTH },
-    //             httpsAgent: agent,
-    //             headers: { 'content-type': 'application/json', Accept: 'application/json' },
-    //             params: JSON.stringify(decisionsData),
-    //         }
-    //     )
+    // return fetch(url, options)
+    return axios
+        .post(
+            url,
+            {},
+            {
+                auth: { ...LIMS_AUTH },
+                httpsAgent: agent,
+                headers: { 'content-type': 'application/json', Accept: 'application/json' },
+                params: decisionsData,
+            }
+        )
         .then((resp) => {
             info(url);
             return resp.json();
