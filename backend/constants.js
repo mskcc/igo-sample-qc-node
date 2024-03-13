@@ -325,8 +325,8 @@ exports.dnaOrder = [
     'TumorOrNormal',
     'Preservation',
     'SourceSampleId',
-    'A260230',
     'A260280',
+    'A260230',
     'RecordId',
 ];
 
@@ -345,8 +345,8 @@ exports.rnaOrder = [
     'Preservation',
     'Rqn',
     'SourceSampleId',
-    'A260230',
     'A260280',
+    'A260230',
     'RecordId',
 ];
 

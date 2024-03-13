@@ -1,6 +1,5 @@
 const https = require('https');
 const axios = require('axios');
-const qs = require('qs');
 const { logger } = require('../util/winston');
 
 const LIMS_AUTH = {
@@ -100,26 +99,17 @@ exports.getPicklist = () => {
 };
 
 exports.setQCInvestigatorDecision = (decisionsData) => {
+    // console.log(JSON.stringify(decisionsData));
     const url = `${LIMS_URL}/setInvestigatorDecision`;
-    // const options = {
-    //     method: 'POST',
-    //     headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    //     auth: { ...LIMS_AUTH },
-    //     httpsAgent: agent,
-    //     data: qs.stringify(decisionsData),
-    //     url,
-    //   };
     logger.info(`Sending request to ${url}`);
     return axios
         .post(
             url,
-            {},
+            decisionsData,
             {
                 auth: { ...LIMS_AUTH },
                 httpsAgent: agent,
-                params: qs.stringify(decisionsData),
-                headers: { 'content-type': 'application/x-www-form-urlencoded' },
-                ...axiosConfig,
+                ...axiosConfig
             }
         )
         .then((resp) => {

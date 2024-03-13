@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json());
  
 // For parsing application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 const jwtInCookie = require('jwt-in-cookie');

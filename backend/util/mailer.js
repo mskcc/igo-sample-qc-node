@@ -4,7 +4,8 @@ const { emailConfig } = require('../constants');
 
 const ENVIRONMENT = process.env.ENV;
 const devRecipients = [
-    'delbels@mskcc.org'
+    'delbels@mskcc.org',
+    'mirhajf@mskcc.org'
 ];
 
 // create reusable transporter object using the default SMTP transport
@@ -98,13 +99,12 @@ exports.sendNotification = function(recipients, comment, requestId, report, auth
         .catch((error) => console.log(error));
 };
 
-exports.sendDecisionNotification = function(decision, decisionUser, recipients, initialAuthor) {
-    let contentBody = `Hello,<br><br>Decisions have been submitted for project ${decision.request_id} by ${decisionUser.fullName}.<br><br><span style="font-weight:bold;"> To make any changes to the decisions, please reach out to IGO at zzPDL_IGO_Staff@mskcc.org.</span><br>You can find the project at <a href="https://igo.mskcc.org/sample-qc/request/${decision.request_id}">igo.mskcc.org/sample-qc/request/${decision.request_id}</a>.<br><br>Thank you,`;
+exports.sendDecisionNotification = function(decision, decisionUser, recipients) {
+    let contentBody = `Hello,<br><br>Decisions have been submitted for project ${decision.request_id} by ${decisionUser}.<br><br><span style="font-weight:bold;"> To make any changes to the decisions, please reach out to IGO at zzPDL_IGO_Staff@mskcc.org.</span><br>You can find the project at <a href="https://igo.mskcc.org/sample-qc/request/${decision.request_id}">igo.mskcc.org/sample-qc/request/${decision.request_id}</a>.<br><br>Thank you,`;
     let email;
-    const allRecipients = recipients.push(`${initialAuthor}@mskcc.org`);
 
     if (ENVIRONMENT === 'development') {
-        contentBody = contentBody + `<br><br>In production, this email would have been sent to: ${recipients.join(', ')}<br><br>`;
+        contentBody = contentBody + `<br><br>In production, this email would have been sent to: ${recipients}<br><br>`;
         email = {
             subject: `${emailConfig.devSubject} ${decision.request_id} Decisions Submitted for ${decision.report}`,
             content: contentBody,
@@ -116,7 +116,7 @@ exports.sendDecisionNotification = function(decision, decisionUser, recipients, 
             subject: `${emailConfig.subject} ${decision.request_id} Decisions Submitted for ${decision.report}`,
             content: contentBody,
             footer: emailConfig.footer,
-            mailTo: allRecipients.join(',')
+            mailTo: recipients
         };
     }
 
@@ -132,13 +132,12 @@ exports.sendDecisionNotification = function(decision, decisionUser, recipients, 
         .catch((error) => console.log(error));
 };
 
-exports.sendStopProcessingNotification = function (decision, decisionUser, recipients, initialAuthor) {
-    let contentBody = `Hello,<br><br>For project ${decision.request_id} Stop Processing decision(s) have been submitted by ${decisionUser.fullName}.<br><br><span style="font-weight:bold;"> This is to notify you to check if the iLab proper charges for these samples are present.</span><br>You can find the project at <a href="https://igo.mskcc.org/sample-qc/request/${decision.request_id}">igo.mskcc.org/sample-qc/request/${decision.request_id}</a>.<br><br>Thank you,`;
+exports.sendStopProcessingNotification = function (decision, decisionUser, recipients) {
+    let contentBody = `Hello,<br><br>For project ${decision.request_id} Stop Processing decision(s) have been submitted by ${decisionUser}.<br><br><span style="font-weight:bold;"> This is to notify you to check if the iLab proper charges for these samples are present.</span><br>You can find the project at <a href="https://igo.mskcc.org/sample-qc/request/${decision.request_id}">igo.mskcc.org/sample-qc/request/${decision.request_id}</a>.<br><br>Thank you,`;
     let email;
-    const allRecipients = recipients.push(`${initialAuthor}@mskcc.org`);
 
     if (ENVIRONMENT === 'development') {
-        contentBody = contentBody + `<br><br>In production, this email would have been sent to: ${recipients.join(', ')}<br><br>`;
+        contentBody = contentBody + `<br><br>In production, this email would have been sent to: ${recipients}<br><br>`;
         email = {
             subject: `${emailConfig.devSubject} ${decision.request_id} Stop Processing Decision(s) Submitted for ${decision.report}`,
             content: contentBody,
@@ -150,7 +149,7 @@ exports.sendStopProcessingNotification = function (decision, decisionUser, recip
             subject: `${emailConfig.subject} ${decision.request_id} Stop Processing Decision(s) Submitted for ${decision.report}`,
             content: contentBody,
             footer: emailConfig.footer,
-            mailTo: allRecipients.join(',')
+            mailTo: recipients
         };
     }
 
