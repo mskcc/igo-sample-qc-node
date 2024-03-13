@@ -2,6 +2,7 @@ const https = require('https');
 const axios = require('axios');
 const qs = require('qs');
 const { logger } = require('../util/winston');
+const fetch = require('node-fetch');
 
 const LIMS_AUTH = {
     username: process.env.LIMS_USER,
