@@ -124,12 +124,12 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
     return axios
         .post(
             url,
-            {},
+            decisionsData,
             {
                 auth: { ...LIMS_AUTH },
                 httpsAgent: agent,
                 headers: { 'content-type': 'application/x-www-form-urlencoded' },
-                params: decisionsData,
+                // params: decisionsData,
             }
         )
         .then((resp) => {
