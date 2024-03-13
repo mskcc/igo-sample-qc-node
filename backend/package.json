@@ -27,9 +27,7 @@
         "mysql": "^2.18.1",
         "mysqlx": "^1.1.8",
         "nodemailer": "^6.9.7",
-        "qs": "^6.11.2",
         "sequelize": "^6.32.1",
-        "uuencode": "^0.0.4",
         "winston": "^3.3.3",
         "winston-daily-rotate-file": "^4.5.0"
     },
