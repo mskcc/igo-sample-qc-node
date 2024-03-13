@@ -124,17 +124,17 @@ exports.setQCInvestigatorDecision = (decisionsData) => {
     return axios
         .post(
             url,
-            decisionsData,
+            {},
             {
                 auth: { ...LIMS_AUTH },
                 httpsAgent: agent,
-                headers: { 'content-type': 'application/x-www-form-urlencoded' },
-                // params: decisionsData,
+                ...axiosConfig,
+                params: { ...decisionsData },
             }
         )
         .then((resp) => {
             info(url);
-            return resp.json();
+            return resp;
         })
         .catch((error) => {
             errorlog(url, error);
