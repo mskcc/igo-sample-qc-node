@@ -4,7 +4,8 @@ import 'react-app-polyfill/ie11';
 
 import { LocalizeProvider } from 'react-localize-redux';
 import { Provider } from 'react-redux';
-import store from './store/configureStore';
+import { store, persistor } from './store/configureStore';
+import { PersistGate } from 'redux-persist/integration/react';
 
 import Root from './containers/Root';
 
@@ -16,7 +17,9 @@ function App() {
   return (
     <Provider store={store}>
       <LocalizeProvider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
           <Root />
+        </PersistGate>
       </LocalizeProvider>
     </Provider>
   );
