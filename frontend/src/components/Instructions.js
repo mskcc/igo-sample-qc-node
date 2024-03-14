@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import ReactPlayer from 'react-player';
-// import mov from './Sample-qc.mov';
+import mov from './Sample-qc.mov';
 
 const styles = (theme) => ({
   container: {
@@ -56,7 +56,7 @@ const Instructions = ({ role, classes }) => (
             Site
           </p>
           <div className={classes['instructional-video']}>
-            <ReactPlayer url={'"mov"'} width="100%" height="100%" controls={true} />
+            <ReactPlayer url={mov} width="100%" height="100%" controls={true} />
           </div>
         </div>
         <h2>Documentation</h2>
