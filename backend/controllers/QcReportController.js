@@ -407,7 +407,7 @@ exports.getComments = [
     query('request_id').exists().withMessage('request ID must be specified.'),
     function(req, res) {
         const requestId = req.query.request_id;
-        const responseObj = {'comments': null};
+        const responseObj = {'comments': {}};
 
         CommentRelation.findAll({
             where: {
