@@ -5,7 +5,8 @@ import { userActions as ActionTypes } from '../actions';
 const mockUser = {
   loggedIn: true,
   username: 'lawala',
-  fullName: 'Fname Lname',
+  firstName: 'firstname',
+  lastName: 'lastname',
   role: 'user',
   groups: 'zzPDL_IGO_Staff',
   title: 'Research Assistant'

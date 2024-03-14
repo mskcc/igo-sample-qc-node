@@ -193,7 +193,7 @@ export function submitInvestigatorDecision() {
     );
     let request_id = getState().report.request.requestId;
     let username = getState().user.username;
-    let userFullName = getState().user.fullName;
+    let userFullName = `${getState().user.firstName} ${getState().user.lastName}`;
     let report = getState().report.reportShown;
 
     return axios
