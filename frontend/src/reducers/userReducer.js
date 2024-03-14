@@ -42,10 +42,11 @@ function userReducer(state = initialState, action) {
   
 
     default:
-      return state;
       // return {
       //   ...mockUser
       // }
+      return state;
+
   }
 }
 export default userReducer;
