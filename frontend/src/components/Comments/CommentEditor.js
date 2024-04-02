@@ -452,7 +452,7 @@ export default function CommentEditor(props) {
                 )}
                 <FormControlLabel
                   control={<Checkbox onChange={handleCheckbox('onHold')} />}
-                  label="IGO will put this project on hold until decisions are submitted in the grid below."
+                  label="IGO will put this project on hold until decisions are submitted in the grid above."
                 />
                 <br/>
                 <br/>
@@ -582,7 +582,7 @@ export default function CommentEditor(props) {
           {values.service || <span className={classes.highlight}>...</span>} on
           Project {props.request.requestId}.
           <br />
-          Please see the reports and documents below for the results.
+          Please see the reports and documents above for the results.
           <br />
           <br />
           
