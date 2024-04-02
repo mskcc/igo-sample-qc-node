@@ -207,7 +207,7 @@ export default function CommentEditor(props) {
           <span>
             <br />
             IGO will put this project on hold until decisions are submitted in
-            the grid below.
+            the grid above.
           </span>
         )}
         {checkedValue === 'confirmationRequested' && (
