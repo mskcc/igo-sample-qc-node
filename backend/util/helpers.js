@@ -33,7 +33,7 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
                 responseColumnFeatures.push(concentrationColumn);
 
             } else if (constantOrderedColumn === 'TotalMass') {
-                const massColumn = constantColumnFeatures[constantOrderedColumn];
+                const massColumn = { ...constantColumnFeatures[constantOrderedColumn] };
                 const columnName = constantColumnFeatures[constantOrderedColumn]['columnHeader'];
                 
                 if (sampleUnits === 'ng/ul') {
