@@ -22,7 +22,7 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
 
             // account for special columns like unitless measurements
             if (constantOrderedColumn === 'Concentration') {
-                const concentrationColumn = constantColumnFeatures[constantOrderedColumn];
+                const concentrationColumn = { ...constantColumnFeatures[constantOrderedColumn] };
                 const columnName = constantColumnFeatures[constantOrderedColumn]['columnHeader'];
 
                 // if column name already includes units, don't add again
@@ -30,11 +30,10 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
                     columnName : (
                         `${constantColumnFeatures[constantOrderedColumn]['columnHeader']} (${exampleSample['concentrationUnits']})`
                     );
-
                 responseColumnFeatures.push(concentrationColumn);
 
             } else if (constantOrderedColumn === 'TotalMass') {
-                const massColumn = constantColumnFeatures[constantOrderedColumn];
+                const massColumn = { ...constantColumnFeatures[constantOrderedColumn] };
                 const columnName = constantColumnFeatures[constantOrderedColumn]['columnHeader'];
                 
                 if (sampleUnits === 'ng/ul') {
