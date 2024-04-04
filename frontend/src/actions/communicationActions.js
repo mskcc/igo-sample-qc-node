@@ -1,12 +1,5 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-// import {
-//   generateSubmitData,
-//   generateSubmissionsGrid,
-//   findSubmission,
-//   submissionExists,
-//   checkGridAndForm,
-// } from '../helpers'
 
 import { Config } from '../secret_config.js';
 import {
@@ -243,14 +236,19 @@ export function getComments() {
     dispatch({ type: GET_COMMENTS });
     return axios
       .get(Config.API_ROOT + `/qcReport/getComments?request_id=${requestId}`, {
-        // params: {
-        //   request_id: requestId,
-        // },
       })
       .then((response) => {
+        // Sort comments by date before dispatching success action
+        const sortedComments = response.data.data.comments;
+        sortedComments.forEach(report => {
+          Object.keys(report).forEach(reportType => {
+            report[reportType].comments.sort((a, b) => new Date(a.date_created) - new Date(b.date_created));
+          });
+        });
+
         return dispatch({
           type: GET_COMMENTS_SUCCESS,
-          payload: response.data.data.comments,
+          payload: sortedComments,
         });
       })
       .catch((error) => {
