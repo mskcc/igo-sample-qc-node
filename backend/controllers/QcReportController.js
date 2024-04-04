@@ -426,6 +426,7 @@ exports.getComments = [
                 'Library Report': {'comments': [], 'recipients': ''},
                 'Pathology Report': {'comments': [], 'recipients': ''}
             };
+
             
             return Promise.all(commentRelationRecords.map(commentRelation => {
                 commentsResponse[commentRelation.report]['recipients'] = commentRelation.recipients;
@@ -436,14 +437,14 @@ exports.getComments = [
                     },
                     order: [['date_created', 'ASC']]
                 }).then(commentsRecords => {
-                    commentsRecords.sort((a, b) => a.date_created - b.date_created);
-                    console.log('Comments after sorting:', commentsRecords); 
+                    // commentsRecords.forEach(comment => {
                     return Promise.all(commentsRecords.map(comment => {
                         return Users.findOne({
                             where: {
                                 username: comment.username
                             }
                         }).then(user => {
+
                             const commentData = {
                                 'comment': comment.comment,
                                 'date_created': comment.createdAt,
@@ -453,6 +454,8 @@ exports.getComments = [
                             };
                             commentsResponse[commentRelation.report]['comments'].push(commentData);
                         });
+                        
+                        
                     }));
                      
                 }).catch(error => {
