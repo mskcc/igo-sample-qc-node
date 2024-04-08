@@ -462,12 +462,20 @@ exports.getComments = [
                     return apiResponse.errorResponse(res, `Failed to retrieve comments from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                 });
             })).then(() => {
+                for (const report in commentsResponse) {
+                    commentsResponse[report]['comments'].sort((a, b) => {
+                        return new Date(a.date_created) - new Date(b.date_created);
+                    });
+                }
+                console.log("Sorted comments by date.");
+
                 // delete reports without comments
                 for (const report in commentsResponse) {
                     if (commentsResponse[report]['comments'].length === 0) {
                         delete commentsResponse[report];
                     }
                 }
+
                 const response = {'comments': commentsResponse};
                 return apiResponse.successResponseWithData(res, 'Successfully retrieved comments', response); 
             });
