@@ -65,7 +65,7 @@ exports.getPendingRequests = [
                                     date: record.createdAt.toLocaleString(),
                                     // most_recent_date: allReportComments[0].createdAt.toLocaleString(),
                                     author: record.author,
-                                    recipients: `<div class='recipients-col'>${record.recipients.replaceAll(',', '\n')}</div>`,
+                                    recipients: `<div class='recipients-col'>${record.recipients.replace(',', '\n')}</div>`,
                                     // lab_notifications: labNotifications,
                                     // pm_notifications: PmNotifications,
                                     // user_replies: userReplies,
