@@ -91,8 +91,8 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
 
                 if (order.includes(formattedDataField)) {
                     if (dataField === 'otherSampleId' && sampleFieldValue.includes(',')) {
-                        sampleFieldValue = sampleFieldValue.replaceAll(',', ', ');
-                        responseSample[dataField] = sampleFieldValue.replaceAll('-', '&#8209;');
+                        sampleFieldValue = sampleFieldValue.replace(',', ', ');
+                        responseSample[dataField] = sampleFieldValue.replace('-', '&#8209;');
 
                     } else if (dataField === 'igoQcRecommendation') {
                         const recommendation = sampleFieldValue;
