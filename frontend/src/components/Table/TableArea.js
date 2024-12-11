@@ -114,6 +114,8 @@ export default function TableArea(props) {
   const isInvestigatorPrepped = props.report.request.requestName === 'Investigator Prepared Libraries' ||
             props.report.request.requestName === 'Investigator Prepared Pools';
 
+  const shouldDisplayCellInfo = props.report.recipe === 'OGM' || props.report.request.recipe.includes("ATAC") || props.report.recipe.includes("SC");
+
   return (
     <div className={classes.container}>
       <div className={classes.toolbar}>
@@ -237,6 +239,7 @@ export default function TableArea(props) {
                 role={props.role}
                 data={props.report.tables[report]}
                 investigatorPrepped={isInvestigatorPrepped}
+                cellInfo={shouldDisplayCellInfo}
               />
             )}
           </TabPanel>

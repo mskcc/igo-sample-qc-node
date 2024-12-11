@@ -135,6 +135,24 @@ exports.dnaColumns = {
         'data': 'A260280',
         'columnHeader': '260/280',
         'readOnly': 'true',
+    },
+    'CellCount': {
+        'limsField': 'cellCount',
+        'data': 'cellCount',
+        'columnHeader': 'Cell Count',
+        'readOnly': 'true',
+    },
+    'CellViability': {
+        'limsField': 'cellViability',
+        'data': 'cellViability',
+        'columnHeader': 'Cell Viability',
+        'readOnly': 'true',
+    },
+    'TissueSize': {
+        'limsField': 'tissueSize',
+        'data': 'tissueSize',
+        'columnHeader': 'Tissue Size',
+        'readOnly': 'true',
     }
 };
 
@@ -185,7 +203,25 @@ exports.rnaColumns = {
         'data': 'A260280',
         'columnHeader': '260/280',
         'readOnly': 'true',
-    }
+    },
+    'CellCount': {
+        'limsField': 'cellCount',
+        'data': 'cellCount',
+        'columnHeader': 'Cell Count',
+        'readOnly': 'true',
+    },
+    'CellViability': {
+        'limsField': 'cellViability',
+        'data': 'cellViability',
+        'columnHeader': 'Cell Viability',
+        'readOnly': 'true',
+    },
+    'TissueSize': {
+        'limsField': 'tissueSize',
+        'data': 'tissueSize',
+        'columnHeader': 'Tissue Size',
+        'readOnly': 'true',
+    } 
 };
 
 exports.libraryColumns = {
@@ -327,6 +363,9 @@ exports.dnaOrder = [
     'SourceSampleId',
     'A260280',
     'A260230',
+    'CellCount',
+    'CellViability',
+    'TissueSize',
     'RecordId',
 ];
 
@@ -347,6 +386,9 @@ exports.rnaOrder = [
     'SourceSampleId',
     'A260280',
     'A260230',
+    'CellCount',
+    'CellViability',
+    'TissueSize',
     'RecordId',
 ];
 
