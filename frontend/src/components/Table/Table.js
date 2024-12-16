@@ -57,7 +57,7 @@ class Table extends React.Component {
       this.setState({ 
         hiddenColumns: [recordIdCol, maxReadsCol]
       });
-    } else if (!this.props.cellProperties && (columnHeader == 'Cell Count' || columnHeader == 'Cell Viability' || columnHeader == 'Tissue Size')) {
+    } else if (!this.props.cellInfo && (columnHeader == 'Cell Count' || columnHeader == 'Cell Viability' || columnHeader == 'Tissue Size')) {
       this.setState({
         hiddenColumns: [recordIdCol, maxReadsCol, tissueSizeCol, cellViabilityCol, cellCountCol]
       })
