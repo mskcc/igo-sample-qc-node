@@ -153,6 +153,12 @@ exports.dnaColumns = {
         'data': 'tissueSize',
         'columnHeader': 'Tissue Size',
         'readOnly': 'true',
+    },
+    'Species': {
+        'limsField': 'Species',
+        'data': 'species',
+        'columnHeader': 'Species',
+        'readOnly': 'true',
     }
 };
 
@@ -221,7 +227,13 @@ exports.rnaColumns = {
         'data': 'tissueSize',
         'columnHeader': 'Tissue Size',
         'readOnly': 'true',
-    } 
+    },
+    'Species': {
+        'limsField': 'Species',
+        'data': 'species',
+        'columnHeader': 'Species',
+        'readOnly': 'true',
+    }
 };
 
 exports.libraryColumns = {
@@ -258,6 +270,12 @@ exports.libraryColumns = {
         'limsField': 'NumOfReads',
         'data': 'numOfReads',
         'columnHeader': 'Number of Reads',
+        'readOnly': 'true',
+    },
+    'Species': {
+        'limsField': 'Species',
+        'data': 'species',
+        'columnHeader': 'Species',
         'readOnly': 'true',
     }
 };
@@ -366,6 +384,7 @@ exports.dnaOrder = [
     'CellCount',
     'CellViability',
     'TissueSize',
+    'Species',
     'RecordId',
 ];
 
@@ -389,6 +408,7 @@ exports.rnaOrder = [
     'CellCount',
     'CellViability',
     'TissueSize',
+    'Species',
     'RecordId',
 ];
 
@@ -406,6 +426,7 @@ exports.libraryOrder = [
     'TumorOrNormal',
     'SourceSampleId',
     'NumOfReads',
+    'Species',
     'RecordId',
 ];
 
