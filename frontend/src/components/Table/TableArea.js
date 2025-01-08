@@ -114,7 +114,7 @@ export default function TableArea(props) {
   const isInvestigatorPrepped = props.report.request.requestName === 'Investigator Prepared Libraries' ||
             props.report.request.requestName === 'Investigator Prepared Pools';
 
-  const shouldDisplayCellInfo = props.report.tables.recipe === 'OGM' || props.report.tables.recipe.includes("ATAC") || props.report.tables.recipe.includes("SC");
+  const shouldDisplayCellInfo = props.report.request.requestName === 'OGM' || props.report.request.request.includes("ATAC") || props.report.request.requestName.includes("SingleCell");
 
   return (
     <div className={classes.container}>
