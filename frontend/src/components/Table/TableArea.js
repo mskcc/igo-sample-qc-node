@@ -119,8 +119,7 @@ export default function TableArea(props) {
   if (requestString.includes("ATAC") || requestString.includes("SingleCell") || requestString === 'OGM') {
     shouldDisplayCellInfo = true;
   }
-  //const shouldDisplayCellInfo = props.report.request.requestName === 'OGM' || props.report.request.request.includes("ATAC") || props.report.request.requestName.includes("SingleCell");
-
+  
   return (
     <div className={classes.container}>
       <div className={classes.toolbar}>
