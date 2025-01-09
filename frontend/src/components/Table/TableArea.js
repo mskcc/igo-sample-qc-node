@@ -110,11 +110,15 @@ export default function TableArea(props) {
   function handleReportDownload(index) {
     props.handleReportDownload(Object.keys(props.report.tables)[index]);
   }
-
+  console.log(props.report);
   const isInvestigatorPrepped = props.report.request.requestName === 'Investigator Prepared Libraries' ||
             props.report.request.requestName === 'Investigator Prepared Pools';
 
-  const shouldDisplayCellInfo = props.report.request.requestName === 'OGM' || props.report.request.request.includes("ATAC") || props.report.request.requestName.includes("SingleCell");
+  const requestString = props?.report?.request?.request || "";
+  if (requestString.includes("ATAC") || requestString.includes("SingleCell") || requestString === 'OGM') {
+    shouldDisplayCellInfo = true;
+  }
+  //const shouldDisplayCellInfo = props.report.request.requestName === 'OGM' || props.report.request.request.includes("ATAC") || props.report.request.requestName.includes("SingleCell");
 
   return (
     <div className={classes.container}>
