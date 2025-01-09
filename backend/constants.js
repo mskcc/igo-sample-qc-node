@@ -227,12 +227,6 @@ exports.rnaColumns = {
         'data': 'tissueSize',
         'columnHeader': 'Tissue Size',
         'readOnly': 'true',
-    },
-    'Species': {
-        'limsField': 'Species',
-        'data': 'species',
-        'columnHeader': 'Species',
-        'readOnly': 'true',
     }
 };
 
@@ -270,12 +264,6 @@ exports.libraryColumns = {
         'limsField': 'NumOfReads',
         'data': 'numOfReads',
         'columnHeader': 'Number of Reads',
-        'readOnly': 'true',
-    },
-    'Species': {
-        'limsField': 'Species',
-        'data': 'species',
-        'columnHeader': 'Species',
         'readOnly': 'true',
     }
 };
@@ -408,7 +396,6 @@ exports.rnaOrder = [
     'CellCount',
     'CellViability',
     'TissueSize',
-    'Species',
     'RecordId',
 ];
 
@@ -426,7 +413,6 @@ exports.libraryOrder = [
     'TumorOrNormal',
     'SourceSampleId',
     'NumOfReads',
-    'Species',
     'RecordId',
 ];
 
