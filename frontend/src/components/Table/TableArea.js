@@ -115,10 +115,7 @@ export default function TableArea(props) {
             props.report.request.requestName === 'Investigator Prepared Pools';
 
   const requestString = props?.report?.request?.requestName || "";
-  const shouldDisplayCellInfo = false;
-  if (requestString.includes("ATAC") || requestString.includes("SingleCell") || requestString === 'OGM') {
-    shouldDisplayCellInfo = true;
-  }
+  const shouldDisplayCellInfo = requestString.includes("ATAC") || requestString.includes("SingleCell") || requestString === 'OGM';
   
   return (
     <div className={classes.container}>
