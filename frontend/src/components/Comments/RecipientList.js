@@ -61,7 +61,7 @@ export default function RecipientList(props) {
       {!edit.editView ? (
         <React.Fragment>
           <div className={classes.sectionHeader}>
-            <i className="material-icons">keyboard_arrow_right</i> Review
+            <i className="material-icons"></i> Review
             Recipients
             <IconButton
               size="small"
@@ -108,7 +108,7 @@ export default function RecipientList(props) {
       ) : (
         <React.Fragment>
           <div className={classes.sectionHeader}>
-            <i class="material-icons">keyboard_arrow_right</i> Review Recipients
+            <i class="material-icons"></i> Review Recipients
             <IconButton size="small" onClick={handleSubmit} color="primary">
               <CheckCircleOutlineIcon />
             </IconButton>

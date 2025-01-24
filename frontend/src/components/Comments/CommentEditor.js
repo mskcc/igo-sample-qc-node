@@ -297,7 +297,7 @@ export default function CommentEditor(props) {
           {Object.keys(props.tables).length > 0 && (
             <React.Fragment>
               <div className={classes.sectionHeader}>
-                <i className="material-icons">keyboard_arrow_right</i> Which
+                <i className="material-icons"></i> Which
                 report should this comment be added to?
               </div>
               <div className={classes.section}>
@@ -327,7 +327,7 @@ export default function CommentEditor(props) {
           )}
           <form>
             <div className={classes.sectionHeader}>
-              <i className="material-icons">keyboard_arrow_right</i> Fill in the
+              <i className="material-icons"></i> Fill in the
               blanks:{' '}
             </div>
             <div className={classes.section}>
@@ -390,7 +390,7 @@ export default function CommentEditor(props) {
               <br />
             </div>
             <div className={classes.sectionHeader}>
-              <i className="material-icons">keyboard_arrow_right</i> Select all
+              <i className="material-icons"></i> Select all
               QC statuses present in this report/project:
             </div>
             <div className={classes.section}>
@@ -438,7 +438,7 @@ export default function CommentEditor(props) {
 
             <React.Fragment>
               <div className={classes.sectionHeader}>
-                <i className="material-icons">keyboard_arrow_right</i> Add
+                <i className="material-icons"></i> Add
                 additional Instructions:
               </div>
               <div className={classes.section}>
