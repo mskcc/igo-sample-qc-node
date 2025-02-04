@@ -46,9 +46,9 @@ class Table extends React.Component {
       });
     }
     
-    const cellCountCol = this.props.data.columnFeatures.length - 5;
-    const cellViabilityCol = this.props.data.columnFeatures.length - 4;
-    const tissueSizeCol = this.props.data.columnFeatures.length - 3;
+    const cellCountCol = this.props.data.columnFeatures.length - 4;
+    const cellViabilityCol = this.props.data.columnFeatures.length - 3;
+    const tissueSizeCol = this.props.data.columnFeatures.length - 2;
     const maxReadsCol = this.props.data.columnFeatures.length - 2;
     const recordIdCol = this.props.data.columnFeatures.length - 1;
     // if not investigator prepped project, hide max number of reads column
