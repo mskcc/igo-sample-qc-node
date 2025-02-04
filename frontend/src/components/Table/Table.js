@@ -59,7 +59,7 @@ class Table extends React.Component {
       });
     } else if (!this.props.cellInfo && (columnHeader == 'Cell Count' || columnHeader == 'Cell Viability' || columnHeader == 'Tissue Size')) {
       this.setState({
-        hiddenColumns: [recordIdCol, maxReadsCol, tissueSizeCol, cellViabilityCol, cellCountCol]
+        hiddenColumns: [recordIdCol, tissueSizeCol, cellViabilityCol, cellCountCol]
       })
     } else {
       this.setState({ 
