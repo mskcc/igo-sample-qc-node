@@ -1,5 +1,5 @@
 const winston = require('winston');
-
+const moment = require('moment-timezone');
 const { format } = winston;
 
 const logLabel = 'SampleQC';
@@ -7,7 +7,7 @@ const container = new winston.Container();
 
 const fileConfig = format.combine(
     format.timestamp({
-        format: 'YYYY-MM-DD HH:mm:ss',
+        format: () => moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss'), 
     }),
     format.json()
 );
@@ -16,7 +16,7 @@ const consoleConfig = format.combine(
     format.colorize(),
     format.align(),
     format.timestamp({
-        format: 'YYYY-MM-DD HH:mm:ss',
+        format: () => moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss'), 
     }),
     format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
 );
