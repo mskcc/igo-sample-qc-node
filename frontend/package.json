@@ -22,6 +22,7 @@
         "file-saver": "^2.0.5",
         "handsontable": "^7.4.2",
         "html-webpack-plugin": "4.0.0-alpha.2",
+        "moment-timezone": "^0.5.47",
         "react": "^16.14.0",
         "react-dom": "^16.14.0",
         "react-json-excel": "^1.1.0",
