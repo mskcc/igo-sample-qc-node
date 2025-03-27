@@ -381,11 +381,7 @@ exports.setQCInvestigatorDecision = [
                     const decisionsMade = JSON.stringify(decisions);
                     const allRecipients = commentRelationRecord.recipients.concat(`,${commentRelationRecord.author}@mskcc.org`);
                 
-                    if (decisionsMade.includes('Stop processing')) {
-                        mailer.sendStopProcessingNotification(commentRelationRecord, fullName, allRecipients)
-                    } else {
-                        mailer.sendDecisionNotification(commentRelationRecord, fullName, allRecipients);
-                    }
+                    mailer.sendDecisionNotification(commentRelationRecord, fullName, allRecipients);
 
                 }).catch(error => {
                     return apiResponse.errorResponse(res, `Failed to save decision to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
