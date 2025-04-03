@@ -467,5 +467,5 @@ exports.emailConfig = {
     cmoPmEmail: 'skicmopm@mskcc.org',
     devSubject: '[SampleQC Beta-Test]',
     subject: '[IGO SampleQC]',
-    footer: `<br><a style="color:#f29934; font-weight:bold;" href="https://genomics.mskcc.org">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br><a href="https:https://www.linkedin.com/company/igo-mskcc/posts/?feedView=all">Follow us on LinkedIn<br><br><br>${this.user_training_string}`,
+    footer: `<br><a style="color:#f29934; font-weight:bold;" href="https://genomics.mskcc.org">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br><a href="https://www.linkedin.com/company/igo-mskcc/posts/?feedView=all">Follow us on LinkedIn<br><br><br>${this.user_training_string}`,
 };
