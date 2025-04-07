@@ -23,7 +23,7 @@ jobs:
           cd /srv/prep/deployments/igo-sample-qc-node
           git pull
           cd frontend/
-          npm run build
+          CI=false npm run build
           # Ensure public directory exists
           mkdir -p ../backend/public/
           cp -rT build/ ../backend/public/
@@ -63,7 +63,7 @@ jobs:
             exit 1
           fi
           cd frontend/
-          npm run build
+          CI=false npm run build
           # Ensure public directory exists
           dzdo mkdir -p ../backend/public/
           dzdo cp -rT build/ ../backend/public/
@@ -79,4 +79,4 @@ jobs:
             dzdo pm2 logs sampleqc --lines 50
             exit 1
           fi
-          echo "✅ Deployment completed successfully".     ------- SampleQC 
+          echo "✅ Deployment completed successfully"
