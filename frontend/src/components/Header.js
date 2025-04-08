@@ -49,18 +49,6 @@ const Header = (props) => {
             </Button>
 
             <Button>
-              <NavLink
-                to="/instructions"
-                activeClassName={'active'}
-                className={'navlink'}
-              >
-                <Typography color="inherit" variant="h6">
-                  Instructions
-                </Typography>
-              </NavLink>
-            </Button>
-
-            <Button>
               <a
                 href="https://genomics.mskcc.org/criteria/dna"
                 className={'navlink'}
