@@ -10,7 +10,7 @@ import { withLocalize } from 'react-localize-redux';
 
 import LoadingOverlay from 'react-loading-overlay';
 
-import { Header, SnackMessage, Instructions } from '../components';
+import { Header, SnackMessage} from '../components';
 
 import PendingContainer from './Report/PendingContainer';
 import ReportContainer from './Report/ReportContainer';
@@ -101,13 +101,6 @@ class Root extends Component {
                       exact
                       path="/"
                       component={ReportContainer}
-                    />
-
-                    <PrivateRoute
-                      data={{ role: this.props.user.role }}
-                      exact
-                      path="/instructions"
-                      component={Instructions}
                     />
                     <PrivateRoute path='/logout' component={Logout} />
 

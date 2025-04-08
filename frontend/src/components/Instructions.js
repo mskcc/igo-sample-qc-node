@@ -1,4 +1,4 @@
-import React from 'react';
+/*import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import ReactPlayer from 'react-player';
@@ -21,16 +21,6 @@ const styles = (theme) => ({
     position: 'relative',
     width: '100%',
     height: '80vh',
-  },
-  'instructional-video': {
-    margin: 'auto',
-    width: '80%',
-    height: '80%',
-  },
-  'instructions-header': {
-    'font-size': '1.65rem',
-    'padding-bottom': '.3rem',
-    'border-bottom': '1px solid #eaecef',
   },
 });
 
@@ -82,3 +72,7 @@ Instructions.propTypes = {
 };
 
 export default withStyles(styles)(Instructions);
+
+
+
+*/
