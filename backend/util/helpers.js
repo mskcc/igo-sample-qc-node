@@ -219,7 +219,7 @@ exports.buildPendingList = (pendings, isUser) => {
 // returns false if request has no inital comment OR user is not associated
 exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
     let isAuthorized = false;
-    if (commentRelationsForRequest && commentRelationsForRequest.length > 0) {
+    if (commentRelationsForRequest && commentRelationsForRequest.length > 0 && typeof username === 'string') {
         const username = user.username.toLowerCase();
         for (let i = 0; i < commentRelationsForRequest.length; i++) {
             const relationData = commentRelationsForRequest[i].dataValues;
