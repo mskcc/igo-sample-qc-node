@@ -270,8 +270,10 @@ exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
 
 exports.isUserAuthorizedForPendingRequest = (commentRelationRecord, user) => {
     let isAuthorized = false;
-    const username = user.username.toLowerCase();
-
+    const username = user.username;
+    if (typeof username === 'string') {
+        username = user.username.toLowerCase();
+    }
     //username listed specifically
     if (commentRelationRecord.recipients.toLowerCase().includes(username) ||
         commentRelationRecord.author.toLowerCase() === username) {
