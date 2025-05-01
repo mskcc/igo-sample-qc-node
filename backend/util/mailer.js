@@ -67,7 +67,7 @@ exports.sendInitialNotification = function(recipients, requestId, report, author
 
 exports.sendNotification = function(recipients, comment, requestId, report, author) {
     const reportType = report.split(' ')[0];
-    let contentBody = `Hello,<br><br>The following comment has been added to ${reportType} QC on project ${requestId} by ${author.full_name}.<br><br>'${comment}'<br><br>Please proceed to <a href="https://igo.mskcc.org/sample-qc/">igo.mskcc.org/sample-qc/</a> and search your request ID if you would like to reply.<br><br>Thank you,`;
+    let contentBody = `Hello,<br><br>The following comment has been added to ${reportType} QC on project ${requestId} by ${author.full_name}.<br><br>'${comment}'<br><br>Please proceed to <a href="https://igo.mskcc.org/sample-qc/">igo.mskcc.org/sample-qc/</a> and search your request ID in the search box if you would like to reply.<br><br>Thank you,`;
     let email;
 
     if (ENVIRONMENT === 'development') {
