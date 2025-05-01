@@ -674,7 +674,7 @@ exports.addToAllAndNotify = [
             }
         }).then(user => {
             Promise.all(reports.map(report => {
-                if (report.toLowerCase() !== 'attachments') {
+                if (typeof report === 'string' && report.toLowerCase() !== 'attachments') {
                     commentsResponse[report] = {'comments': [], 'recipients': ''};
 
                     return CommentRelation.findOne({
