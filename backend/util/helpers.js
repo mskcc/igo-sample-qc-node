@@ -220,7 +220,7 @@ exports.buildPendingList = (pendings, isUser) => {
 exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
     let isAuthorized = false;
     if (commentRelationsForRequest && commentRelationsForRequest.length > 0) {
-        const username = user.username.toLowerCase();
+        let username = user.username.toLowerCase();
         for (let i = 0; i < commentRelationsForRequest.length; i++) {
             const relationData = commentRelationsForRequest[i].dataValues;
             
@@ -270,7 +270,7 @@ exports.isUserAuthorizedForRequest = (commentRelationsForRequest, user) => {
 
 exports.isUserAuthorizedForPendingRequest = (commentRelationRecord, user) => {
     let isAuthorized = false;
-    const username = user.username;
+    let username = user.username;
     if (typeof username === 'string') {
         username = user.username.toLowerCase();
     }
