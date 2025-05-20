@@ -53,9 +53,18 @@ const syncUserFromMongo = async (username) => {
     logger.info(`[SYNC] ✅ User found in MongoDB: ${username}`);
     console.log(`[SYNC] ✅ User found in MongoDB: ${username}`);
 
-    let role = 'user';
-    if (mongoUser.isLabMember) role = 'lab_member';
-    else if (mongoUser.isPM) role = 'cmo_pm';
+    let role = 'user'; // default fallback
+
+    if (mongoUser.isLabMember === true) {
+      role = 'lab_member';
+    } else if (mongoUser.isPM === true) {
+      role = 'cmo_pm';
+    } else if (mongoUser.isUser === true) {
+      role = 'user';
+    }
+    
+    logger.info(`[SYNC] Role resolved for ${username} — isLabMember: ${mongoUser.isLabMember}, isPM: ${mongoUser.isPM}, isUser: ${mongoUser.isUser}`);
+    console.log(`[SYNC] 🧭 Resolved role: ${role}`);
 
     let groups = '';
     if (typeof mongoUser.groups === 'string') {
