@@ -15,6 +15,10 @@ module.exports = (sequelize, Sequelize) => {
         groups: {
             type: Sequelize.DataTypes.TEXT,
         },
+        login_counter: {
+            type: Sequelize.DataTypes.INTEGER,
+            defaultValue: 1
+        },
         createdAt: {
             field: 'login_first_date',
             type: Sequelize.DataTypes.DATE,
@@ -26,6 +30,5 @@ module.exports = (sequelize, Sequelize) => {
     }, {
         tableName: 'users'
     });
-
     return User;
 };

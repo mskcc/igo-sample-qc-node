@@ -28,7 +28,8 @@ const Decisions = db.decisions;
 const CommentRelation = db.commentRelations;
 const Comments = db.comments;
 const Users = db.users;
-
+const { syncUserFromMongo } = require('../util/userSync');
+const { logger } = require('../util/winston');
 
 exports.getRequestSamples = [
     query('request_id').exists().withMessage('request ID must be specified.'),
@@ -84,318 +85,345 @@ exports.getRequestSamples = [
 ];
 
 exports.getQcReportSamples = [
-    function(req, res) {
-        const reqData = req.body.data;
-        const requestId = reqData.request;
-        const samples = reqData.samples;
-        const user = reqData.user;
+    async function(req, res) {
+        try {
+            const reqData = req.body.data;
+            const requestId = reqData.request;
+            const samples = reqData.samples;
+            const user = reqData.user;
 
-        const isLabMember = user.role === 'lab_member';
-        const isCmoPm = user.role === 'cmo_pm';
-
-        const reports = [];
-        const samplesAsString = samples.toString();
-
-        const qcReportPromise = services.getQcReportSamples(requestId, samplesAsString);
-        const picklistPromise = services.getPicklist();
-
-        Promise.all([qcReportPromise, picklistPromise]).then(results => {
-            if(!results) {
-                return apiResponse.errorResponse(res, 'Cannot find report data');
+            // Ensure user exists in MySQL
+            if (user && user.username) {
+                await syncUserFromMongo(user.username);
             }
-            let [qcReportResults, picklistResults] = results;
 
-            let isCmoPmOnly = false;
-            let isCmoPmOnlyAndNotPmUser = false;
+            const isLabMember = user.role === 'lab_member';
+            const isCmoPm = user.role === 'cmo_pm';
 
-            CommentRelation.findAll({
-                where: {
-                    request_id: requestId
+            const reports = [];
+            const samplesAsString = samples.toString();
+
+            const qcReportPromise = services.getQcReportSamples(requestId, samplesAsString);
+            const picklistPromise = services.getPicklist();
+
+            Promise.all([qcReportPromise, picklistPromise]).then(results => {
+                if(!results) {
+                    return apiResponse.errorResponse(res, 'Cannot find report data');
                 }
-            }).then((commentRelationsResponse) => {
-                const isAuthed = isLabMember || isUserAuthorizedForRequest(commentRelationsResponse, user);
-                if (!isAuthed) {
-                    return apiResponse.notFoundResponse(res, 'Request not found or associated with your username.');
-                }
+                let [qcReportResults, picklistResults] = results;
 
-                commentRelationsResponse.forEach(commentRelation => {
-                    reports.push(commentRelation.dataValues.report);
-                    isCmoPmOnly = commentRelation.dataValues.is_cmo_pm_project;
-                });
-                isCmoPmOnlyAndNotPmUser = isCmoPmOnly && !isCmoPm;
+                let isCmoPmOnly = false;
+                let isCmoPmOnlyAndNotPmUser = false;
 
-                let constantColumnFeatures = {};
-                const tables = {};
-                let readOnly = true;
-
-                Decisions.findAll({
+                CommentRelation.findAll({
                     where: {
-                        request_id: requestId,
-                        is_submitted: false
+                        request_id: requestId
                     }
-                }).then((decisionsResults) => {
-                    let decisionsSamplesByReport = {
-                        'DNA Report': [],
-                        'RNA Report': [],
-                        'Library Report': [],
-                        'Pool Report': []
-                    };
-                    if (decisionsResults && decisionsResults.length > 0) {
-                        decisionsResults.forEach(result => {
-                            const resultReport = result.report;
-                            const decisionsArr = eval(result.decisions);
-                            const decisionSamples = decisionsArr[0].samples;
-                            decisionsSamplesByReport[resultReport] = decisionSamples;
-                        });
-                    }
-                    for (let field of Object.keys(qcReportResults)) {
-                        if (field === 'dnaReportSamples') {
-                            if ((reports.includes('DNA Report') && isAuthed) || isLabMember) {
-                                readOnly = isCmoPmOnlyAndNotPmUser || isDecisionMade(qcReportResults[field]);
-                                constantColumnFeatures = mergeColumns(sharedColumns, dnaColumns);
-                                constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
-                                constantColumnFeatures.InvestigatorDecision.source = picklistResults;
-
-                                tables[field] = buildTableHTML(
-                                    field,
-                                    qcReportResults[field],
-                                    constantColumnFeatures,
-                                    dnaOrder,
-                                    decisionsSamplesByReport['DNA Report']
-                                );
-                                tables[field]['readOnly'] = readOnly;
-                                tables[field]['isCmoPmProject'] = isCmoPmOnly;
-                            }
-                        }
-                        if (field === 'rnaReportSamples') {
-                            if ((reports.includes('RNA Report') && isAuthed) || isLabMember) {
-                                readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
-                                constantColumnFeatures = mergeColumns(sharedColumns, rnaColumns);
-                                constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
-                                constantColumnFeatures.InvestigatorDecision.source = picklistResults;
-
-                                tables[field] = buildTableHTML(
-                                    field,
-                                    qcReportResults[field],
-                                    constantColumnFeatures,
-                                    rnaOrder,
-                                    decisionsSamplesByReport['RNA Report']
-                                );
-                                tables[field]['readOnly'] = readOnly;
-                                tables[field]['isCmoPmProject'] = isCmoPmOnly;
-                            }
-                        }
-                        if (field === 'libraryReportSamples') {
-                            if ((reports.includes('Library Report') && isAuthed) || isLabMember) {
-                                readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
-                                constantColumnFeatures = mergeColumns(sharedColumns, libraryColumns);
-                                constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
-                                constantColumnFeatures.InvestigatorDecision.source = picklistResults;
-
-                                tables[field] = buildTableHTML(
-                                    field,
-                                    qcReportResults[field],
-                                    constantColumnFeatures,
-                                    libraryOrder,
-                                    decisionsSamplesByReport['Library Report']
-                                );
-                                tables[field]['readOnly'] = readOnly;
-                                tables[field]['isCmoPmProject'] = isCmoPmOnly;
-                            }
-                        }
-                        if (field === 'poolReportSamples') {
-                            if ((reports.includes('Pool Report') && isAuthed) || isLabMember) {
-                                readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
-                                constantColumnFeatures = mergeColumns(sharedColumns, poolColumns);
-                                constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
-                                constantColumnFeatures.InvestigatorDecision.source = picklistResults;
-
-                                tables[field] = buildTableHTML(
-                                    field,
-                                    qcReportResults[field],
-                                    constantColumnFeatures,
-                                    poolOrder,
-                                    decisionsSamplesByReport['Pool Report']
-                                );
-                                tables[field]['readOnly'] = readOnly;
-                                tables[field]['isCmoPmProject'] = isCmoPmOnly;
-                            }
-                        }
-                        if (field === 'pathologyReportSamples') {
-                            if ((reports.includes('Pathology Report') && isAuthed) || isLabMember) {
-
-                                tables[field] = buildTableHTML(
-                                    field,
-                                    qcReportResults[field],
-                                    pathologyColumns,
-                                    pathologyOrder
-                                );
-                                tables[field]['readOnly'] = true;
-                                readOnly = true;
-                            }
-                        }
-                        if (field === 'attachments') {
-                            tables[field] = buildTableHTML(
-                                field,
-                                qcReportResults[field],
-                                attachmentColumns,
-                                attachmentOrder
-                            );
-                        }
-                    
+                }).then((commentRelationsResponse) => {
+                    const isAuthed = isLabMember || isUserAuthorizedForRequest(commentRelationsResponse, user);
+                    if (!isAuthed) {
+                        return apiResponse.notFoundResponse(res, 'Request not found or associated with your username.');
                     }
 
-                    const responseObject = {
-                        tables,
-                        read_only: readOnly
-                    };
-    
-                    return apiResponse.successResponseWithData(res, 'successfully retrieved table data', responseObject);
+                    commentRelationsResponse.forEach(commentRelation => {
+                        reports.push(commentRelation.dataValues.report);
+                        isCmoPmOnly = commentRelation.dataValues.is_cmo_pm_project;
+                    });
+                    isCmoPmOnlyAndNotPmUser = isCmoPmOnly && !isCmoPm;
+
+                    let constantColumnFeatures = {};
+                    const tables = {};
+                    let readOnly = true;
+
+                    Decisions.findAll({
+                        where: {
+                            request_id: requestId,
+                            is_submitted: false
+                        }
+                    }).then((decisionsResults) => {
+                        let decisionsSamplesByReport = {
+                            'DNA Report': [],
+                            'RNA Report': [],
+                            'Library Report': [],
+                            'Pool Report': []
+                        };
+                        if (decisionsResults && decisionsResults.length > 0) {
+                            decisionsResults.forEach(result => {
+                                const resultReport = result.report;
+                                const decisionsArr = eval(result.decisions);
+                                const decisionSamples = decisionsArr[0].samples;
+                                decisionsSamplesByReport[resultReport] = decisionSamples;
+                            });
+                        }
+                        for (let field of Object.keys(qcReportResults)) {
+                            if (field === 'dnaReportSamples') {
+                                if ((reports.includes('DNA Report') && isAuthed) || isLabMember) {
+                                    readOnly = isCmoPmOnlyAndNotPmUser || isDecisionMade(qcReportResults[field]);
+                                    constantColumnFeatures = mergeColumns(sharedColumns, dnaColumns);
+                                    constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+                                    constantColumnFeatures.InvestigatorDecision.source = picklistResults;
+
+                                    tables[field] = buildTableHTML(
+                                        field,
+                                        qcReportResults[field],
+                                        constantColumnFeatures,
+                                        dnaOrder,
+                                        decisionsSamplesByReport['DNA Report']
+                                    );
+                                    tables[field]['readOnly'] = readOnly;
+                                    tables[field]['isCmoPmProject'] = isCmoPmOnly;
+                                }
+                            }
+                            if (field === 'rnaReportSamples') {
+                                if ((reports.includes('RNA Report') && isAuthed) || isLabMember) {
+                                    readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
+                                    constantColumnFeatures = mergeColumns(sharedColumns, rnaColumns);
+                                    constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+                                    constantColumnFeatures.InvestigatorDecision.source = picklistResults;
+
+                                    tables[field] = buildTableHTML(
+                                        field,
+                                        qcReportResults[field],
+                                        constantColumnFeatures,
+                                        rnaOrder,
+                                        decisionsSamplesByReport['RNA Report']
+                                    );
+                                    tables[field]['readOnly'] = readOnly;
+                                    tables[field]['isCmoPmProject'] = isCmoPmOnly;
+                                }
+                            }
+                            if (field === 'libraryReportSamples') {
+                                if ((reports.includes('Library Report') && isAuthed) || isLabMember) {
+                                    readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
+                                    constantColumnFeatures = mergeColumns(sharedColumns, libraryColumns);
+                                    constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+                                    constantColumnFeatures.InvestigatorDecision.source = picklistResults;
+
+                                    tables[field] = buildTableHTML(
+                                        field,
+                                        qcReportResults[field],
+                                        constantColumnFeatures,
+                                        libraryOrder,
+                                        decisionsSamplesByReport['Library Report']
+                                    );
+                                    tables[field]['readOnly'] = readOnly;
+                                    tables[field]['isCmoPmProject'] = isCmoPmOnly;
+                                }
+                            }
+                            if (field === 'poolReportSamples') {
+                                if ((reports.includes('Pool Report') && isAuthed) || isLabMember) {
+                                    readOnly = isDecisionMade(qcReportResults[field]) || isCmoPmOnlyAndNotPmUser;
+                                    constantColumnFeatures = mergeColumns(sharedColumns, poolColumns);
+                                    constantColumnFeatures.InvestigatorDecision.readOnly = readOnly;
+                                    constantColumnFeatures.InvestigatorDecision.source = picklistResults;
+
+                                    tables[field] = buildTableHTML(
+                                        field,
+                                        qcReportResults[field],
+                                        constantColumnFeatures,
+                                        poolOrder,
+                                        decisionsSamplesByReport['Pool Report']
+                                    );
+                                    tables[field]['readOnly'] = readOnly;
+                                    tables[field]['isCmoPmProject'] = isCmoPmOnly;
+                                }
+                            }
+                            if (field === 'pathologyReportSamples') {
+                                if ((reports.includes('Pathology Report') && isAuthed) || isLabMember) {
+
+                                    tables[field] = buildTableHTML(
+                                        field,
+                                        qcReportResults[field],
+                                        pathologyColumns,
+                                        pathologyOrder
+                                    );
+                                    tables[field]['readOnly'] = true;
+                                    readOnly = true;
+                                }
+                            }
+                            if (field === 'attachments') {
+                                tables[field] = buildTableHTML(
+                                    field,
+                                    qcReportResults[field],
+                                    attachmentColumns,
+                                    attachmentOrder
+                                );
+                            }
+                        
+                        }
+
+                        const responseObject = {
+                            tables,
+                            read_only: readOnly
+                        };
+        
+                        return apiResponse.successResponseWithData(res, 'successfully retrieved table data', responseObject);
+                    }).catch(e => {
+                        console.log(e);
+                        return apiResponse.errorResponse(res, `ERROR querying MySQL database for decisions: ${e}`);
+                    });
+
                 }).catch(e => {
                     console.log(e);
-                    return apiResponse.errorResponse(res, `ERROR querying MySQL database for decisions: ${e}`);
+                    return apiResponse.errorResponse(res, `ERROR querying MySQL database for comment relations: ${e}`);
                 });
-
-            }).catch(e => {
-                console.log(e);
-                return apiResponse.errorResponse(res, `ERROR querying MySQL database for comment relations: ${e}`);
+            }).catch(error => {
+                console.log(error);
+                return apiResponse.errorResponse(res, `ERROR retrieving QC reports: ${error}`);
             });
-        }).catch(error => {
+        } catch (error) {
             console.log(error);
-            return apiResponse.errorResponse(res, `ERROR retrieving QC reports: ${error}`);
-        });
+            return apiResponse.errorResponse(res, `Error processing request: ${error}`);
+        }
     }
 ];
 
 exports.savePartialSubmission = [
-    function(req, res) {
-        const reqData = req.body.data;
-        const decisions = reqData.decisions;
-        const requestId = reqData.request_id;
-        const report = reqData.report;
-        const username = reqData.username;
+    async function(req, res) {
+        try {
+            const reqData = req.body.data;
+            const decisions = reqData.decisions;
+            const requestId = reqData.request_id;
+            const report = reqData.report;
+            const username = reqData.username;
 
-        if(!decisions || decisions.length === 0) {
-            return apiResponse.errorResponse(res, 'No decisions to save.');
-        }
-        CommentRelation.findOne({
-            where: {
-                request_id: requestId,
-                report: report
+            // Ensure user exists in MySQL
+            if (username) {
+                await syncUserFromMongo(username);
             }
-        }).then(commentRelation => {
-            const commentRelationId = commentRelation.id;
-            Decisions.findAll({
+
+            if(!decisions || decisions.length === 0) {
+                return apiResponse.errorResponse(res, 'No decisions to save.');
+            }
+            CommentRelation.findOne({
                 where: {
                     request_id: requestId,
                     report: report
                 }
-            }).then(decision => {
-                if (decision && decision.is_submitted) {
-                    return apiResponse.errorResponse(res, 'This decision was already submitted to IGO and cannot be saved. Contact IGO if you need to make changes.');
-                } else if (decision && decision.length > 0) {
-                    Decisions.update({
-                        decisions: JSON.stringify(decisions),
-                        is_submitted: false,
-                        decision_maker: username,
-                    }, {
-                        where: {
-                            request_id: requestId,
-                            report: report
-                        }
-                    });
-                    return apiResponse.successResponse(res, 'Decisions updated, not yet submitted to IGO.');
-                } else {
-                    Decisions.create({
-                        decisions: JSON.stringify(decisions),
-                        report: report,
-                        request_id: requestId,
-                        is_submitted: false,
-                        decision_maker: username,
-                        comment_relation_id: commentRelationId
-                    });
-                    return apiResponse.successResponse(res, 'Decisions saved, not yet submitted to IGO.');
-                }
-            }).catch(error => {
-                return apiResponse.errorResponse(res, `Failed to save. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
-            });
-        }).catch(error => {
-            return apiResponse.errorResponse(res, `Failed to save. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
-        });
-        
-    }
-];
-
-exports.setQCInvestigatorDecision = [
-    function(req, res) {
-        const reqData = req.body.data;
-        const decisions = reqData.decisions;
-        const username = reqData.username;
-        const fullName = reqData.userFullName;
-        const requestId = reqData.request_id;
-        const report = reqData.report;
-
-        CommentRelation.findOne({
-            where: {
-                request_id: requestId,
-                report: report
-            }
-        }).then(commentRelationRecord => {
-            if (!commentRelationRecord || commentRelationRecord.length === 0) {
-                return apiResponse.errorResponse(res, 'Can only decide on reports with initial comment.');
-            }
-
-            // save to LIMS
-            const qcDecisionPromise = services.setQCInvestigatorDecision(decisions);
-            Promise.all([qcDecisionPromise]).then(results => {
-                //figure out what we get back from POST??
-                // console.log(results);
-                
-                // save/update Decisions table
-                Decisions.findOne({
+            }).then(commentRelation => {
+                const commentRelationId = commentRelation.id;
+                Decisions.findAll({
                     where: {
-                        comment_relation_id: commentRelationRecord.id
+                        request_id: requestId,
+                        report: report
                     }
                 }).then(decision => {
-                    if (!decision || decision.length === 0) {
+                    if (decision && decision.is_submitted) {
+                        return apiResponse.errorResponse(res, 'This decision was already submitted to IGO and cannot be saved. Contact IGO if you need to make changes.');
+                    } else if (decision && decision.length > 0) {
+                        Decisions.update({
+                            decisions: JSON.stringify(decisions),
+                            is_submitted: false,
+                            decision_maker: username,
+                        }, {
+                            where: {
+                                request_id: requestId,
+                                report: report
+                            }
+                        });
+                        return apiResponse.successResponse(res, 'Decisions updated, not yet submitted to IGO.');
+                    } else {
                         Decisions.create({
                             decisions: JSON.stringify(decisions),
                             report: report,
                             request_id: requestId,
-                            is_submitted: true,
+                            is_submitted: false,
                             decision_maker: username,
-                            comment_relation_id: commentRelationRecord.id
+                            comment_relation_id: commentRelationId
                         });
-                    } else {
-                        Decisions.update({
-                            decisions: JSON.stringify(decisions),
-                            is_submitted: true,
-                            decision_maker: username,
-                        }, {
-                            where: {
-                                comment_relation_id: commentRelationRecord.id
-                            }
-                        });
+                        return apiResponse.successResponse(res, 'Decisions saved, not yet submitted to IGO.');
                     }
+                }).catch(error => {
+                    return apiResponse.errorResponse(res, `Failed to save. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+                });
+            }).catch(error => {
+                return apiResponse.errorResponse(res, `Failed to save. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+            });
+        } catch (error) {
+            return apiResponse.errorResponse(res, `Error processing request: ${error}`);
+        }
+    }
+];
 
-                    const decisionsMade = JSON.stringify(decisions);
-                    const allRecipients = commentRelationRecord.recipients.concat(`,${commentRelationRecord.author}@mskcc.org`);
-                
-                    mailer.sendDecisionNotification(commentRelationRecord, fullName, allRecipients);
+exports.setQCInvestigatorDecision = [
+    async function(req, res) {
+        try {
+            const reqData = req.body.data;
+            const decisions = reqData.decisions;
+            const username = reqData.username;
+            const fullName = reqData.userFullName;
+            const requestId = reqData.request_id;
+            const report = reqData.report;
+
+            // Ensure user exists in MySQL
+            if (username) {
+                await syncUserFromMongo(username);
+            }
+
+            CommentRelation.findOne({
+                where: {
+                    request_id: requestId,
+                    report: report
+                }
+            }).then(commentRelationRecord => {
+                if (!commentRelationRecord || commentRelationRecord.length === 0) {
+                    return apiResponse.errorResponse(res, 'Can only decide on reports with initial comment.');
+                }
+
+                // save to LIMS
+                const qcDecisionPromise = services.setQCInvestigatorDecision(decisions);
+                Promise.all([qcDecisionPromise]).then(results => {
+                    //figure out what we get back from POST??
+                    // console.log(results);
+                    
+                    // save/update Decisions table
+                    Decisions.findOne({
+                        where: {
+                            comment_relation_id: commentRelationRecord.id
+                        }
+                    }).then(decision => {
+                        if (!decision || decision.length === 0) {
+                            Decisions.create({
+                                decisions: JSON.stringify(decisions),
+                                report: report,
+                                request_id: requestId,
+                                is_submitted: true,
+                                decision_maker: username,
+                                comment_relation_id: commentRelationRecord.id
+                            });
+                        } else {
+                            Decisions.update({
+                                decisions: JSON.stringify(decisions),
+                                is_submitted: true,
+                                decision_maker: username,
+                            }, {
+                                where: {
+                                    comment_relation_id: commentRelationRecord.id
+                                }
+                            });
+                        }
+
+                        const decisionsMade = JSON.stringify(decisions);
+                        const allRecipients = commentRelationRecord.recipients.concat(`,${commentRelationRecord.author}@mskcc.org`);
+                    
+                        mailer.sendDecisionNotification(commentRelationRecord, fullName, allRecipients);
+
+                    }).catch(error => {
+                        return apiResponse.errorResponse(res, `Failed to save decision to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+                    });
+
+                    return apiResponse.successResponse(res, 'Decisions submitted to IGO.');
 
                 }).catch(error => {
-                    return apiResponse.errorResponse(res, `Failed to save decision to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+                    return apiResponse.errorResponse(res, `Failed to save decisions to LIMS. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                 });
 
-                return apiResponse.successResponse(res, 'Decisions submitted to IGO.');
-
             }).catch(error => {
-                return apiResponse.errorResponse(res, `Failed to save decisions to LIMS. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+                return apiResponse.errorResponse(res, `Failed to save submit. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
             });
-
-        }).catch(error => {
-            return apiResponse.errorResponse(res, `Failed to save submit. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
-        });
+        } catch (error) {
+            return apiResponse.errorResponse(res, `Error processing request: ${error}`);
+        }
     }
 ];
 
@@ -483,244 +511,263 @@ exports.getComments = [
 ];
 
 exports.addAndNotifyInitial = [
-    function(req, res) {
-        const reqData = req.body.data;
-        const comment = reqData.comment;
-        const reports = reqData.reports;
-        const requestId = reqData.request_id;
-        const recipients = reqData.recipients;
-        const decisionsMade = reqData.decisions_made;
-        const isCmoProject = reqData.is_cmo_pm_project;
-        const username = reqData.comment.username;
+    async function(req, res) {
+        try {
+            const reqData = req.body.data;
+            const comment = reqData.comment;
+            const reports = reqData.reports;
+            const requestId = reqData.request_id;
+            const recipients = reqData.recipients;
+            const decisionsMade = reqData.decisions_made;
+            const isCmoProject = reqData.is_cmo_pm_project;
+            const username = reqData.comment.username;
 
-        //return value for comment state
-        const commentsResponse = {};
-        // const commentsResponse = {
-        //     'DNA Report': {'comments': [], 'recipients': ''},
-        //     'RNA Report': {'comments': [], 'recipients': ''},
-        //     'Pool Report': {'comments': [], 'recipients': ''},
-        //     'Library Report': {'comments': [], 'recipients': ''},
-        //     'Pathology Report': {'comments': [], 'recipients': ''}
-        // };
-
-        Users.findOne({
-            where: {
-                username: username
+            // Ensure user exists in MySQL and wait for completion
+            await syncUserFromMongo(username);
+            
+            // Get the user (which should now exist)
+            const user = await Users.findOne({
+                where: { username: username }
+            });
+            
+            if (!user) {
+                return apiResponse.errorResponse(res, `User ${username} not found in database.`);
             }
-        }).then(user => {
-            Promise.all(reports.map(report => {
+
+            // Response object
+            const commentsResponse = {};
+            
+            // Process each report sequentially
+            for (const report of reports) {
+                let relationId;
+                let createdAtDate = new Date().toISOString().replace('T', ' ').replace('Z', '');
                 let isDecided = false;
                 let isPathologyReport = report === 'Pathology Report';
-                return CommentRelation.findOne({
+                
+                // Check if relation exists
+                let commentRelationRecord = await CommentRelation.findOne({
                     where: {
                         request_id: requestId,
                         report: report
                     }
-                }).then(commentRelationRecord => {
-                    let relationId;
-                    let createdAtDate = new Date().toISOString().replace('T', ' ').replace('Z', '');
-                    if (!commentRelationRecord || commentRelationRecord.length === 0) {
-                        CommentRelation.create({
-                            request_id: requestId,
-                            report: report,
-                            recipients: recipients,
-                            is_cmo_pm_project: isCmoProject,
-                            author: username
-                        }).then(relation => {
-                            relationId = relation.id;
-                            createdAtDate = relation.createdAt;
-                            Comments.create({
-                                comment: comment.content,
-                                commentrelation_id: relation.id,
-                                username: username
-                            });
-                        });
-
-                        
-                        
-                    } else {
-                        relationId = commentRelationRecord.id;
-                        Comments.create({
-                            comment: comment.content,
-                            commentrelation_id: commentRelationRecord.id,
-                            username: username
-                        }).then(comment => {
-                            createdAtDate = comment.createdAt;
-                        });
-                    }
-
-                    // create commentData for response
-                    commentsResponse[report] = {'comments': [], 'recipients': ''};
-                    const commentData = {
-                        'comment': comment.content,
-                        'date_created': createdAtDate,
-                        'username': username,
-                        'full_name': user.full_name,
-                        'title': user.title
-                    };
-                    commentsResponse[report]['recipients'] = recipients;
-                    commentsResponse[report]['comments'].push(commentData);
-
-
-                    // an inital comment was submitted for a report where all decisions have been made in the LIMS already
-                    if (report in decisionsMade) {
-                        isDecided = true;
-                        Decisions.create({
-                            request_id: requestId,
-                            decision_maker: username,
-                            comment_relation_id: relationId,
-                            report: report,
-                            is_submitted: true,
-                            is_igo_decision: true,
-                            decisions: JSON.stringify(decisionsMade[report])
-                        });
-                    }
-
-                    mailer.sendInitialNotification(recipients, requestId, report, user, isDecided, isPathologyReport, isCmoProject);
-
-                }).catch(error => {
-                    return apiResponse.errorResponse(res, `Failed to save comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                 });
-            })).then(() => {
-                return apiResponse.successResponseWithData(res, 'Successfully saved comments and notified recipients', commentsResponse);
-            });
-
-        }).catch(error => {
-            return apiResponse.errorResponse(res, `Failed to save user comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
-        });
-        
-        
-    }
-];
-
-exports.addAndNotify = [
-    function(req, res) {
-        const reqData = req.body.data;
-        const comment = reqData.comment.content;
-        const username = reqData.comment.username;
-        const report = reqData.report;
-        const requestId = reqData.request_id;
-
-        //return value for comment state
-        const commentsResponse = {};
-        commentsResponse[report] = {'comments': [], 'recipients': ''};
-
-        Users.findOne({
-            where: {
-                username: username
-            }
-        }).then(user => {
-            CommentRelation.findOne({
-                where: {
-                    request_id: requestId,
-                    report: report
+                
+                if (!commentRelationRecord) {
+                    // Create new relation
+                    commentRelationRecord = await CommentRelation.create({
+                        request_id: requestId,
+                        report: report,
+                        recipients: recipients,
+                        is_cmo_pm_project: isCmoProject,
+                        author: username
+                    });
+                    
+                    relationId = commentRelationRecord.id;
+                    createdAtDate = commentRelationRecord.createdAt;
+                } else {
+                    relationId = commentRelationRecord.id;
                 }
-            }).then(commentRelationRecord => {
-                Comments.create({
-                    comment: comment,
-                    commentrelation_id: commentRelationRecord.id,
+                
+                // Create comment
+                const newComment = await Comments.create({
+                    comment: comment.content,
+                    commentrelation_id: relationId,
                     username: username
                 });
+                
+                if (newComment) {
+                    createdAtDate = newComment.createdAt;
+                }
+                
+                // Prepare response data
+                commentsResponse[report] = {'comments': [], 'recipients': ''};
                 const commentData = {
-                    'comment': comment,
-                    'date_created': new Date().toISOString().replace('T', ' ').replace('Z', ''),
+                    'comment': comment.content,
+                    'date_created': createdAtDate,
                     'username': username,
                     'full_name': user.full_name,
                     'title': user.title
                 };
-                commentsResponse[report]['recipients'] = commentRelationRecord.recipients;
+                commentsResponse[report]['recipients'] = recipients;
                 commentsResponse[report]['comments'].push(commentData);
-
-                // if a non-lab member comments, notify intial comment's author
-                let emailRecipients = commentRelationRecord.recipients;
-                if (user.role !== 'lab_member') {
-                    const authorEmail = `${commentRelationRecord.author}@mskcc.org`;
-                    emailRecipients = emailRecipients.concat(',', authorEmail);
+                
+                // Handle decisions
+                if (report in decisionsMade) {
+                    isDecided = true;
+                    await Decisions.create({
+                        request_id: requestId,
+                        decision_maker: username,
+                        comment_relation_id: relationId,
+                        report: report,
+                        is_submitted: true,
+                        is_igo_decision: true,
+                        decisions: JSON.stringify(decisionsMade[report])
+                    });
                 }
+                
+                // Send notification
+                mailer.sendInitialNotification(recipients, requestId, report, user, isDecided, isPathologyReport, isCmoProject);
+            }
+            
+            return apiResponse.successResponseWithData(res, 'Successfully saved comments and notified recipients', commentsResponse);
+        } catch (error) {
+            logger.error(`Error in addAndNotifyInitial: ${error}`);
+            return apiResponse.errorResponse(res, `Failed to add initial comment: ${error.message || error}`);
+        }
+    }
+];
 
-                mailer.sendNotification(emailRecipients, comment, requestId, report, user);
+exports.addAndNotify = [
+    async function(req, res) {
+        try {
+            const reqData = req.body.data;
+            const comment = reqData.comment.content;
+            const username = reqData.comment.username;
+            const report = reqData.report;
+            const requestId = reqData.request_id;
 
-                return apiResponse.successResponseWithData(res, 'Successfully saved comment and notified recipients', commentsResponse);
+            // Create response object
+            const commentsResponse = {};
+            commentsResponse[report] = {'comments': [], 'recipients': ''};
 
-            }).catch(error => {
-                return apiResponse.errorResponse(res, `Failed to save user comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
+            // IMPORTANT: Ensure user exists BEFORE any other database operations
+            // and wait for it to complete
+            await syncUserFromMongo(username);
+            
+            // Now get the user (which should now exist)
+            const user = await Users.findOne({
+                where: { username: username }
             });
-        }).catch(error => {
-            return apiResponse.errorResponse(res, `Failed to get user from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
-        });
+            
+            if (!user) {
+                return apiResponse.errorResponse(res, `User ${username} not found in database.`);
+            }
+
+            // Get the comment relation
+            const commentRelationRecord = await CommentRelation.findOne({
+                where: {
+                    request_id: requestId,
+                    report: report
+                }
+            });
+            
+            if (!commentRelationRecord) {
+                return apiResponse.errorResponse(res, `Comment relation not found for request ${requestId} and report ${report}.`);
+            }
+
+            // Create the comment
+            await Comments.create({
+                comment: comment,
+                commentrelation_id: commentRelationRecord.id,
+                username: username
+            });
+
+            // Create response data
+            const commentData = {
+                'comment': comment,
+                'date_created': new Date().toISOString().replace('T', ' ').replace('Z', ''),
+                'username': username,
+                'full_name': user.full_name,
+                'title': user.title
+            };
+            commentsResponse[report]['recipients'] = commentRelationRecord.recipients;
+            commentsResponse[report]['comments'].push(commentData);
+
+            // Handle notifications
+            let emailRecipients = commentRelationRecord.recipients;
+            if (user.role !== 'lab_member') {
+                const authorEmail = `${commentRelationRecord.author}@mskcc.org`;
+                emailRecipients = emailRecipients.concat(',', authorEmail);
+            }
+
+            // Send notification
+            mailer.sendNotification(emailRecipients, comment, requestId, report, user);
+
+            // Return success response
+            return apiResponse.successResponseWithData(res, 'Successfully saved comment and notified recipients', commentsResponse);
+        } catch (error) {
+            logger.error(`Error in addAndNotify: ${error}`);
+            return apiResponse.errorResponse(res, `Failed to add comment: ${error.message || error}`);
+        }
     }
 ];
 
 exports.addToAllAndNotify = [
-    function(req, res) {
-        const reqData = req.body.data;
-        const comment = reqData.comment.content;
-        const username = reqData.comment.username;
-        const reports = reqData.reports;
-        const requestId = reqData.request_id;
+    async function(req, res) {
+        try {
+            const reqData = req.body.data;
+            const comment = reqData.comment.content;
+            const username = reqData.comment.username;
+            const reports = reqData.reports;
+            const requestId = reqData.request_id;
 
-        // return value for comment state:
-        const commentsResponse = {};
-        // const commentsResponse = {
-        //     'DNA Report': {'comments': [], 'recipients': ''},
-        //     'RNA Report': {'comments': [], 'recipients': ''},
-        //     'Pool Report': {'comments': [], 'recipients': ''},
-        //     'Library Report': {'comments': [], 'recipients': ''},
-        //     'Pathology Report': {'comments': [], 'recipients': ''}
-        // };
-        Users.findOne({
-            where: {
-                username: username
+            // Ensure user exists in MySQL and wait for completion
+            await syncUserFromMongo(username);
+            
+            // Get the user (which should now exist)
+            const user = await Users.findOne({
+                where: { username: username }
+            });
+            
+            if (!user) {
+                return apiResponse.errorResponse(res, `User ${username} not found in database.`);
             }
-        }).then(user => {
-            Promise.all(reports.map(report => {
-                if (typeof report === 'string' && report.toLowerCase() !== 'attachments') {
-                    commentsResponse[report] = {'comments': [], 'recipients': ''};
 
-                    return CommentRelation.findOne({
+            // Response object
+            const commentsResponse = {};
+            
+            // Process each report sequentially
+            for (const report of reports) {
+                if (typeof report === 'string' && report.toLowerCase() !== 'attachments') {
+                    // Get comment relation
+                    const commentRelationRecord = await CommentRelation.findOne({
                         where: {
                             request_id: requestId,
                             report: report
                         }
-                    }).then(commentRelationRecord => {
-                        
-                        Comments.create({
-                            comment: comment,
-                            commentrelation_id: commentRelationRecord.id,
-                            username: username
-                        });
-                    
-                        const commentData = {
-                            'comment': comment,
-                            'date_created': new Date().toISOString().replace('T', ' ').replace('Z', ''),
-                            'username': username,
-                            'full_name': user.full_name,
-                            'title': user.title
-                        };
-
-                        commentsResponse[report]['recipients'] = commentRelationRecord.recipients;
-                        commentsResponse[report]['comments'].push(commentData);
-
-                        // if a non-lab member comments, notify intial comment's author
-                        let emailRecipients = commentRelationRecord.recipients;
-                        if (user.role !== 'lab_member') {
-                            const authorEmail = `${commentRelationRecord.author}@mskcc.org`;
-                            emailRecipients = emailRecipients.concat(',', authorEmail);
-                        }
-
-                        mailer.sendNotification(emailRecipients, comment, requestId, report, user);
-
-
-                    }).catch(error => {
-                        return apiResponse.errorResponse(res, `Failed to save user comment to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                     });
+                    
+                    if (!commentRelationRecord) {
+                        logger.warn(`Comment relation not found for request ${requestId} and report ${report}.`);
+                        continue;
+                    }
+                    
+                    // Create comment
+                    await Comments.create({
+                        comment: comment,
+                        commentrelation_id: commentRelationRecord.id,
+                        username: username
+                    });
+                    
+                    // Prepare response data
+                    commentsResponse[report] = {'comments': [], 'recipients': ''};
+                    const commentData = {
+                        'comment': comment,
+                        'date_created': new Date().toISOString().replace('T', ' ').replace('Z', ''),
+                        'username': username,
+                        'full_name': user.full_name,
+                        'title': user.title
+                    };
+                    commentsResponse[report]['recipients'] = commentRelationRecord.recipients;
+                    commentsResponse[report]['comments'].push(commentData);
+                    
+                    // Handle notifications
+                    let emailRecipients = commentRelationRecord.recipients;
+                    if (user.role !== 'lab_member') {
+                        const authorEmail = `${commentRelationRecord.author}@mskcc.org`;
+                        emailRecipients = emailRecipients.concat(',', authorEmail);
+                    }
+                    
+                    // Send notification
+                    mailer.sendNotification(emailRecipients, comment, requestId, report, user);
                 }
-            })).then(() => {
-                return apiResponse.successResponseWithData(res, 'Successfully saved comments and notified recipients', commentsResponse);
-            });
-        }).catch(error => {
-            return apiResponse.errorResponse(res, `Failed to get user from database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
-        });
+            }
+            
+            return apiResponse.successResponseWithData(res, 'Successfully saved comments and notified recipients', commentsResponse);
+        } catch (error) {
+            logger.error(`Error in addToAllAndNotify: ${error}`);
+            return apiResponse.errorResponse(res, `Failed to add comments: ${error.message || error}`);
+        }
     }
 ];
 
