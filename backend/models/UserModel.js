@@ -10,6 +10,9 @@ var UserSchema = new mongoose.Schema(
         role: { type: String, required: true },
         title: { type: String, required: true },
         groups: { type: Array, required: true },
+ isLabMember: { type: Boolean, default: false },
+        isPM: { type: Boolean, default: false },
+        isUser: { type: Boolean, default: false },
     },
     { timestamps: true }
 );
