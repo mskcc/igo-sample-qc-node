@@ -5,7 +5,8 @@ const { emailConfig } = require('../constants');
 const ENVIRONMENT = process.env.ENV;
 const devRecipients = [
     'delbels@mskcc.org',
-    'mirhajf@mskcc.org'
+    'mirhajf@mskcc.org',
+    'patelo2@mskcc.org'
 ];
 
 // create reusable transporter object using the default SMTP transport

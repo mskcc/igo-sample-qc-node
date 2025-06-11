@@ -406,8 +406,15 @@ exports.setQCInvestigatorDecision = [
                         const decisionsMade = JSON.stringify(decisions);
                         const allRecipients = commentRelationRecord.recipients.concat(`,${commentRelationRecord.author}@mskcc.org`);
                     
+                        if (decisionsMade.includes('Stop processing') && report === 'Library Report') {
+                        
+                        const seqEmail = process.env.SEQ_EMAIL;
+                        mailer.sendStopProcessingNotification(commentRelationRecord, fullName, seqEmail);
+                        logger.info(`Library QC Stop Processing notification sent to SEQ team: ${seqEmail}`);
+                    } else {
+                        // Send regular decision notification for non-stop processing decisions
                         mailer.sendDecisionNotification(commentRelationRecord, fullName, allRecipients);
-
+                    }
                     }).catch(error => {
                         return apiResponse.errorResponse(res, `Failed to save decision to database. Please contact an admin by emailing zzPDL_SKI_IGO_DATA@mskcc.org. ${error}`);
                     });
