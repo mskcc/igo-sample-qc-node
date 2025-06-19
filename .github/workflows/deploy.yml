@@ -32,7 +32,6 @@ jobs:
           cp -rT build/ ../backend/public/
           cd ..
           cp -rT backend/ /srv/www/sampleQC/
-          chmod -R 775 /srv/www/sampleQC/public/
           echo "🔁 Checking if app exists in PM2..."
           if pm2 list | grep -q "sampleQC"; then
             echo "App exists, restarting..."
@@ -48,7 +47,7 @@ jobs:
             pm2 logs sampleQC --lines 50
             exit 1
           fi
-          echo "✅ DEV Deployment completed successfully"
+          echo "✅ Deployment completed successfully"
 
   deploy-to-prod:
     name: Deploy to PROD (`plviigoapps1`)
@@ -60,7 +59,7 @@ jobs:
         run: |
           echo "🚀 Deploying to PROD on plviigoapps1..."
           cd /srv/deployments/igo-sample-qc-node
-          git pull origin main
+          git pull
           # Verify that the current branch is main (ONLY DEPLOY main BRANCH TO PROD)
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           if [[ "$CURRENT_BRANCH" != "main" ]]; then
@@ -73,7 +72,6 @@ jobs:
           cd ..
           cp -rT backend/ /srv/www/sampleqc/
           chmod -R 775 /srv/www/sampleqc/public/
-          echo "🔁 Restarting PM2 in PROD..."
           pm2 restart sampleqc
           # Check if restart was successful, if not try with nvm use 16
           sleep 5
