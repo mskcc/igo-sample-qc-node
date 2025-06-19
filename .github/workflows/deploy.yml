@@ -10,6 +10,7 @@ on:
         options:
           - dev
           - production
+
 jobs:
   deploy-to-dev:
     name: Deploy to DEV (`dlviigoapps1`)
@@ -31,6 +32,7 @@ jobs:
           cp -rT build/ ../backend/public/
           cd ..
           cp -rT backend/ /srv/www/sampleQC/
+          chmod -R 775 /srv/www/sampleQC/public/
           echo "🔁 Checking if app exists in PM2..."
           if pm2 list | grep -q "sampleQC"; then
             echo "App exists, restarting..."
@@ -46,41 +48,43 @@ jobs:
             pm2 logs sampleQC --lines 50
             exit 1
           fi
-          echo "✅ Deployment completed successfully"
+          echo "✅ DEV Deployment completed successfully"
+
   deploy-to-prod:
-    name: Deploy to PROD (`plviigoweb1`)
-    runs-on: self-hosted
-    if: github.event.inputs.environment == 'production'  # Only run when production is selected
+    name: Deploy to PROD (`plviigoapps1`)
+    runs-on: [self-hosted, prod, sample-qc-prod]
+    if: github.event.inputs.environment == 'production'
     environment: production
     steps:
       - name: Deploy to PROD
         run: |
-          echo "🚀 Deploying to PROD on plviigoweb1..."
-          cd /prep/deployments/igo-sample-qc-node
-          # Ensure we're on the master branch before pulling updates
-          git checkout master || { echo "❌ Failed to checkout master branch"; exit 1; }
-          git pull origin master
-          # Verify that the current branch is master
+          echo "🚀 Deploying to PROD on plviigoapps1..."
+          cd /srv/deployments/igo-sample-qc-node
+          git pull origin main
+          # Verify that the current branch is main (ONLY DEPLOY main BRANCH TO PROD)
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          if [[ "$CURRENT_BRANCH" != "master" ]]; then
-            echo "❌ You can only deploy the 'master' branch to PROD."
+          if [[ "$CURRENT_BRANCH" != "main" ]]; then
+            echo "❌ You can only deploy the 'main' branch to PROD."
             exit 1
           fi
           cd frontend/
           CI=false npm run build
-          # Ensure public directory exists and is copied with correct permissions
-          dzdo mkdir -p ../backend/public/
-          dzdo cp -rT build/ ../backend/public/
+          cp -rT build/ ../backend/public/
           cd ..
-          dzdo cp -rT backend/ /srv/www/sampleqc/
-          dzdo chmod -R 775 /srv/www/sampleqc/public/
+          cp -rT backend/ /srv/www/sampleqc/
+          chmod -R 775 /srv/www/sampleqc/public/
           echo "🔁 Restarting PM2 in PROD..."
-          # Use nvm to select Node.js version 16 before restarting PM2
-          dzdo bash -c 'nvm use 16 || true; pm2 restart sampleqc'
+          pm2 restart sampleqc
+          # Check if restart was successful, if not try with nvm use 16
           sleep 5
-          if ! dzdo pm2 show sampleqc | grep -q "status.*online"; then
-            echo "❌ PM2 process 'sampleqc' failed to start in PROD!"
-            dzdo pm2 logs sampleqc --lines 50
-            exit 1
+          if ! pm2 show sampleqc | grep -q "status.*online"; then
+            echo "⚠️ Initial restart failed, trying with nvm use 16..."
+            bash -c 'nvm use 16 && pm2 restart sampleqc'
+            sleep 5
+            if ! pm2 show sampleqc | grep -q "status.*online"; then
+              echo "❌ PM2 process 'sampleqc' failed to start in PROD!"
+              pm2 logs sampleqc --lines 50
+              exit 1
+            fi
           fi
-          echo "✅ Deployment completed successfully"
+          echo "✅ PROD Deployment completed successfully"
