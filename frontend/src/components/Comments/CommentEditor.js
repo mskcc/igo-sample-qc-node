@@ -88,10 +88,8 @@ export default function CommentEditor(props) {
     movingForward: false,
     confirmationRequested: false,
     sequencingRequested: false,
-    tumorNormalMatchNote: false,
     suboptimalQuantity: false,
     sizeSelection: false,
-    additionalQC: false,
     suggestSizeSelection: false
   });
   const [commentArray, setCommentArray] = useState([]);
@@ -226,21 +224,6 @@ export default function CommentEditor(props) {
             iLab request and notify our Sample and Project Management Team of
             the IGO ID number by emailing
             zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org.
-          </span>
-        )}
-        {checkedValue === 'additionalQC' && (
-          <span>
-            {' '}
-            <br />
-            These samples are now in queue for additional QC.
-          </span>
-        )}
-        {checkedValue === 'tumorNormalMatchNote' && (
-          <span>
-            {' '}
-            <br />
-            Please note: If a Tumor or Normal fails, its matched T/N should be
-            eliminated.
           </span>
         )}
         {checkedValue === 'cmoDecisionsNote' && (
@@ -480,27 +463,6 @@ export default function CommentEditor(props) {
                   }
                 />
                 <br/>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      onChange={handleCheckbox('additionalQC')}
-                    />
-                  }
-                  label={
-                    'These samples are now in queue for additional QC.'
-                  }
-                />
-                <br/>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      onChange={handleCheckbox('tumorNormalMatchNote')}
-                    />
-                  }
-                  label={
-                    'Please note: If a Tumor or Normal fails, its matched T/N should be eliminated.'
-                  }
-                />
                 <br/>
                 {(showCMOCheckbox()) && (<FormControlLabel
                   control={
