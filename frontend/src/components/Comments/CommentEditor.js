@@ -204,8 +204,7 @@ export default function CommentEditor(props) {
         {checkedValue === 'onHold' && (
           <span>
             <br />
-            IGO will put this project on hold until decisions are submitted in
-            the grid above.
+            IGO will put this project on hold until decisions are submitted for all samples in the grid above.
           </span>
         )}
         {checkedValue === 'confirmationRequested' && (
@@ -220,10 +219,7 @@ export default function CommentEditor(props) {
           <span>
             {' '}
             <br />
-            If you are ready to move forward to sequencing, please fill out an
-            iLab request and notify our Sample and Project Management Team of
-            the IGO ID number by emailing
-            zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org.
+            To proceed with sequencing, please submit a new iLab request and email the Service ID number to our Sample and Project Management team at igosampleproimgmt@mskcc.org.
           </span>
         )}
         {checkedValue === 'cmoDecisionsNote' && (
@@ -435,7 +431,7 @@ export default function CommentEditor(props) {
                 )}
                 <FormControlLabel
                   control={<Checkbox onChange={handleCheckbox('onHold')} />}
-                  label="IGO will put this project on hold until decisions are submitted in the grid above."
+                  label="IGO will put this project on hold until decisions are submitted for all samples in the grid above."
                 />
                 <br/>
                 <br/>
@@ -458,8 +454,7 @@ export default function CommentEditor(props) {
                     />
                   }
                   label={
-                    'If you are ready to move forward to sequencing, please fill out an iLab request and notify our Sample ' +
-                    'and Project Management team of the IGO ID number by emailing zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org.'
+                    'To proceed with sequencing, please submit a new iLab request and email the Service ID number to our Sample and Project Management team at igosampleproimgmt@mskcc.org.'
                   }
                 />
                 <br/>
