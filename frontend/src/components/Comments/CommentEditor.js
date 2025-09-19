@@ -90,7 +90,10 @@ export default function CommentEditor(props) {
     sequencingRequested: false,
     suboptimalQuantity: false,
     sizeSelection: false,
-    suggestSizeSelection: false
+    suggestSizeSelection: false,
+    samplesDiscarded: false,
+    pickupInstructions: false,
+    cmoProcessingDecisions: false
   });
   const [commentArray, setCommentArray] = useState([]);
 
@@ -263,6 +266,27 @@ export default function CommentEditor(props) {
             service IGO provides. If you would like to pick up the samples for 
             size selection, please reply below and we will provide additional 
             instructions.
+          </span>
+        )}
+        {checkedValue === 'samplesDiscarded' && (
+          <span>
+            {' '}
+            <br />
+            Your samples will now be discarded.
+          </span>
+        )}
+        {checkedValue === 'pickupInstructions' && (
+          <span>
+            {' '}
+            <br />
+            When you're ready to pick up your samples, please contact our Sample and Project Management Team at igosampleprojmgmt@mskcc.org.
+          </span>
+        )}
+        {checkedValue === 'cmoProcessingDecisions' && (
+          <span>
+            {' '}
+            <br />
+            Please note that processing decisions should be submitted by the CMO PM team.
           </span>
         )}
       </div>
@@ -513,6 +537,42 @@ export default function CommentEditor(props) {
                       }
                       label={
                         ' We suggest these samples undergo a size selection, which is not a service IGO provides. If you would like to pick up the samples for size selection, please reply below and we will provide additional instructions.'
+                      }
+                    />
+                    <br/>
+                    <br/>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          onChange={handleCheckbox('samplesDiscarded')}
+                        />
+                      }
+                      label={
+                        ' Your samples will now be discarded.'
+                      }
+                    />
+                    <br/>
+                    <br/>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          onChange={handleCheckbox('pickupInstructions')}
+                        />
+                      }
+                      label={
+                        ' When you\'re ready to pick up your samples, please contact our Sample and Project Management Team at igosampleprojmgmt@mskcc.org.'
+                      }
+                    />
+                    <br/>
+                    <br/>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          onChange={handleCheckbox('cmoProcessingDecisions')}
+                        />
+                      }
+                      label={
+                        ' Please note that processing decisions should be submitted by the CMO PM team.'
                       }
                     />
                   </React.Fragment>
