@@ -88,11 +88,12 @@ export default function CommentEditor(props) {
     movingForward: false,
     confirmationRequested: false,
     sequencingRequested: false,
-    tumorNormalMatchNote: false,
     suboptimalQuantity: false,
     sizeSelection: false,
-    additionalQC: false,
-    suggestSizeSelection: false
+    suggestSizeSelection: false,
+    samplesDiscardedText: false,
+    pickupInstructionsText: false,
+    cmoProcessingDecisionsText: false
   });
   const [commentArray, setCommentArray] = useState([]);
 
@@ -206,8 +207,7 @@ export default function CommentEditor(props) {
         {checkedValue === 'onHold' && (
           <span>
             <br />
-            IGO will put this project on hold until decisions are submitted in
-            the grid above.
+            IGO will put this project on hold until decisions are submitted for all samples in the grid above.
           </span>
         )}
         {checkedValue === 'confirmationRequested' && (
@@ -222,25 +222,28 @@ export default function CommentEditor(props) {
           <span>
             {' '}
             <br />
-            If you are ready to move forward to sequencing, please fill out an
-            iLab request and notify our Sample and Project Management Team of
-            the IGO ID number by emailing
-            zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org.
+            To proceed with sequencing, please submit a new iLab request and email the Service ID number to our Sample and Project Management team at igosampleprojmgmt@mskcc.org..
           </span>
         )}
-        {checkedValue === 'additionalQC' && (
+        {checkedValue === 'samplesDiscardedText' && (
           <span>
             {' '}
             <br />
-            These samples are now in queue for additional QC.
+            Your samples will now be discarded.
           </span>
         )}
-        {checkedValue === 'tumorNormalMatchNote' && (
+        {checkedValue === 'pickupInstructionsText' && (
           <span>
             {' '}
             <br />
-            Please note: If a Tumor or Normal fails, its matched T/N should be
-            eliminated.
+            When you're ready to pick up your samples, please contact our Sample and Project Management Team at igosampleprojmgmt@mskcc.org.
+          </span>
+        )}
+        {checkedValue === 'cmoProcessingDecisionsText' && (
+          <span>
+            {' '}
+            <br />
+            Please note that processing decisions should be submitted by the CMO PM team.
           </span>
         )}
         {checkedValue === 'cmoDecisionsNote' && (
@@ -452,7 +455,7 @@ export default function CommentEditor(props) {
                 )}
                 <FormControlLabel
                   control={<Checkbox onChange={handleCheckbox('onHold')} />}
-                  label="IGO will put this project on hold until decisions are submitted in the grid above."
+                  label="IGO will put this project on hold until decisions are submitted for all samples in the grid above."
                 />
                 <br/>
                 <br/>
@@ -475,32 +478,46 @@ export default function CommentEditor(props) {
                     />
                   }
                   label={
-                    'If you are ready to move forward to sequencing, please fill out an iLab request and notify our Sample ' +
-                    'and Project Management team of the IGO ID number by emailing zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org.'
+                    'To proceed with sequencing, please submit a new iLab request and email the Service ID number to our Sample and Project Management team at igosampleprojmgmt@mskcc.org..'
                   }
                 />
+                <br/>
                 <br/>
                 <FormControlLabel
                   control={
                     <Checkbox
-                      onChange={handleCheckbox('additionalQC')}
+                      onChange={handleCheckbox('samplesDiscardedText')}
                     />
                   }
                   label={
-                    'These samples are now in queue for additional QC.'
+                    'Your samples will now be discarded.'
                   }
                 />
+                <br/>
                 <br/>
                 <FormControlLabel
                   control={
                     <Checkbox
-                      onChange={handleCheckbox('tumorNormalMatchNote')}
+                      onChange={handleCheckbox('pickupInstructionsText')}
                     />
                   }
                   label={
-                    'Please note: If a Tumor or Normal fails, its matched T/N should be eliminated.'
+                    'When you\'re ready to pick up your samples, please contact our Sample and Project Management Team at igosampleprojmgmt@mskcc.org.'
                   }
                 />
+                <br/>
+                <br/>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      onChange={handleCheckbox('cmoProcessingDecisionsText')}
+                    />
+                  }
+                  label={
+                    'Please note that processing decisions should be submitted by the CMO PM team.'
+                  }
+                />
+                <br/>
                 <br/>
                 {(showCMOCheckbox()) && (<FormControlLabel
                   control={
