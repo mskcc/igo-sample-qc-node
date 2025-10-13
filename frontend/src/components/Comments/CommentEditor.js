@@ -271,14 +271,6 @@ export default function CommentEditor(props) {
             affect the sequencing balance across the project. 
           </span>
         )}
-        {checkedValue === 'suboptimalQuantity' && (
-          <span>
-            {' '}
-            <br />
-            However, the quantity is only sufficient for one attempt so we
-            cannot guarantee the requested reads.
-          </span>
-        )}
         {checkedValue === 'suggestSizeSelection' && (
           <span>
             {' '}
@@ -549,18 +541,6 @@ export default function CommentEditor(props) {
                       }
                       label={
                         ' These samples have adapters and/or fragments over 1kb that could affect the sequencing balance across the project. '
-                      }
-                    />
-                    <br/>
-                    <br/>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          onChange={handleCheckbox('suboptimalQuantity')}
-                        />
-                      }
-                      label={
-                        ' However, the quantity is only sufficient for one attempt so we cannot guarantee the requested reads.'
                       }
                     />
                     <br/>
