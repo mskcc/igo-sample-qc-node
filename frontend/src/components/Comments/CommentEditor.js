@@ -93,7 +93,8 @@ export default function CommentEditor(props) {
     suggestSizeSelection: false,
     samplesDiscardedText: false,
     pickupInstructionsText: false,
-    cmoProcessingDecisionsText: false
+    cmoProcessingDecisionsText: false,
+    reQcMessage: false
   });
   const [commentArray, setCommentArray] = useState([]);
 
@@ -279,6 +280,14 @@ export default function CommentEditor(props) {
             service IGO provides. If you would like to pick up the samples for 
             size selection, please reply below and we will provide additional 
             instructions.
+          </span>
+        )}
+        {checkedValue === 'reQcMessage' && (
+          <span>
+            {' '}
+            <br />
+            Your sample(s) have been re-QC'd. Please see the updated QC results in the grid above.
+            Please submit your processing decisions at your earliest convenience to ensure your samples are included in this week's queue. Delays in submission may result in your samples being held until the following week.
           </span>
         )}
       </div>
@@ -523,6 +532,20 @@ export default function CommentEditor(props) {
                 />)}
                 <br/>
                 <br/>
+                {props.isReQc && (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={handleCheckbox('reQcMessage')}
+                      />
+                    }
+                    label={
+                      'Your sample(s) have been re-QC\'d. Please see the updated QC results in the grid above. Please submit your processing decisions at your earliest convenience to ensure your samples are included in this week\'s queue. Delays in submission may result in your samples being held until the following week.'
+                    }
+                  />
+                )}
+                <br/>
+                <br/>
                 {(values['Library Report'] || values['Pool Report']) && (
                   <React.Fragment>
                     <FormControlLabel
@@ -568,20 +591,31 @@ export default function CommentEditor(props) {
         </Typography>
         <div ref={commentEl}>
           <br />
-          Good{' '}
-          {values.salutation || (
-            <span className={classes.highlight}>...</span>
-          )}{' '}
-          {values.addressee || <span className={classes.highlight}>...</span>}
-          ,
-          <br />
-          IGO has completed{' '}
-          {values.service || <span className={classes.highlight}>...</span>} on
-          Project {props.request.requestId}.
-          <br />
-          Please see the reports and documents above for the results.
-          <br />
-          <br />
+          {props.isReQc ? (
+            <span>
+              Your sample(s) have been re-QC'd. Please see the updated QC results in the grid above.
+              Please submit your processing decisions at your earliest convenience to ensure your samples are included in this week's queue. Delays in submission may result in your samples being held until the following week.
+              <br />
+              <br />
+            </span>
+          ) : (
+            <span>
+              Good{' '}
+              {values.salutation || (
+                <span className={classes.highlight}>...</span>
+              )}{' '}
+              {values.addressee || <span className={classes.highlight}>...</span>}
+              ,
+              <br />
+              IGO has completed{' '}
+              {values.service || <span className={classes.highlight}>...</span>} on
+              Project {props.request.requestId}.
+              <br />
+              Please see the reports and documents above for the results.
+              <br />
+              <br />
+            </span>
+          )}
           
           {renderPreviewText(commentArray)}
           
@@ -599,19 +633,21 @@ export default function CommentEditor(props) {
           color="primary"
           onClick={handleInitialComment}
           disabled={
-            ((values['DNA Report'] ||
-              values['RNA Report'] ||
-              values['Pathology Report'] ||
-              values['Pool Report'] ||
-              values['Library Report']) &&
-              values.salutation !== '' &&
-              values.addressee !== '' &&
-              values.downstreamProcess !== '' &&
-              values.service !== '') === false ||
-            props.recipientsBeingEdited === true
+            props.isReQc ? false : (
+              ((values['DNA Report'] ||
+                values['RNA Report'] ||
+                values['Pathology Report'] ||
+                values['Pool Report'] ||
+                values['Library Report']) &&
+                values.salutation !== '' &&
+                values.addressee !== '' &&
+                values.downstreamProcess !== '' &&
+                values.service !== '') === false ||
+              props.recipientsBeingEdited === true
+            )
           }
         >
-          Continue to Review
+          {props.isReQc ? 'Generate Comment' : 'Continue to Review'}
         </Button>
       </div>
     </div>

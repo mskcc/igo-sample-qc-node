@@ -259,9 +259,49 @@ export function getComments() {
   };
 }
 
-export const SET_RECIPIENTS = 'SET_RECIPIENTS';
-export function setRecipients(recipients) {
-  return (dispatch) => {
-    dispatch({ type: SET_RECIPIENTS, payload: recipients });
+export const GENERATE_REQC_TEXT = 'GENERATE_REQC_TEXT';
+export const GENERATE_REQC_TEXT_SUCCESS = 'GENERATE_REQC_TEXT_SUCCESS';
+export const GENERATE_REQC_TEXT_FAIL = 'GENERATE_REQC_TEXT_FAIL';
+
+export function generateReQcText(comment, report) {
+  return (dispatch, getState) => {
+    let commentToSave = {
+      comment: {
+        content: comment,
+        username: getState().user.username,
+      },
+      request_id: getState().report.request.requestId,
+      report: report,
+    };
+
+    dispatch({ type: GENERATE_REQC_TEXT });
+    return axios
+      .post(Config.API_ROOT + '/qcReport/addAndNotify', { data: commentToSave })
+      .then((response) => {
+        // already comments for report; add onto state instead of overwriting
+        let newCommentData = response.data.data[report].comments[0];
+        const currentComments = getState().communication.comments;
+        const currentCommentsForReport = currentComments[report];
+        
+        currentCommentsForReport.comments.push(newCommentData);
+        
+        const newCommentState = {
+          ...getState().communication.comments,
+          ...currentCommentsForReport
+        }
+        return dispatch({
+          type: GENERATE_REQC_TEXT_SUCCESS,
+          payload: newCommentState,
+          message: 'Re-QC comment generated and sent!',
+        });
+      })
+
+      .catch((error) => {
+        return dispatch({
+          type: GENERATE_REQC_TEXT_FAIL,
+          error: error,
+          message: 'Generating re-QC comment failed.',
+        });
+      });
   };
 }

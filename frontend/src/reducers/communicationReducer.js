@@ -65,6 +65,17 @@ function commentReducer(state = initialState, action) {
         recipients: action.payload.recipients,
       };
 
+    case ActionTypes.GENERATE_REQC_TEXT_SUCCESS:
+      return {
+        ...state,
+        comments: action.payload,
+      };
+
+    case ActionTypes.GENERATE_REQC_TEXT_FAIL:
+      return {
+        ...state,
+      };
+
     case ActionTypes.SET_RECIPIENTS:
       return {
         ...state,
