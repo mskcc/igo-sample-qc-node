@@ -263,11 +263,11 @@ export const GENERATE_REQC_TEXT = 'GENERATE_REQC_TEXT';
 export const GENERATE_REQC_TEXT_SUCCESS = 'GENERATE_REQC_TEXT_SUCCESS';
 export const GENERATE_REQC_TEXT_FAIL = 'GENERATE_REQC_TEXT_FAIL';
 
-export function generateReQcText(comment, report) {
+export function generateReQcText(commentText, report) {
   return (dispatch, getState) => {
     let commentToSave = {
       comment: {
-        content: comment,
+        content: commentText,
         username: getState().user.username,
       },
       request_id: getState().report.request.requestId,

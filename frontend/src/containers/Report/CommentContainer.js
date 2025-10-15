@@ -9,11 +9,33 @@ import {
   allIntialCommentsSent,
 } from '../../actions/helpers';
 import { CommentArea, CommentEditorArea } from '../../components/Comments';
+import QcSentPopup from '../../components/Comments/QcSentPopup';
 
 
 export class CommentContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showQcSentPopup: false,
+    };
+  }
+
   componentDidMount() {
     this.props.getComments();
+  }
+
+  componentDidUpdate(prevProps) {
+    // Check if initial comment was just sent successfully
+    if (prevProps.communication && this.props.communication) {
+      const prevComments = prevProps.communication.comments;
+      const currentComments = this.props.communication.comments;
+      
+      // If comments were just added and user is lab member, show popup
+      if (this.props.user.role === 'lab_member' && 
+          Object.keys(currentComments).length > Object.keys(prevComments).length) {
+        this.setState({ showQcSentPopup: true });
+      }
+    }
   }
 
   handleInitialComment = (comment, values) => {
@@ -223,26 +245,12 @@ export class CommentContainer extends Component {
     this.props.setRecipients(recipients);
   };
 
-  generateReQcText = (comment, values) => {
-    // Generate the comment text using the same logic as initial comment
-    let reportString = '';
-    var filteredReports = [];
-    var isCmoPmProject = false;
-
-    if (values) {
-      var keys = Object.keys(values);
-      // array of all selected reports
-      filteredReports = keys.filter(function (key) {
-        return values[key] && key.includes('Report');
-      });
-      reportString = Object.values(filteredReports).join(', ');
-    }
-
+  generateReQcText = (commentText) => {
     // For re-QC, we'll add the comment to the current report
     const currentReport = this.props.report.reportShown;
     
     // Call the action to generate and send the re-QC text
-    this.props.generateReQcText(comment, currentReport);
+    this.props.generateReQcText(commentText, currentReport);
   };
 
   // Check if this is a re-QC scenario
@@ -267,9 +275,18 @@ export class CommentContainer extends Component {
     return hasComments && isLabMember;
   };
 
+  handleCloseQcSentPopup = () => {
+    this.setState({ showQcSentPopup: false });
+  };
+
   render() {
     return (
       <React.Fragment>
+        <QcSentPopup
+          open={this.state.showQcSentPopup}
+          onClose={this.handleCloseQcSentPopup}
+          userRole={this.props.user.role}
+        />
         {this.props.report.reportShown &&
         this.props.comments &&
         this.props.report.reportShown.includes('Report') &&

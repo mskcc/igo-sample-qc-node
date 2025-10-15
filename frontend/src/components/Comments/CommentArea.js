@@ -31,7 +31,6 @@ const styles = (theme) => ({
     padding: '16px',
     backgroundColor: 'var(--material-gray)',
     borderRadius: '8px',
-    border: '2px solid var(--mskcc-light-blue)',
   }
 });
 
