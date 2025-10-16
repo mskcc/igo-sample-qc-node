@@ -9,34 +9,17 @@ import {
   allIntialCommentsSent,
 } from '../../actions/helpers';
 import { CommentArea, CommentEditorArea } from '../../components/Comments';
-import QcSentPopup from '../../components/Comments/QcSentPopup';
 
 
 export class CommentContainer extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      showQcSentPopup: false,
-    };
   }
 
   componentDidMount() {
     this.props.getComments();
   }
 
-  componentDidUpdate(prevProps) {
-    // Check if initial comment was just sent successfully
-    if (prevProps.communication && this.props.communication) {
-      const prevComments = prevProps.communication.comments;
-      const currentComments = this.props.communication.comments;
-      
-      // If comments were just added and user is lab member, show popup
-      if (this.props.user.role === 'lab_member' && 
-          Object.keys(currentComments).length > Object.keys(prevComments).length) {
-        this.setState({ showQcSentPopup: true });
-      }
-    }
-  }
 
   handleInitialComment = (comment, values) => {
     let reportString = '';
@@ -275,18 +258,10 @@ export class CommentContainer extends Component {
     return hasComments && isLabMember;
   };
 
-  handleCloseQcSentPopup = () => {
-    this.setState({ showQcSentPopup: false });
-  };
 
   render() {
     return (
       <React.Fragment>
-        <QcSentPopup
-          open={this.state.showQcSentPopup}
-          onClose={this.handleCloseQcSentPopup}
-          userRole={this.props.user.role}
-        />
         {this.props.report.reportShown &&
         this.props.comments &&
         this.props.report.reportShown.includes('Report') &&
