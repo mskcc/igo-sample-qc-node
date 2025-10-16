@@ -62,21 +62,18 @@ const CommentArea = ({
         addCommentToAllReports={addCommentToAllReports}
       />
       <CommentBox comments={comments} currentUser={currentUser} />
-      {isReQc && userRole === 'lab_member' && (
-        <div className={classes.generateTextContainer}>
-          <Typography variant="body2" style={{ marginBottom: '12px', color: 'var(--mskcc-dark-blue)', fontWeight: 'bold' }}>
-            Generate a standardized re-QC notification message
-          </Typography>
-          <GenerateTextOptions
-            onGenerateText={onGenerateText}
-            currentReportShown={currentReportShown}
-            request={request}
-            recipients={recipients}
-            tables={tables}
-            comments={allComments}
-          />
-        </div>
-      )}
+          {isReQc && userRole === 'lab_member' && (
+            <div className={classes.generateTextContainer}>
+              <GenerateTextOptions
+                onGenerateText={onGenerateText}
+                currentReportShown={currentReportShown}
+                request={request}
+                recipients={recipients}
+                tables={tables}
+                comments={allComments}
+              />
+            </div>
+          )}
     </div>
   </div>
 );

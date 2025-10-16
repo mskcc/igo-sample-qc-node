@@ -143,7 +143,7 @@ export default function GenerateTextOptions(props) {
         onClick={handleOpen}
         disabled={props.disabled}
       >
-        Generate Text Options
+            GENERATE TEXT OPTIONS
       </Button>
       
       <Dialog
