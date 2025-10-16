@@ -28,9 +28,6 @@ const styles = (theme) => ({
     textAlign: 'center',
     marginTop: '1em',
     marginBottom: '1em',
-    padding: '16px',
-    backgroundColor: 'var(--material-gray)',
-    borderRadius: '8px',
   }
 });
 
