@@ -93,7 +93,9 @@ export default function CommentEditor(props) {
     suggestSizeSelection: false,
     samplesDiscardedText: false,
     pickupInstructionsText: false,
-    cmoProcessingDecisionsText: false
+    cmoProcessingDecisionsText: false,
+    reQcMessage: false,
+    reQcUrgency: false
   });
   const [commentArray, setCommentArray] = useState([]);
 
@@ -271,14 +273,6 @@ export default function CommentEditor(props) {
             affect the sequencing balance across the project. 
           </span>
         )}
-        {checkedValue === 'suboptimalQuantity' && (
-          <span>
-            {' '}
-            <br />
-            However, the quantity is only sufficient for one attempt so we
-            cannot guarantee the requested reads.
-          </span>
-        )}
         {checkedValue === 'suggestSizeSelection' && (
           <span>
             {' '}
@@ -289,6 +283,20 @@ export default function CommentEditor(props) {
             instructions.
           </span>
         )}
+        {checkedValue === 'reQcMessage' && (
+          <span>
+            {' '}
+            <br />
+            Your sample(s) have been re-QC'd. Please see the updated QC results in the grid above.
+          </span>
+        )}
+        {checkedValue === 'reQcUrgency' && (
+          <span>
+            {' '}
+            <br />
+            Please submit your processing decisions at your earliest convenience to ensure your samples are included in this week's queue. Delays in submission may result in your samples being held until the following week.
+          </span>
+        )}
       </div>
     ));
   };
@@ -297,7 +305,7 @@ export default function CommentEditor(props) {
     <div className={classes.container}>
       <div className={classes.editorForm}>
         <div>
-          {Object.keys(props.tables).length > 0 && (
+          {Object.keys(props.tables).length > 0 && !props.isReQc && (
             <React.Fragment>
               <div className={classes.sectionHeader}>
                 <i className="material-icons">keyboard_arrow_right</i> Which
@@ -329,256 +337,282 @@ export default function CommentEditor(props) {
             </React.Fragment>
           )}
           <form>
-            <div className={classes.sectionHeader}>
-              <i className="material-icons">keyboard_arrow_right</i> Fill in the
-              blanks:{' '}
-            </div>
-            <div className={classes.section}>
-              <FormControl className={classes.formControl}>
-                <InputLabel htmlFor="salutation-simple">Salutation</InputLabel>
-                <Select
-                  value={values.salutation}
-                  onChange={handleChange('salutation')}
-                  inputProps={{
-                    name: 'salutation',
-                    id: 'salutation-simple',
-                  }}
-                >
-                  <MenuItem value="Morning">Morning</MenuItem>
-                  <MenuItem value="Afternoon">Afternoon</MenuItem>
-                  <MenuItem value="Evening">Evening</MenuItem>
-                </Select>
-              </FormControl>
-              <TextField
-                id="addressee-simple"
-                label="Addressee"
-                value={values.addressee}
-                className={classes.formControl}
-                onChange={handleChange('addressee')}
-                margin="normal"
-              />
-              <FormControl className={classes.formControl}>
-                <InputLabel htmlFor="servicePerformed-simple">
-                  Service Performed
-                </InputLabel>
-                <Select
-                  value={values.service}
-                  onChange={handleChange('service')}
-                  inputProps={{
-                    name: 'servicePerformed',
-                    id: 'servicePerformed-simple',
-                  }}
-                >
-                  <MenuItem value="10x cDNA preparation">
-                    10x cDNA preparation
-                  </MenuItem>
-                  <MenuItem value="Extraction">Extraction</MenuItem>
-                  <MenuItem value="DNA QC">DNA QC</MenuItem>
-                  <MenuItem value="cDNA QC">cDNA QC</MenuItem>
-                  <MenuItem value="Library Prep">Library Prep</MenuItem>
-                  <MenuItem value="Library QC">Library QC</MenuItem>
-                  <MenuItem value="Pool QC">Pool QC</MenuItem>
-                  <MenuItem value="RNA QC">RNA QC</MenuItem>
-                  <MenuItem value="Pathology">Pathology</MenuItem>
-                </Select>
-              </FormControl>
-              <TextField
-                id="downstreamProcess-simple"
-                label="Downstream Process"
-                className={classes.formControl}
-                onChange={handleChange('downstreamProcess')}
-                margin="normal"
-                value={values.downstreamProcess}
-              />
-              <br />
-            </div>
-            <div className={classes.sectionHeader}>
-              <i className="material-icons">keyboard_arrow_right</i> Select all
-              QC statuses present in this report/project:
-            </div>
-            <div className={classes.section}>
-              <FormControlLabel
-                control={
-                  <Checkbox onChange={handleCheckbox('pass')} value="pass" />
-                }
-                label={'pass'}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox onChange={handleCheckbox('try')} value="try" />
-                }
-                label={'try'}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox onChange={handleCheckbox('fail')} value="fail" />
-                }
-                label={'fail'}
-              />
-            </div>
-            {values.try && (
-              <div className={classes.section}>
-                <FormControl className={classes.formControl}>
-                  <InputLabel htmlFor="rnaChecked-simple">
-                    RNA application?
-                  </InputLabel>
-                  <Select
-                    value={values.rnaChecked}
-                    onChange={handleCheckbox('rnaChecked')}
-                    inputProps={{
-                      name: 'rnaChecked',
-                      id: 'rnaChecked-simple',
-                    }}
-                  >
-                    <MenuItem value="default" />
-                    <MenuItem value="true">yes</MenuItem>
-                    <MenuItem value="false">no</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-            )}
-            <br />
-
-            <React.Fragment>
-              <div className={classes.sectionHeader}>
-                <i className="material-icons">keyboard_arrow_right</i> Add
-                additional Instructions:
-              </div>
-              <div className={classes.section}>
-                {values.pass && !values.try && !values.fail && (
+            {!props.isReQc && (
+              <React.Fragment>
+                <div className={classes.sectionHeader}>
+                  <i className="material-icons">keyboard_arrow_right</i> Fill in the
+                  blanks:{' '}
+                </div>
+                <div className={classes.section}>
+                  <FormControl className={classes.formControl}>
+                    <InputLabel htmlFor="salutation-simple">Salutation</InputLabel>
+                    <Select
+                      value={values.salutation}
+                      onChange={handleChange('salutation')}
+                      inputProps={{
+                        name: 'salutation',
+                        id: 'salutation-simple',
+                      }}
+                    >
+                      <MenuItem value="Morning">Morning</MenuItem>
+                      <MenuItem value="Afternoon">Afternoon</MenuItem>
+                      <MenuItem value="Evening">Evening</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <TextField
+                    id="addressee-simple"
+                    label="Addressee"
+                    value={values.addressee}
+                    className={classes.formControl}
+                    onChange={handleChange('addressee')}
+                    margin="normal"
+                  />
+                  <FormControl className={classes.formControl}>
+                    <InputLabel htmlFor="servicePerformed-simple">
+                      Service Performed
+                    </InputLabel>
+                    <Select
+                      value={values.service}
+                      onChange={handleChange('service')}
+                      inputProps={{
+                        name: 'servicePerformed',
+                        id: 'servicePerformed-simple',
+                      }}
+                    >
+                      <MenuItem value="10x cDNA preparation">
+                        10x cDNA preparation
+                      </MenuItem>
+                      <MenuItem value="Extraction">Extraction</MenuItem>
+                      <MenuItem value="DNA QC">DNA QC</MenuItem>
+                      <MenuItem value="cDNA QC">cDNA QC</MenuItem>
+                      <MenuItem value="Library Prep">Library Prep</MenuItem>
+                      <MenuItem value="Library QC">Library QC</MenuItem>
+                      <MenuItem value="Pool QC">Pool QC</MenuItem>
+                      <MenuItem value="RNA QC">RNA QC</MenuItem>
+                      <MenuItem value="Pathology">Pathology</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <TextField
+                    id="downstreamProcess-simple"
+                    label="Downstream Process"
+                    className={classes.formControl}
+                    onChange={handleChange('downstreamProcess')}
+                    margin="normal"
+                    value={values.downstreamProcess}
+                  />
+                  <br />
+                </div>
+                <div className={classes.sectionHeader}>
+                  <i className="material-icons">keyboard_arrow_right</i> Select all
+                  QC statuses present in this report/project:
+                </div>
+                <div className={classes.section}>
                   <FormControlLabel
                     control={
-                      <Checkbox onChange={handleCheckbox('movingForward')} />
+                      <Checkbox onChange={handleCheckbox('pass')} value="pass" />
                     }
-                    label='Add: "All samples pass for XYZ and are moving forward."'
+                    label={'pass'}
                   />
+                  <FormControlLabel
+                    control={
+                      <Checkbox onChange={handleCheckbox('try')} value="try" />
+                    }
+                    label={'try'}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox onChange={handleCheckbox('fail')} value="fail" />
+                    }
+                    label={'fail'}
+                  />
+                </div>
+                {values.try && (
+                  <div className={classes.section}>
+                    <FormControl className={classes.formControl}>
+                      <InputLabel htmlFor="rnaChecked-simple">
+                        RNA application?
+                      </InputLabel>
+                      <Select
+                        value={values.rnaChecked}
+                        onChange={handleCheckbox('rnaChecked')}
+                        inputProps={{
+                          name: 'rnaChecked',
+                          id: 'rnaChecked-simple',
+                        }}
+                      >
+                        <MenuItem value="default" />
+                        <MenuItem value="true">yes</MenuItem>
+                        <MenuItem value="false">no</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
                 )}
-                <FormControlLabel
-                  control={<Checkbox onChange={handleCheckbox('onHold')} />}
-                  label="IGO will put this project on hold until decisions are submitted for all samples in the grid above."
-                />
-                <br/>
-                <br/>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      onChange={handleCheckbox('confirmationRequested')}
-                    />
-                  }
-                  label={
-                    'Please confirm that the samples look as expected in order to continue to sequencing.'
-                  }
-                />
-                <br/>
-                <br/>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      onChange={handleCheckbox('sequencingRequested')}
-                    />
-                  }
-                  label={
-                    'To proceed with sequencing, please submit a new iLab request and email the Service ID number to our Sample and Project Management team at igosampleprojmgmt@mskcc.org..'
-                  }
-                />
-                <br/>
-                <br/>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      onChange={handleCheckbox('samplesDiscardedText')}
-                    />
-                  }
-                  label={
-                    'Your samples will now be discarded.'
-                  }
-                />
-                <br/>
-                <br/>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      onChange={handleCheckbox('pickupInstructionsText')}
-                    />
-                  }
-                  label={
-                    'When you\'re ready to pick up your samples, please contact our Sample and Project Management Team at igosampleprojmgmt@mskcc.org.'
-                  }
-                />
-                <br/>
-                <br/>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      onChange={handleCheckbox('cmoProcessingDecisionsText')}
-                    />
-                  }
-                  label={
-                    'Please note that processing decisions should be submitted by the CMO PM team.'
-                  }
-                />
-                <br/>
-                <br/>
-                {(showCMOCheckbox()) && (<FormControlLabel
-                  control={
-                    <Checkbox
-                      onChange={handleCheckbox('cmoDecisionsNote')}
-                    />
-                  }
-                  label={
-                    'Please note, the QC decisions for this project will be made by the CMO project Management team. Please contact skicmopm@mskcc.org if you have any questions.'
-                  }
-                />)}
-                <br/>
-                <br/>
-                {(values['Library Report'] || values['Pool Report']) && (
-                  <React.Fragment>
+                <br />
+              </React.Fragment>
+            )}
+
+            {props.isReQc ? (
+              <React.Fragment>
+                <div className={classes.sectionHeader}>
+                  <i className="material-icons">keyboard_arrow_right</i> Re-QC Notification Options:
+                </div>
+                <div className={classes.section}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={handleCheckbox('reQcMessage')}
+                        checked={values.reQcMessage}
+                      />
+                    }
+                    label={
+                      'Your sample(s) have been re-QC\'d. Please see the updated QC results in the grid above.'
+                    }
+                  />
+                  <br/>
+                  <br/>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={handleCheckbox('reQcUrgency')}
+                        checked={values.reQcUrgency}
+                      />
+                    }
+                    label={
+                      'Please submit your processing decisions at your earliest convenience to ensure your samples are included in this week\'s queue. Delays in submission may result in your samples being held until the following week.'
+                    }
+                  />
+                </div>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <div className={classes.sectionHeader}>
+                  <i className="material-icons">keyboard_arrow_right</i> Add
+                  additional Instructions:
+                </div>
+                <div className={classes.section}>
+                  {values.pass && !values.try && !values.fail && (
                     <FormControlLabel
                       control={
-                        <Checkbox onChange={handleCheckbox('unevenLibrary')} />
+                        <Checkbox onChange={handleCheckbox('movingForward')} />
                       }
-                      label={
-                        ' Please note that because the library profiles are not even, the sequencing results may be unbalanced when sequenced together.'
-                      }
+                      label='Add: "All samples pass for XYZ and are moving forward."'
                     />
-                    <br/>
-                    <br/>
-                    <FormControlLabel
-                      control={
-                        <Checkbox onChange={handleCheckbox('sizeSelection')} />
-                      }
-                      label={
-                        ' These samples have adapters and/or fragments over 1kb that could affect the sequencing balance across the project. '
-                      }
-                    />
-                    <br/>
-                    <br/>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          onChange={handleCheckbox('suboptimalQuantity')}
-                        />
-                      }
-                      label={
-                        ' However, the quantity is only sufficient for one attempt so we cannot guarantee the requested reads.'
-                      }
-                    />
-                    <br/>
-                    <br/>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          onChange={handleCheckbox('suggestSizeSelection')}
-                        />
-                      }
-                      label={
-                        ' We suggest these samples undergo a size selection, which is not a service IGO provides. If you would like to pick up the samples for size selection, please reply below and we will provide additional instructions.'
-                      }
-                    />
-                  </React.Fragment>
-                )}
-              </div>
-            </React.Fragment>
+                  )}
+                  <FormControlLabel
+                    control={<Checkbox onChange={handleCheckbox('onHold')} />}
+                    label="IGO will put this project on hold until decisions are submitted for all samples in the grid above."
+                  />
+                  <br/>
+                  <br/>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={handleCheckbox('confirmationRequested')}
+                      />
+                    }
+                    label={
+                      'Please confirm that the samples look as expected in order to continue to sequencing.'
+                    }
+                  />
+                  <br/>
+                  <br/>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={handleCheckbox('sequencingRequested')}
+                      />
+                    }
+                    label={
+                      'To proceed with sequencing, please submit a new iLab request and email the Service ID number to our Sample and Project Management team at igosampleprojmgmt@mskcc.org..'
+                    }
+                  />
+                  <br/>
+                  <br/>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={handleCheckbox('samplesDiscardedText')}
+                      />
+                    }
+                    label={
+                      'Your samples will now be discarded.'
+                    }
+                  />
+                  <br/>
+                  <br/>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={handleCheckbox('pickupInstructionsText')}
+                      />
+                    }
+                    label={
+                      'When you\'re ready to pick up your samples, please contact our Sample and Project Management Team at igosampleprojmgmt@mskcc.org.'
+                    }
+                  />
+                  <br/>
+                  <br/>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={handleCheckbox('cmoProcessingDecisionsText')}
+                      />
+                    }
+                    label={
+                      'Please note that processing decisions should be submitted by the CMO PM team.'
+                    }
+                  />
+                  <br/>
+                  <br/>
+                  {(showCMOCheckbox()) && (<FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={handleCheckbox('cmoDecisionsNote')}
+                      />
+                    }
+                    label={
+                      'Please note, the QC decisions for this project will be made by the CMO project Management team. Please contact skicmopm@mskcc.org if you have any questions.'
+                    }
+                  />)}
+                  <br/>
+                  <br/>
+                  {(values['Library Report'] || values['Pool Report']) && (
+                    <React.Fragment>
+                      <FormControlLabel
+                        control={
+                          <Checkbox onChange={handleCheckbox('unevenLibrary')} />
+                        }
+                        label={
+                          ' Please note that because the library profiles are not even, the sequencing results may be unbalanced when sequenced together.'
+                        }
+                      />
+                      <br/>
+                      <br/>
+                      <FormControlLabel
+                        control={
+                          <Checkbox onChange={handleCheckbox('sizeSelection')} />
+                        }
+                        label={
+                          ' These samples have adapters and/or fragments over 1kb that could affect the sequencing balance across the project. '
+                        }
+                      />
+                      <br/>
+                      <br/>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            onChange={handleCheckbox('suggestSizeSelection')}
+                          />
+                        }
+                        label={
+                          ' We suggest these samples undergo a size selection, which is not a service IGO provides. If you would like to pick up the samples for size selection, please reply below and we will provide additional instructions.'
+                        }
+                      />
+                    </React.Fragment>
+                  )}
+                </div>
+              </React.Fragment>
+            )}
           </form>
         </div>
       </div>
@@ -588,20 +622,31 @@ export default function CommentEditor(props) {
         </Typography>
         <div ref={commentEl}>
           <br />
-          Good{' '}
-          {values.salutation || (
-            <span className={classes.highlight}>...</span>
-          )}{' '}
-          {values.addressee || <span className={classes.highlight}>...</span>}
-          ,
-          <br />
-          IGO has completed{' '}
-          {values.service || <span className={classes.highlight}>...</span>} on
-          Project {props.request.requestId}.
-          <br />
-          Please see the reports and documents above for the results.
-          <br />
-          <br />
+          {props.isReQc ? (
+            <span>
+              Your sample(s) have been re-QC'd. Please see the updated QC results in the grid above.
+              Please submit your processing decisions at your earliest convenience to ensure your samples are included in this week's queue. Delays in submission may result in your samples being held until the following week.
+              <br />
+              <br />
+            </span>
+          ) : (
+            <span>
+              Good{' '}
+              {values.salutation || (
+                <span className={classes.highlight}>...</span>
+              )}{' '}
+              {values.addressee || <span className={classes.highlight}>...</span>}
+              ,
+              <br />
+              IGO has completed{' '}
+              {values.service || <span className={classes.highlight}>...</span>} on
+              Project {props.request.requestId}.
+              <br />
+              Please see the reports and documents above for the results.
+              <br />
+              <br />
+            </span>
+          )}
           
           {renderPreviewText(commentArray)}
           
@@ -619,19 +664,21 @@ export default function CommentEditor(props) {
           color="primary"
           onClick={handleInitialComment}
           disabled={
-            ((values['DNA Report'] ||
-              values['RNA Report'] ||
-              values['Pathology Report'] ||
-              values['Pool Report'] ||
-              values['Library Report']) &&
-              values.salutation !== '' &&
-              values.addressee !== '' &&
-              values.downstreamProcess !== '' &&
-              values.service !== '') === false ||
-            props.recipientsBeingEdited === true
+            props.isReQc ? false : (
+              ((values['DNA Report'] ||
+                values['RNA Report'] ||
+                values['Pathology Report'] ||
+                values['Pool Report'] ||
+                values['Library Report']) &&
+                values.salutation !== '' &&
+                values.addressee !== '' &&
+                values.downstreamProcess !== '' &&
+                values.service !== '') === false ||
+              props.recipientsBeingEdited === true
+            )
           }
         >
-          Continue to Review
+          {props.isReQc ? 'Generate Comment' : 'Continue to Review'}
         </Button>
       </div>
     </div>

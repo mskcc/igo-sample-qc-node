@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import CommentBox from './CommentBox';
 import NewCommentArea from './NewCommentArea';
+import GenerateTextOptions from './GenerateTextOptions';
 import Typography from '@material-ui/core/Typography';
 
 const styles = (theme) => ({
@@ -11,7 +12,7 @@ const styles = (theme) => ({
     gridArea: 'comments',
     display: 'grid',
     height: '100%',
-    gridTemplateAreas: '"history" "new-comment"',
+    gridTemplateAreas: '"history" "new-comment" "generate-text"',
     // gridTemplateRows: '80% 20%',
     marginTop: '25px',
     marginBottom: '45px',
@@ -21,6 +22,12 @@ const styles = (theme) => ({
   commentsTitle: {
     paddingLeft: '2em',
     marginTop: '1em'
+  },
+  generateTextContainer: {
+    gridArea: 'generate-text',
+    textAlign: 'center',
+    marginTop: '1em',
+    marginBottom: '1em',
   }
 });
 
@@ -31,6 +38,13 @@ const CommentArea = ({
   currentUser,
   addComment,
   addCommentToAllReports,
+  isReQc,
+  userRole,
+  onGenerateText,
+  request,
+  recipients,
+  tables,
+  allComments,
   classes,
 }) => (
   <div className={classes.commentsTitle}>
@@ -45,6 +59,18 @@ const CommentArea = ({
         addCommentToAllReports={addCommentToAllReports}
       />
       <CommentBox comments={comments} currentUser={currentUser} />
+          {isReQc && userRole === 'lab_member' && (
+            <div className={classes.generateTextContainer}>
+              <GenerateTextOptions
+                onGenerateText={onGenerateText}
+                currentReportShown={currentReportShown}
+                request={request}
+                recipients={recipients}
+                tables={tables}
+                comments={allComments}
+              />
+            </div>
+          )}
     </div>
   </div>
 );

@@ -12,9 +12,14 @@ import { CommentArea, CommentEditorArea } from '../../components/Comments';
 
 
 export class CommentContainer extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   componentDidMount() {
     this.props.getComments();
   }
+
 
   handleInitialComment = (comment, values) => {
     let reportString = '';
@@ -223,6 +228,37 @@ export class CommentContainer extends Component {
     this.props.setRecipients(recipients);
   };
 
+  generateReQcText = (commentText) => {
+    // For re-QC, we'll add the comment to the current report
+    const currentReport = this.props.report.reportShown;
+    
+    // Call the action to generate and send the re-QC text
+    this.props.generateReQcText(commentText, currentReport);
+  };
+
+  // Check if this is a re-QC scenario
+  // This would be true when:
+  // 1. Comments already exist for the current report
+  // 2. User is a lab member
+  // 3. This is not the initial QC (comments exist)
+  isReQcScenario = () => {
+    const { comments, report, user } = this.props;
+    const currentReport = report.reportShown;
+    
+    // Check if comments exist for current report
+    const hasComments = comments && 
+                       currentReport && 
+                       comments[currentReport] && 
+                       comments[currentReport].comments && 
+                       comments[currentReport].comments.length > 0;
+    
+    // Check if user is lab member
+    const isLabMember = user.role === 'lab_member';
+    
+    return hasComments && isLabMember;
+  };
+
+
   render() {
     return (
       <React.Fragment>
@@ -248,6 +284,13 @@ export class CommentContainer extends Component {
               currentUser={this.props.user.username}
               addComment={this.addComment}
               addCommentToAllReports={this.addCommentToAllReports}
+              isReQc={this.isReQcScenario()}
+              userRole={this.props.user.role}
+              onGenerateText={this.generateReQcText}
+              request={this.props.report.request}
+              recipients={this.props.recipients}
+              tables={this.props.report.tables}
+              allComments={this.props.comments}
             />
         ) : (
           this.props.report.reportShown &&
