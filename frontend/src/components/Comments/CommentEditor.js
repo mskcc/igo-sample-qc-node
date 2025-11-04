@@ -224,7 +224,7 @@ export default function CommentEditor(props) {
           <span>
             {' '}
             <br />
-            To proceed with sequencing, please submit a new iLab request and email the Service ID number to our Sample and Project Management team at igosampleprojmgmt@mskcc.org..
+            To proceed with sequencing, please submit a new iLab request and email the Service ID number to our Sample and Project Management team at igosampleprojmgmt@mskcc.org.
           </span>
         )}
         {checkedValue === 'samplesDiscardedText' && (
@@ -523,7 +523,7 @@ export default function CommentEditor(props) {
                       />
                     }
                     label={
-                      'To proceed with sequencing, please submit a new iLab request and email the Service ID number to our Sample and Project Management team at igosampleprojmgmt@mskcc.org..'
+                      'To proceed with sequencing, please submit a new iLab request and email the Service ID number to our Sample and Project Management team at igosampleprojmgmt@mskcc.org.'
                     }
                   />
                   <br/>
