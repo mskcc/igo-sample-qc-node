@@ -16,6 +16,14 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     margin: 0,
     backgroundColor: 'white',
+    '& .MuiOutlinedInput-root': {
+      alignItems: 'flex-start',
+    },
+    '& textarea': {
+      resize: 'vertical',
+      minHeight: '7.5em',
+      boxSizing: 'border-box',
+    },
   },
   button: {
     // float: "right",
