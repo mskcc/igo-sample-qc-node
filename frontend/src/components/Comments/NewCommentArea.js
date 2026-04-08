@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     },
     '& textarea': {
       resize: 'vertical',
-      minHeight: '7.5em',
+      minHeight: '10em',
       boxSizing: 'border-box',
     },
   },
