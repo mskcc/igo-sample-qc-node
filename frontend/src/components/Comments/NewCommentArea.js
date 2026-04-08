@@ -37,20 +37,19 @@ const useStyles = makeStyles((theme) => ({
 
 export default function NewCommentArea(props) {
   const classes = useStyles();
-  const [values, setValues] = React.useState({
-    radioSelect: false,
-  });
 
-  const handleChange = (name) => (event) => {
-    setValues({ ...values, [name]: event.target.value });
+  const comment = props.commentValue ?? '';
+
+  const handleChange = (event) => {
+    props.onCommentChange(event.target.value);
   };
 
-  const addComment = (report) => {
-    props.addComment(values.comment);
+  const addComment = () => {
+    props.addComment(comment);
   };
 
-  const addCommentToAllReports = (report) => {
-    props.addCommentToAllReports(values.comment);
+  const addCommentToAllReports = () => {
+    props.addCommentToAllReports(comment);
   };
 
   return (
@@ -61,7 +60,8 @@ export default function NewCommentArea(props) {
         multiline
         rows="5"
         placeholder="Your Comment"
-        onChange={handleChange('comment')}
+        value={comment}
+        onChange={handleChange}
         className={classes.textField}
         margin="normal"
         variant="outlined"
@@ -74,7 +74,7 @@ export default function NewCommentArea(props) {
               size="small"
               onClick={addComment}
               color="primary"
-              disabled={values.comment ? false : true}
+              disabled={!comment.trim()}
               className={classes.button}
             >
               Reply to {props.currentReportShown}
@@ -85,7 +85,7 @@ export default function NewCommentArea(props) {
               size="small"
               onClick={addCommentToAllReports}
               color="secondary"
-              disabled={values.comment ? false : true}
+              disabled={!comment.trim()}
               className={classes.button}
             >
               Reply to all reports
@@ -97,7 +97,7 @@ export default function NewCommentArea(props) {
             size="small"
             onClick={addComment}
             color="primary"
-            disabled={values.comment ? false : true}
+            disabled={!comment.trim()}
             className={classes.singleButton}
           >
             Reply to {props.currentReportShown}
