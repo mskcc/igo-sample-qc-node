@@ -38,6 +38,8 @@ const CommentArea = ({
   currentUser,
   addComment,
   addCommentToAllReports,
+  newCommentValue,
+  onNewCommentChange,
   isReQc,
   userRole,
   onGenerateText,
@@ -57,6 +59,8 @@ const CommentArea = ({
         currentReportShown={currentReportShown}
         addComment={addComment}
         addCommentToAllReports={addCommentToAllReports}
+        commentValue={newCommentValue}
+        onCommentChange={onNewCommentChange}
       />
       <CommentBox comments={comments} currentUser={currentUser} />
           {isReQc && userRole === 'lab_member' && (

@@ -12,12 +12,22 @@ import { CommentArea, CommentEditorArea } from '../../components/Comments';
 
 
 export class CommentContainer extends Component {
+  state = {
+    newCommentDraft: '',
+  };
+
   constructor(props) {
     super(props);
   }
 
   componentDidMount() {
     this.props.getComments();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.report.reportShown !== this.props.report.reportShown) {
+      this.setState({ newCommentDraft: '' });
+    }
   }
 
 
@@ -166,6 +176,7 @@ export class CommentContainer extends Component {
           comment.replace(/\n/gi, '<br>'),
           Object.keys(this.props.report.tables)
         );
+        this.setState({ newCommentDraft: '' });
       } else {
         Swal.fire({
           title: 'Not all intial comments sent.',
@@ -189,6 +200,7 @@ export class CommentContainer extends Component {
         comment.replace(/\n/gi, '<br>'),
         this.props.report.reportShown
       );
+      this.setState({ newCommentDraft: '' });
     } else {
       this.showMrnError();
     }
@@ -228,12 +240,18 @@ export class CommentContainer extends Component {
     this.props.setRecipients(recipients);
   };
 
-  generateReQcText = (commentText) => {
-    // For re-QC, we'll add the comment to the current report
-    const currentReport = this.props.report.reportShown;
-    
-    // Call the action to generate and send the re-QC text
-    this.props.generateReQcText(commentText, currentReport);
+  handleNewCommentChange = (value) => {
+    this.setState({ newCommentDraft: value });
+  };
+
+  /** Inserts generated template text into the new-comment field (user sends via Reply). */
+  applyGeneratedCommentText = (commentText) => {
+    this.setState((prev) => {
+      const cur = (prev.newCommentDraft || '').trim();
+      return {
+        newCommentDraft: cur ? `${cur}\n\n${commentText}` : commentText,
+      };
+    });
   };
 
   // Check if this is a re-QC scenario
@@ -284,9 +302,11 @@ export class CommentContainer extends Component {
               currentUser={this.props.user.username}
               addComment={this.addComment}
               addCommentToAllReports={this.addCommentToAllReports}
+              newCommentValue={this.state.newCommentDraft}
+              onNewCommentChange={this.handleNewCommentChange}
               isReQc={this.isReQcScenario()}
               userRole={this.props.user.role}
-              onGenerateText={this.generateReQcText}
+              onGenerateText={this.applyGeneratedCommentText}
               request={this.props.report.request}
               recipients={this.props.recipients}
               tables={this.props.report.tables}

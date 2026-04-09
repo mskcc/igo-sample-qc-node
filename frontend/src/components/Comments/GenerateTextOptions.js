@@ -90,6 +90,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function timeBasedSalutation() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Morning';
+  if (h < 17) return 'Afternoon';
+  return 'Evening';
+}
+
+/** Matches CommentEditor initial-comment style: "Good Morning Jane," */
+function investigatorGreeting(request) {
+  const name = request && request.investigatorName && String(request.investigatorName).trim();
+  if (!name) {
+    return 'Hello,\n\n';
+  }
+  const firstName = name.split(/\s+/)[0];
+  return `Good ${timeBasedSalutation()} ${firstName},\n\n`;
+}
+
 export default function GenerateTextOptions(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -118,8 +135,8 @@ export default function GenerateTextOptions(props) {
   };
 
   const handleGenerateComment = () => {
-    let commentText = '';
-    
+    let commentText = investigatorGreeting(props.request);
+
     if (selectedOptions.reQcMessage) {
       commentText += 'Your sample(s) have been re-QC\'d. Please see the updated QC results in the grid above.\n\n';
     }
@@ -130,7 +147,6 @@ export default function GenerateTextOptions(props) {
     
     commentText += 'Please reply here if you have any questions or comments.';
     
-    // Call the parent's handler with the generated text
     props.onGenerateText(commentText);
     handleClose();
   };
@@ -209,7 +225,7 @@ export default function GenerateTextOptions(props) {
             variant="contained"
             disabled={!selectedOptions.reQcMessage && !selectedOptions.reQcUrgency}
           >
-            Generate & Send Comment
+            Add to comment
           </Button>
         </DialogActions>
       </Dialog>
