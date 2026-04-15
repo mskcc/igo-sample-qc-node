@@ -144,7 +144,7 @@ exports.dnaColumns = {
     },
     'CellViability': {
         'limsField': 'cellViability',
-        'data': 'cellViability',
+        'data': 'viability',
         'columnHeader': 'Cell Viability',
         'readOnly': 'true',
     },
@@ -218,7 +218,7 @@ exports.rnaColumns = {
     },
     'CellViability': {
         'limsField': 'cellViability',
-        'data': 'cellViability',
+        'data': 'viability',
         'columnHeader': 'Cell Viability',
         'readOnly': 'true',
     },
