@@ -89,7 +89,7 @@ exports.buildTableHTML = (tableType, samples, constantColumnFeatures, order, dec
                     'cqRP'
                 ];
 
-                const isCellViabilityAlias = dataField === 'viability' && order.includes('viability');
+                const isCellViabilityAlias = dataField === 'viability' && order.includes('CellViability');
                 if (order.includes(formattedDataField) || isCellViabilityAlias) {
                     if (dataField === 'otherSampleId' && sampleFieldValue.includes(',')) {
                         sampleFieldValue = sampleFieldValue.replace(',', ', ');
